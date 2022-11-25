@@ -125,6 +125,4 @@ class InputPerturbationTest(Analyser):
                 gc.collect()
                 torch.cuda.empty_cache()
 
-        print(y_preds_perturbed)
-
         return (scores, y_preds_perturbed, indices_perturbed)

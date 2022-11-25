@@ -531,16 +531,17 @@ class MasterAnalyser:
 
     def print_meta_consistency_scores(self) -> None:
         """Print MC scores in a human-readable way."""
-        print("")
-        for (
-            perturbation_type,
-            mc_results,
-        ) in self.results_meta_consistency_scores.items():
-            for mc_metric, result in mc_results.items():
-                if isinstance(result, dict):
-                    print(f"{mc_metric}:")
-                    for k, v in result.items():
-                        print(f"\t{k}: {v}")
-                else:
-                    print(f"{mc_metric}: {result:.2f}")
-        print("")
+        if self.results_meta_consistency_scores:
+            print("")
+            for (
+                perturbation_type,
+                mc_results,
+            ) in self.results_meta_consistency_scores.items():
+                for mc_metric, result in mc_results.items():
+                    if isinstance(result, dict):
+                        print(f"{mc_metric}:")
+                        for k, v in result.items():
+                            print(f"\t{k}: {v}")
+                    else:
+                        print(f"{mc_metric}: {result}")
+            print("")

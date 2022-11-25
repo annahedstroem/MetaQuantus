@@ -39,7 +39,7 @@ def compute_iac_score(
 
     p_value = measure(q, q_hat, alternative=alternative, zero_method=zero_method)[1]
 
-    if reverse_scoring and "Adversary" in analyser_name:
+    if reverse_scoring and "Adversary" in test_name:
         return 1 - p_value
 
     return p_value
@@ -132,7 +132,7 @@ def compute_iec_score(
     Q_hat: np.array,
     indices: np.array,
     lower_is_better: bool,
-    analyser_name: str,
+    test_name: str,
 ) -> float:
     """
 
@@ -142,20 +142,20 @@ def compute_iec_score(
     Q_hat
     indices
     lower_is_better
-    analyser_name
+    test_name
 
     Returns
     -------
 
     """
-    if "Adversary" in analyser_name:
+    if "Adversary" in test_name:
         return compute_iec_adversary(
             Q_star=Q_star,
             Q_hat=Q_hat,
             indices=indices,
             lower_is_better=lower_is_better,
         )
-    elif "Resilience" in analyser_name:
+    elif "Resilience" in test_name:
         return compute_iec_resilience(Q_star=Q_star, Q_hat=Q_hat, indices=indices)
 
     return np.nan
