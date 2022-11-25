@@ -10,6 +10,9 @@ def sanity_analysis(
 ):
     """
     Supporting function to get sanity scores depending on the sanity type.
+        - If Estimator_Different: we sample scores from different distributions
+        when perturbed vs unperturbed.
+        - If Estimator_Same: we pass the unperturbed as the perturbed sample.
 
     Parameters
     ----------
@@ -18,14 +21,12 @@ def sanity_analysis(
     items: int
         The number of scores to produce.
 
-
     Returns
     -------
     A numpy array of scores.
     """
 
-    if sanity_type == "NR":
-        # Sample score from different distributions if perturbed vs unperturbed.
+    if sanity_type == "Estimator_Different":
         if perturbed:
             return np.random.normal(
                 loc=np.random.randint(0, 1),
@@ -38,9 +39,9 @@ def sanity_analysis(
             size=items,
         ).tolist()
 
-    elif sanity_type == "AR":
+    elif sanity_type == "Estimator_Same":
         if perturbed:
-            return unperturbed_scores  # + np.random.uniform(low=-0.0001,high=0.0001,size=items,)
+            return unperturbed_scores
         return np.random.uniform(
             low=0,
             high=1,
@@ -48,7 +49,7 @@ def sanity_analysis(
         ).tolist()
 
     else:
-        raise ValueError("The sanity type ('sanity_check') can be either 'NR' or 'AR'.")
+        raise ValueError("The sanity type ('sanity_check') can be either 'Estimator_Different' or 'Estimator_Same'.")
 
 
 def sanity_analysis_under_perturbation(
