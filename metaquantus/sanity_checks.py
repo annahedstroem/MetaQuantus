@@ -49,7 +49,9 @@ def sanity_analysis(
         ).tolist()
 
     else:
-        raise ValueError("The sanity type ('sanity_check') can be either 'Estimator_Different' or 'Estimator_Same'.")
+        raise ValueError(
+            "The sanity type ('sanity_check') can be either 'Estimator_Different' or 'Estimator_Same'."
+        )
 
 
 def sanity_analysis_under_perturbation(

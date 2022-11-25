@@ -117,10 +117,16 @@ class BenchmarkEstimators:
                     # print('Allocated:', round(torch.cuda.memory_allocated(0)/1024**3,1), 'GB')
                     # print('Cached:   ', round(torch.cuda.memory_cached(0)/1024**3,1), 'GB')
 
+            fname = f"{today}_{dataset_name}_benchmark_exercise_{uid}_{self.name}"
+
+            # Remove dangling '_'.
+            if fname.endswith("_"):
+                fname = fname[:-1]
+
             dump_obj(
                 obj=self.results,
                 path=self.path + f"benchmarks/",
-                fname=f"{today}_{dataset_name}_benchmark_exercise_{uid}_{self.name}",
+                fname=fname,
                 use_json=True,
             )
 

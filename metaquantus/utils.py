@@ -17,7 +17,7 @@ def compute_iac_score(
     q: np.array,
     q_hat: np.array,
     indices: np.array,
-    analyser_name: str,
+    test_name: str,
     measure: Callable = scipy.stats.wilcoxon,
     alternative: str = "two-sided",
     zero_method: str = "zsplit",

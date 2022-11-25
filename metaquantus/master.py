@@ -111,7 +111,12 @@ class MasterAnalyser:
         # Run inference.
         self.run_intra_analysis(reverse_scoring=reverse_scoring)
         self.run_inter_analysis(lower_is_better=lower_is_better)
-        self.run_meta_consistency_analysis()
+
+        # Check that both test parts exist in the test suite.
+        if any("Resilience" in test for test in list(self.analyser_suite)) and any(
+            "Adversary" in test for test in list(self.analyser_suite)
+        ):
+            self.run_meta_consistency_analysis()
 
         if self.write_to_file:
             dump_obj(
@@ -192,18 +197,18 @@ class MasterAnalyser:
         self.results_meta_consistency_scores = {}
         self.results_consistency_scores = {}
 
-        for a, (analyser_name, analyser) in enumerate(self.analyser_suite.items()):
+        for a, (test_name, test) in enumerate(self.analyser_suite.items()):
 
-            self.results_eval_scores[analyser_name] = {}
-            self.results_eval_scores_perturbed[analyser_name] = {}
-            self.results_y_preds_perturbed[analyser_name] = {}
-            self.results_indices_perturbed[analyser_name] = {}
+            self.results_eval_scores[test_name] = {}
+            self.results_eval_scores_perturbed[test_name] = {}
+            self.results_y_preds_perturbed[test_name] = {}
+            self.results_indices_perturbed[test_name] = {}
 
-            if not any(x in analyser_name for x in ["Adversary", "Resilience"]):
+            if not any(x in test_name for x in ["Adversary", "Resilience"]):
                 raise ValueError(
-                    "Either 'Adversary' or 'Resilience' must be in analyser name."
+                    "Either 'Adversary' or 'Resilience' must be in test name."
                 )
-            print(analyser_name)
+            print(test_name)
 
             # This is needed for iterator (zipped over x_batch, y_batch, a_batch, s_batch).
             if s_batch is None:
@@ -269,7 +274,9 @@ class MasterAnalyser:
                         device=device,
                     )
 
-                self.results_eval_scores[analyser_name][method] = np.array(scores).astype(float)
+                self.results_eval_scores[test_name][method] = np.array(
+                    scores
+                ).astype(float)
 
             # Loop over all iterations and save scores with perturbation applied.
             # All explanation methods will be iterated within the metric.
@@ -289,13 +296,13 @@ class MasterAnalyser:
                         items=len(x_batch),
                         nr_perturbations=self.nr_perturbations,
                         xai_methods=self.xai_methods,
-                        unperturbed_scores=self.results_eval_scores[analyser_name],
+                        unperturbed_scores=self.results_eval_scores[test_name],
                     )
 
                 else:
 
                     # Run test!
-                    scores_perturbed, y_preds_perturbed, indices_perturbed = analyser(
+                    scores_perturbed, y_preds_perturbed, indices_perturbed = test(
                         metric=estimator,
                         nr_perturbations=self.nr_perturbations,
                         xai_methods=self.xai_methods,
@@ -311,9 +318,9 @@ class MasterAnalyser:
                         device=device,
                     )
 
-                self.results_eval_scores_perturbed[analyser_name][i] = scores_perturbed
-                self.results_y_preds_perturbed[analyser_name][i] = y_preds_perturbed
-                self.results_indices_perturbed[analyser_name][i] = indices_perturbed
+                self.results_eval_scores_perturbed[test_name][i] = scores_perturbed
+                self.results_y_preds_perturbed[test_name][i] = y_preds_perturbed
+                self.results_indices_perturbed[test_name][i] = indices_perturbed
 
                 # Collect garbage.
                 gc.collect()
@@ -324,9 +331,9 @@ class MasterAnalyser:
 
         self.results_intra_scores = {k: {} for k in self.analyser_suite}
 
-        for a, (analyser_name, analyser) in enumerate(self.analyser_suite.items()):
+        for a, (test_name, test) in enumerate(self.analyser_suite.items()):
             for x, method in enumerate(self.xai_methods.keys()):
-                self.results_intra_scores[analyser_name][method] = []
+                self.results_intra_scores[test_name][method] = []
 
                 for i in range(self.iterations):
 
@@ -335,21 +342,23 @@ class MasterAnalyser:
                     for p in range(self.nr_perturbations):
 
                         p_value = compute_iac_score(
-                            q=self.results_eval_scores[analyser_name][method],
-                            q_hat=self.results_eval_scores_perturbed[analyser_name][i][method][
-                                p
-                            ],
-                            indices=self.results_indices_perturbed[analyser_name][i][p],
-                            analyser_name=analyser_name,
+                            q=self.results_eval_scores[test_name][method],
+                            q_hat=self.results_eval_scores_perturbed[test_name][i][
+                                method
+                            ][p],
+                            indices=self.results_indices_perturbed[test_name][i][p],
+                            test_name=test_name,
                             measure=self.intra_measure,
                             reverse_scoring=reverse_scoring,
                         )
                         p_values.append(p_value)
 
-                    self.results_intra_scores[analyser_name][method].append(np.array(p_values))
+                    self.results_intra_scores[test_name][method].append(
+                        np.array(p_values)
+                    )
 
-                self.results_intra_scores[analyser_name][method] = np.array(
-                    self.results_intra_scores[analyser_name][method]
+                self.results_intra_scores[test_name][method] = np.array(
+                    self.results_intra_scores[test_name][method]
                 )
 
         return self.results_intra_scores
@@ -370,9 +379,9 @@ class MasterAnalyser:
         self.results_inter_scores = {}
         shape = (self.iterations, self.nr_perturbations)
 
-        for a, (analyser_name, analyser) in enumerate(self.analyser_suite.items()):
+        for a, (test_name, test) in enumerate(self.analyser_suite.items()):
 
-            self.results_inter_scores[analyser_name] = []
+            self.results_inter_scores[test_name] = []
 
             for i in range(self.iterations):
 
@@ -384,7 +393,7 @@ class MasterAnalyser:
                 for x, (method, explain_func_kwargs) in enumerate(
                     self.xai_methods.items()
                 ):
-                    Q_star[x] = self.results_eval_scores[analyser_name][method]
+                    Q_star[x] = self.results_eval_scores[test_name][method]
 
                 # Save perturbed scores in Q_hat.
                 for k in range(self.nr_perturbations):
@@ -392,23 +401,23 @@ class MasterAnalyser:
                     for x, (method, explain_func_kwargs) in enumerate(
                         self.xai_methods.items()
                     ):
-                        Q_hat[x] = self.results_eval_scores_perturbed[analyser_name][i][method][
-                            k
-                        ]
+                        Q_hat[x] = self.results_eval_scores_perturbed[test_name][i][
+                            method
+                        ][k]
 
                     # Different conditions for calculating IEC depending on perturbation type.
                     iec_score = compute_iec_score(
                         Q_star=Q_star,
                         Q_hat=Q_hat,
-                        indices=self.results_indices_perturbed[analyser_name][i][k],
+                        indices=self.results_indices_perturbed[test_name][i][k],
                         lower_is_better=lower_is_better,
-                        analyser_name=analyser_name,
+                        test_name=test_name,
                     )
 
-                    self.results_inter_scores[analyser_name].append(iec_score)
+                    self.results_inter_scores[test_name].append(iec_score)
 
-            self.results_inter_scores[analyser_name] = np.array(
-                self.results_inter_scores[analyser_name]
+            self.results_inter_scores[test_name] = np.array(
+                self.results_inter_scores[test_name]
             ).reshape(shape)
 
         return self.results_inter_scores
@@ -466,28 +475,51 @@ class MasterAnalyser:
 
             # Get inter scores of all explanation methods.
             shape = (self.iterations, self.nr_perturbations)
-            self.results_consistency_scores[perturbation_type]["inter_scores_res"] = np.array(
+            self.results_consistency_scores[perturbation_type][
+                "inter_scores_res"
+            ] = np.array(
                 self.results_inter_scores[f"{perturbation_type} Resilience Test"]
-            ).reshape(shape)
-            self.results_consistency_scores[perturbation_type]["inter_scores_adv"] = np.array(
+            ).reshape(
+                shape
+            )
+            self.results_consistency_scores[perturbation_type][
+                "inter_scores_adv"
+            ] = np.array(
                 self.results_inter_scores[f"{perturbation_type} Adversary Test"]
-            ).reshape(shape)
+            ).reshape(
+                shape
+            )
 
             # Get the mean scores, over the right axes.
             meta_consistency_scores = {
-                    "IAC_{NR}": self.results_consistency_scores[perturbation_type]["intra_scores_res"].mean(axis=(0, 2)),
-                    "IAC_{AR}": self.results_consistency_scores[perturbation_type]["intra_scores_adv"].mean(axis=(0, 2)),
-                    "IEC_{NR}": self.results_consistency_scores[perturbation_type]["inter_scores_res"].mean(axis=1),
-                    "IEC_{AR}": self.results_consistency_scores[perturbation_type]["inter_scores_adv"].mean(axis=1),
+                "IAC_{NR}": self.results_consistency_scores[perturbation_type][
+                    "intra_scores_res"
+                ].mean(axis=(0, 2)),
+                "IAC_{AR}": self.results_consistency_scores[perturbation_type][
+                    "intra_scores_adv"
+                ].mean(axis=(0, 2)),
+                "IEC_{NR}": self.results_consistency_scores[perturbation_type][
+                    "inter_scores_res"
+                ].mean(axis=1),
+                "IEC_{AR}": self.results_consistency_scores[perturbation_type][
+                    "inter_scores_adv"
+                ].mean(axis=1),
             }
 
             # Produce the results.
             shape = (self.iterations, 4)
             self.results_meta_consistency_scores[perturbation_type] = {
                 "meta_consistency_scores": meta_consistency_scores,
-                "MC_means": np.array(list(meta_consistency_scores.values())).reshape(shape).mean(axis=1),
-                "MC_mean": np.array(list(meta_consistency_scores.values())).reshape(shape).mean(),
-                "MC_std": np.array(list(meta_consistency_scores.values())).reshape(shape).mean(axis=1).std(),
+                "MC_means": np.array(list(meta_consistency_scores.values()))
+                .reshape(shape)
+                .mean(axis=1),
+                "MC_mean": np.array(list(meta_consistency_scores.values()))
+                .reshape(shape)
+                .mean(),
+                "MC_std": np.array(list(meta_consistency_scores.values()))
+                .reshape(shape)
+                .mean(axis=1)
+                .std(),
             }
             print(
                 f"\n\n{perturbation_type} Perturbation Test ---> MC score="
@@ -500,7 +532,10 @@ class MasterAnalyser:
     def print_meta_consistency_scores(self) -> None:
         """Print MC scores in a human-readable way."""
         print("")
-        for perturbation_type, mc_results in self.results_meta_consistency_scores.items():
+        for (
+            perturbation_type,
+            mc_results,
+        ) in self.results_meta_consistency_scores.items():
             for mc_metric, result in mc_results.items():
                 if isinstance(result, dict):
                     print(f"{mc_metric}:")
