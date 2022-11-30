@@ -94,25 +94,33 @@ class BenchmarkEstimators:
                         if self.keep_results:
                             self.results[dataset_name][model_name][estimator_category][
                                 estimator_name
-                            ]["intra_scores"] = self.master.intra_scores
+                            ]["results_intra_scores"] = self.master.results_intra_scores
                             self.results[dataset_name][model_name][estimator_category][
                                 estimator_name
-                            ]["inter_scores"] = self.master.inter_scores
+                            ]["results_inter_scores"] = self.master.results_inter_scores
                             self.results[dataset_name][model_name][estimator_category][
                                 estimator_name
-                            ]["eval_scores"] = self.master.eval_scores
+                            ]["results_eval_scores"] = self.master.results_eval_scores
                             self.results[dataset_name][model_name][estimator_category][
                                 estimator_name
                             ][
-                                "eval_scores_perturbed"
-                            ] = self.master.eval_scores_perturbed
+                                "results_eval_scores_perturbed"
+                            ] = self.master.results_eval_scores_perturbed
                             self.results[dataset_name][model_name][estimator_category][
                                 estimator_name
-                            ]["indices_perturbed"] = self.master.indices_perturbed
+                            ]["results_indices_perturbed"] = self.master.results_indices_perturbed
+                            self.results[dataset_name][model_name][estimator_category][
+                                estimator_name
+                            ]["results_meta_consistency_scores"] = self.master.results_meta_consistency_scores
+                            self.results[dataset_name][model_name][estimator_category][
+                                estimator_name
+                            ]["results_consistency_scores"] = self.master.results_consistency_scores
 
                         # Collect garbage.
                         gc.collect()
                         torch.cuda.empty_cache()
+
+                        self.master.print_meta_consistency_scores()
 
                     # print('Allocated:', round(torch.cuda.memory_allocated(0)/1024**3,1), 'GB')
                     # print('Cached:   ', round(torch.cuda.memory_cached(0)/1024**3,1), 'GB')

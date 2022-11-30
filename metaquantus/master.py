@@ -117,6 +117,7 @@ class MasterAnalyser:
             "Adversary" in test for test in list(self.analyser_suite)
         ):
             self.run_meta_consistency_analysis()
+            self.print_meta_consistency_scores()
 
         if self.write_to_file:
             dump_obj(
@@ -491,7 +492,7 @@ class MasterAnalyser:
             )
 
             # Get the mean scores, over the right axes.
-            meta_consistency_scores = {
+            consistency_scores = {
                 "IAC_{NR}": self.results_consistency_scores[perturbation_type][
                     "intra_scores_res"
                 ].mean(axis=(0, 2)),
@@ -506,25 +507,38 @@ class MasterAnalyser:
                 ].mean(axis=1),
             }
 
+            # Compute the results.
+            consistency_results = {
+                "IAC_{NR} mean": consistency_scores["IAC_{NR}"].mean(),
+                "IAC_{NR} std": consistency_scores["IAC_{NR}"].std(),
+                "IAC_{AR} mean": consistency_scores["IAC_{AR}"].mean(),
+                "IAC_{AR} std": consistency_scores["IAC_{NR}"].std(),
+                "IEC_{NR} mean": consistency_scores["IEC_{NR}"].mean(),
+                "IEC_{NR} std": consistency_scores["IEC_{NR}"].std(),
+                "IEC_{AR} mean": consistency_scores["IEC_{AR}"].mean(),
+                "IEC_{AR} std": consistency_scores["IEC_{AR}"].std(),
+            }
+
             # Produce the results.
-            shape = (self.iterations, 4)
+            shape = (4, self.iterations)
             self.results_meta_consistency_scores[perturbation_type] = {
-                "meta_consistency_scores": meta_consistency_scores,
-                "MC_means": np.array(list(meta_consistency_scores.values()))
+                "consistency_scores": consistency_scores,
+                "consistency_results": consistency_results,
+                "MC_means": np.array(list(consistency_scores.values()))
                 .reshape(shape)
-                .mean(axis=1),
-                "MC_mean": np.array(list(meta_consistency_scores.values()))
+                .mean(axis=0),
+                "MC_mean": np.array(list(consistency_scores.values()))
                 .reshape(shape)
                 .mean(),
-                "MC_std": np.array(list(meta_consistency_scores.values()))
+                "MC_std": np.array(list(consistency_scores.values()))
                 .reshape(shape)
-                .mean(axis=1)
+                .mean(axis=0)
                 .std(),
             }
             print(
-                f"\n\n{perturbation_type} Perturbation Test ---> MC score="
-                f"{self.results_meta_consistency_scores[perturbation_type]['MC_mean']:.2f} "
-                f"({self.results_meta_consistency_scores[perturbation_type]['MC_std']:.2f})"
+                f"\n{perturbation_type} Perturbation Test ---> MC score="
+                f"{self.results_meta_consistency_scores[perturbation_type]['MC_mean']:.4f} "
+                f"({self.results_meta_consistency_scores[perturbation_type]['MC_std']:.4f})"
             )
 
         return self.results_meta_consistency_scores
@@ -537,11 +551,45 @@ class MasterAnalyser:
                 perturbation_type,
                 mc_results,
             ) in self.results_meta_consistency_scores.items():
+                print(f"{perturbation_type} Perturbation Test")
                 for mc_metric, result in mc_results.items():
                     if isinstance(result, dict):
-                        print(f"{mc_metric}:")
+                        print(f"\t{mc_metric}:")
                         for k, v in result.items():
-                            print(f"\t{k}: {v}")
+                            print(f"\t\t{k}: {v}")
                     else:
-                        print(f"{mc_metric}: {result}")
+                        print(f"\t{mc_metric}: {result}")
             print("")
+
+    def get_results_eval_scores(self):
+        return self.results_eval_scores
+
+    def get_results_eval_scores_perturbed(self):
+        return self.results_eval_scores_perturbed
+
+    def get_results_y_preds_perturbed(self):
+        return self.results_y_preds_perturbed
+
+    def get_results_indices_perturbed(self):
+        return self.results_indices_perturbed
+
+    def get_results_y_true(self):
+        return self.results_y_true
+
+    def get_results_y_preds(self):
+        return self.results_y_preds
+
+    def get_results_indices_correct(self):
+        return self.results_indices_correct
+
+    def get_results_intra_scores(self):
+        return self.results_intra_scores
+
+    def get_results_inter_scores(self):
+        return self.results_inter_scores
+
+    def get_results_meta_consistency_scores(self):
+        return self.results_meta_consistency_scores
+
+    def get_results_consistency_scores(self):
+        return self.results_consistency_scores
