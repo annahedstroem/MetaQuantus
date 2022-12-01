@@ -1,3 +1,4 @@
+import os
 from typing import Union, Callable, Optional, Any, Dict
 import numpy as np
 import gc
@@ -222,6 +223,7 @@ def default(obj):
 
 def dump_obj(path: str, fname: str, obj: Any, use_json: bool = False) -> None:
     """Using pickle and json."""
+    #print(f"Saving from path: {os.getcwd()}")
 
     # Get path.
     full_name = str(path + fname).split("/")[:-1]

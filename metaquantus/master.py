@@ -165,7 +165,7 @@ class MasterAnalyser:
             dump_obj(
                 obj=self.results_consistency_scores,
                 path=self.path,
-                fname=f"{self.today}_{self.fname}consistency_scores_{self.uid}",
+                fname=f"{self.today}_{self.fname}_consistency_scores_{self.uid}",
                 use_json=True,
             )
 
@@ -275,9 +275,9 @@ class MasterAnalyser:
                         device=device,
                     )
 
-                self.results_eval_scores[test_name][method] = np.array(
-                    scores
-                ).astype(float)
+                self.results_eval_scores[test_name][method] = np.array(scores).astype(
+                    float
+                )
 
             # Loop over all iterations and save scores with perturbation applied.
             # All explanation methods will be iterated within the metric.

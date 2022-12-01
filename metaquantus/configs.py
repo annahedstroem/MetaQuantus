@@ -9,25 +9,25 @@ from quantus.functions import (
     normalise_func,
 )
 import torch
-from models import LeNet, ResNet9
+import torchvision
+from metaquantus.models import LeNet, ResNet9
+from metaquantus.model_perturbation_test import ModelPerturbationTest
+from metaquantus.input_perturbation_test import InputPerturbationTest
+
 
 def setup_xai_methods(
     gc_layer: str,
     img_size: int = 28,
 ) -> Dict:
     return {
-    "Gradient": {
-    },
-    "Saliency": {
-    },
-    "IntegratedGradients": {
-    },
-    "GradCAM": {
-        "gc_layer": gc_layer,
-        "interpolate": (img_size, img_size),
-        "interpolate_mode": "bilinear",
-
-    },
+        "Gradient": {},
+        "Saliency": {},
+        "IntegratedGradients": {},
+        "GradCAM": {
+            "gc_layer": gc_layer,
+            "interpolate": (img_size, img_size),
+            "interpolate_mode": "bilinear",
+        },
     }
 
 
@@ -39,109 +39,136 @@ def setup_estimators(
 ) -> Dict:
     return {
         "Robustness": {
-            "Max-Sensitivity": (quantus.MaxSensitivity(
-                nr_samples=10,
-                perturb_func=perturb_func.uniform_noise,
-                norm_numerator=norm_func.fro_norm,
-                norm_denominator=norm_func.fro_norm,
-                lower_bound=0.01,
-                abs=False,
-                normalise=True,
-                normalise_func=normalise_func.normalise_by_average_second_moment_estimate,
-                return_aggregate=False,
-                aggregate_func=np.mean,
-                disable_warnings=True,
-            ), True),
-            "Local Lipschitz Estimate": (quantus.LocalLipschitzEstimate(
-                nr_samples=10,
-                perturb_func=perturb_func.gaussian_noise,
-                norm_numerator=similarity_func.distance_euclidean,
-                norm_denominator=similarity_func.distance_euclidean,
-                perturb_std=0.01,
-                abs=False,
-                normalise=True,
-                normalise_func=normalise_func.normalise_by_average_second_moment_estimate,
-                return_aggregate=False,
-                aggregate_func=np.mean,
-                disable_warnings=True,
-            ), True),
+            "Max-Sensitivity": (
+                quantus.MaxSensitivity(
+                    nr_samples=10,
+                    perturb_func=perturb_func.uniform_noise,
+                    norm_numerator=norm_func.fro_norm,
+                    norm_denominator=norm_func.fro_norm,
+                    lower_bound=0.01,
+                    abs=False,
+                    normalise=True,
+                    normalise_func=normalise_func.normalise_by_average_second_moment_estimate,
+                    return_aggregate=False,
+                    aggregate_func=np.mean,
+                    disable_warnings=True,
+                ),
+                True,
+            ),
+            "Local Lipschitz Estimate": (
+                quantus.LocalLipschitzEstimate(
+                    nr_samples=10,
+                    perturb_func=perturb_func.gaussian_noise,
+                    norm_numerator=similarity_func.distance_euclidean,
+                    norm_denominator=similarity_func.distance_euclidean,
+                    perturb_std=0.01,
+                    abs=False,
+                    normalise=True,
+                    normalise_func=normalise_func.normalise_by_average_second_moment_estimate,
+                    return_aggregate=False,
+                    aggregate_func=np.mean,
+                    disable_warnings=True,
+                ),
+                True,
+            ),
         },
         "Randomisation": {
-            "Random Logit": (quantus.RandomLogit(
-                similarity_func=similarity_func.correlation_spearman,
-                num_classes=num_classes,
-                abs=False,
-                normalise=True,
-                normalise_func=normalise_func.normalise_by_average_second_moment_estimate,
-                return_aggregate=False,
-                aggregate_func=np.mean,
-                disable_warnings=True,
-            ), False),
-            "Model Parameter Randomisation Test": (quantus.ModelParameterRandomisation(
-                similarity_func=similarity_func.correlation_spearman,
-                return_sample_correlation=True,
-                abs=False,
-                normalise=True,
-                normalise_func=normalise_func.normalise_by_average_second_moment_estimate,
-                return_aggregate=False,
-                aggregate_func=np.mean,
-                disable_warnings=True,
-            ), True),
+            "Random Logit": (
+                quantus.RandomLogit(
+                    similarity_func=similarity_func.correlation_spearman,
+                    num_classes=num_classes,
+                    abs=False,
+                    normalise=True,
+                    normalise_func=normalise_func.normalise_by_average_second_moment_estimate,
+                    return_aggregate=False,
+                    aggregate_func=np.mean,
+                    disable_warnings=True,
+                ),
+                False,
+            ),
+            "Model Parameter Randomisation Test": (
+                quantus.ModelParameterRandomisation(
+                    similarity_func=similarity_func.correlation_spearman,
+                    return_sample_correlation=True,
+                    abs=False,
+                    normalise=True,
+                    normalise_func=normalise_func.normalise_by_average_second_moment_estimate,
+                    return_aggregate=False,
+                    aggregate_func=np.mean,
+                    disable_warnings=True,
+                ),
+                True,
+            ),
         },
         "Faithfulness": {
-            "Faithfulness Correlation": (quantus.FaithfulnessCorrelation(
-                subset_size=features,
-                perturb_baseline="uniform",
-                perturb_func=perturb_func.baseline_replacement_by_indices,
-                nr_runs=10,
-                abs=False,
-                normalise=True,
-                normalise_func=normalise_func.normalise_by_average_second_moment_estimate,
-                return_aggregate=False,
-                aggregate_func=np.mean,
-                disable_warnings=True,
-            ), False),
-            "Pixel-Flipping": (quantus.PixelFlipping(
-                features_in_step=features,
-                perturb_baseline="uniform",
-                perturb_func=perturb_func.baseline_replacement_by_indices,
-                abs=False,
-                normalise=True,
-                normalise_func=normalise_func.normalise_by_average_second_moment_estimate,
-                return_aggregate=False,
-                aggregate_func=np.mean,
-                return_auc_per_sample=True,
-                disable_warnings=True,
-            ), False),
+            "Faithfulness Correlation": (
+                quantus.FaithfulnessCorrelation(
+                    subset_size=features,
+                    perturb_baseline="uniform",
+                    perturb_func=perturb_func.baseline_replacement_by_indices,
+                    nr_runs=10,
+                    abs=False,
+                    normalise=True,
+                    normalise_func=normalise_func.normalise_by_average_second_moment_estimate,
+                    return_aggregate=False,
+                    aggregate_func=np.mean,
+                    disable_warnings=True,
+                ),
+                False,
+            ),
+            "Pixel-Flipping": (
+                quantus.PixelFlipping(
+                    features_in_step=features,
+                    perturb_baseline="uniform",
+                    perturb_func=perturb_func.baseline_replacement_by_indices,
+                    abs=False,
+                    normalise=True,
+                    normalise_func=normalise_func.normalise_by_average_second_moment_estimate,
+                    return_aggregate=False,
+                    aggregate_func=np.mean,
+                    return_auc_per_sample=True,
+                    disable_warnings=True,
+                ),
+                False,
+            ),
         },
         "Complexity": {
-            "Sparseness": (quantus.Sparseness(
-                abs=False,
-                normalise=True,
-                normalise_func=normalise_func.normalise_by_average_second_moment_estimate,
-                return_aggregate=False,
-                aggregate_func=np.mean,
-                disable_warnings=True,
-            ), False),
-            "Complexity": (quantus.Complexity(
-                abs=False,
-                normalise=True,
-                normalise_func=normalise_func.normalise_by_average_second_moment_estimate,
-                return_aggregate=False,
-                aggregate_func=np.mean,
-                disable_warnings=True,
-            ), True),
+            "Sparseness": (
+                quantus.Sparseness(
+                    abs=False,
+                    normalise=True,
+                    normalise_func=normalise_func.normalise_by_average_second_moment_estimate,
+                    return_aggregate=False,
+                    aggregate_func=np.mean,
+                    disable_warnings=True,
+                ),
+                False,
+            ),
+            "Complexity": (
+                quantus.Complexity(
+                    abs=False,
+                    normalise=True,
+                    normalise_func=normalise_func.normalise_by_average_second_moment_estimate,
+                    return_aggregate=False,
+                    aggregate_func=np.mean,
+                    disable_warnings=True,
+                ),
+                True,
+            ),
         },
         "Localisation": {
-            "Pointing-Game": (quantus.PointingGame(
-                abs=False,
-                normalise=True,
-                normalise_func=normalise_func.normalise_by_average_second_moment_estimate,
-                return_aggregate=False,
-                aggregate_func=np.mean,
-                disable_warnings=True,
-            ), False),
-            #"Top-K Intersection": (quantus.TopKIntersection(
+            "Pointing-Game": (
+                quantus.PointingGame(
+                    abs=False,
+                    normalise=True,
+                    normalise_func=normalise_func.normalise_by_average_second_moment_estimate,
+                    return_aggregate=False,
+                    aggregate_func=np.mean,
+                    disable_warnings=True,
+                ),
+                False,
+            ),
+            # "Top-K Intersection": (quantus.TopKIntersection(
             #    k=int((img_size*img_size)*percentage),
             #    abs=False,
             #    normalise=True,
@@ -149,29 +176,39 @@ def setup_estimators(
             #    return_aggregate=False,
             #    aggregate_func=np.mean,
             #    disable_warnings=True,
-            #), False),
-            #"Relevance Rank Accuracy": (quantus.RelevanceRankAccuracy(
+            # ), False),
+            # "Relevance Rank Accuracy": (quantus.RelevanceRankAccuracy(
             #    abs=False,
             #    normalise=True,
             #    normalise_func=normalise_func.normalise_by_average_second_moment_estimate,
             #    return_aggregate=False,
             #    aggregate_func=np.mean,
             #    disable_warnings=True,
-            #), False),
-            "Relevance Mass Accuracy": (quantus.RelevanceMassAccuracy(
-                abs=False,
-                normalise=True,
-                normalise_func=normalise_func.normalise_by_average_second_moment_estimate,
-                return_aggregate=False,
-                aggregate_func=np.mean,
-                disable_warnings=True,
-            ), False),
+            # ), False),
+            "Relevance Mass Accuracy": (
+                quantus.RelevanceMassAccuracy(
+                    abs=False,
+                    normalise=True,
+                    normalise_func=normalise_func.normalise_by_average_second_moment_estimate,
+                    return_aggregate=False,
+                    aggregate_func=np.mean,
+                    disable_warnings=True,
+                ),
+                False,
+            ),
         },
     }
 
-def setup_dataset_models(path_assets: str, dataset_name: str):
+
+def setup_dataset_models(
+    dataset_name: str,
+    path_assets: str,
+):
+
+    SETTINGS = {}
 
     if dataset_name == "MNIST":
+
         # Paths.
         path_mnist_model = path_assets + "models/mnist_lenet"
         path_mnist_assets = path_assets + "test_sets/mnist_test_set.npy"
@@ -187,7 +224,23 @@ def setup_dataset_models(path_assets: str, dataset_name: str):
 
         s_batch_mnist = s_batch_mnist.reshape(len(x_batch_mnist), 1, 28, 28)
 
-    elif dataset_name == "fNNIST":
+        # Add to settings.
+        SETTINGS["MNIST"] = {
+            "x_batch": x_batch_mnist,
+            "y_batch": y_batch_mnist,
+            "s_batch": s_batch_mnist,
+            "models": {"LeNet": model_mnist},
+            "gc_layers": {"LeNet": "list(model.named_modules())[3][1]"},
+            "estimator_kwargs": {
+                "features": 28 * 2,
+                "num_classes": 10,
+                "img_size": 28,
+                "percentage": 0.1,
+            },
+        }
+        model_name = "LeNet"
+
+    elif dataset_name == "fMNIST":
 
         # Paths.
         path_fmnist_model = path_assets + "models/fmnist_lenet_model"
@@ -202,9 +255,26 @@ def setup_dataset_models(path_assets: str, dataset_name: str):
         y_batch_fmnist = assets_fmnist["y_batch"]
         s_batch_fmnist = assets_fmnist["s_batch"]
 
-        #s_batch_fmnist = s_batch_fmnist.reshape(len(x_batch_fmnist), 1, 28, 28)
+        # s_batch_fmnist = s_batch_fmnist.reshape(len(x_batch_fmnist), 1, 28, 28)
 
-    elif dataset_name == "cNNIST":
+        # Add to settings.
+        SETTINGS["fMNIST"] = {
+            "x_batch": x_batch_fmnist,
+            "y_batch": y_batch_fmnist,
+            "s_batch": s_batch_fmnist,
+            "models": {"LeNet": model_fmnist},
+            "gc_layers": {"LeNet": "list(model.named_modules())[3][1]"},
+            "estimator_kwargs": {
+                "features": 28 * 2,
+                "num_classes": 10,
+                "img_size": 28,
+                "percentage": 0.1,
+            },
+        }
+
+        model_name = "LeNet"
+
+    elif dataset_name == "cMNIST":
 
         # Paths.
         path_cmnist_model = path_assets + "models/cmnist_resnet9.ckpt"
@@ -222,82 +292,162 @@ def setup_dataset_models(path_assets: str, dataset_name: str):
 
         s_batch_cmnist = s_batch_cmnist.reshape(len(x_batch_cmnist), 1, 32, 32)
 
-        elif dataset_name == "ImageNet":
-        # Paths.
-        #path_imagenet_model = path_assets + "models/imagenet_resnet18_model"
-        #path_imagenet_assets = path_assets + "test_sets/imagenet_test_set.npy"
-        #batch_size_test = 206
-
-        # Example for how to reload assets and models to notebook.
-        #model_imagenet_resnet18 = torchvision.models.resnet18(pretrained=True)
-        #model_imagenet_vgg16 = torchvision.models.vgg16(pretrained=True)
-        #model_imagenet_alexnet = torchvision.models.alexnet(pretrained=True)
-
-        #assets_imagenet = np.load(path_imagenet_assets, allow_pickle=True).item()
-        #x_batch_imagenet = assets_imagenet["x_batch"]
-        #y_batch_imagenet = assets_imagenet["y_batch"]
-        #s_batch_imagenet = assets_imagenet["s_batch"]
-
-        #s_batch_imagenet = s_batch_imagenet.reshape(len(x_batch_imagenet), 1, 224, 224)
-
-    SETTINGS = {
-        "MNIST": {
-            "x_batch": x_batch_mnist,
-            "y_batch": y_batch_mnist,
-            "s_batch": s_batch_mnist,
-            "models": {"LeNet": model_mnist},
-            "gc_layers": {"LeNet": 'list(model.named_modules())[3][1]'},
-            "estimator_kwargs": {
-                "features": 28*2,
-                "num_classes": 10,
-                "img_size": 28,
-                "percentage": 0.1,
-                }
-            },
-        "fMNIST": {
-            "x_batch": x_batch_fmnist,
-            "y_batch": y_batch_fmnist,
-            "s_batch": s_batch_fmnist,
-            "models": {"LeNet": model_fmnist},
-            "gc_layers": {"LeNet": 'list(model.named_modules())[3][1]'},
-            "estimator_kwargs": {
-                "features": 28*2,
-                "num_classes": 10,
-                "img_size": 28,
-                "percentage": 0.1,
-                }
-            },
-        "cMNIST": {
+        # Add to settings.
+        SETTINGS["cMNIST"] = {
             "x_batch": x_batch_cmnist,
             "y_batch": y_batch_cmnist,
             "s_batch": s_batch_cmnist,
             "models": {"ResNet9": model_cmnist},
-            "gc_layers": {"ResNet9": 'list(model.named_modules())[1][1][-6]'},
+            "gc_layers": {"ResNet9": "list(model.named_modules())[1][1][-6]"},
             "estimator_kwargs": {
-                "features": 32*2,
+                "features": 32 * 2,
                 "num_classes": 10,
                 "img_size": 32,
                 "percentage": 0.1,
-                }
             },
-        #"ImageNet": {
-        #    "x_batch": x_batch_imagenet,
-        #    "y_batch": y_batch_imagenet,
-        #    "s_batch": s_batch_imagenet,
-        #    "models": {
-        #        "ResNet18": model_imagenet_resnet18,
+        }
+        model_name = "ResNet9"
+
+    elif dataset_name == "ImageNet":
+        pass
+
+        # Paths.
+        #path_imagenet_model = path_assets + "models/imagenet_resnet18_model"
+        path_imagenet_assets = path_assets + "test_sets/imagenet_test_set.npy"
+
+        # Example for how to reload assets and models to notebook.
+        model_imagenet_resnet18 = torchvision.models.resnet18(pretrained=True)
+        # model_imagenet_vgg16 = torchvision.models.vgg16(pretrained=True)
+        # model_imagenet_alexnet = torchvision.models.alexnet(pretrained=True)
+
+        assets_imagenet = np.load(path_imagenet_assets, allow_pickle=True).item()
+        x_batch_imagenet = assets_imagenet["x_batch"]
+        y_batch_imagenet = assets_imagenet["y_batch"]
+        s_batch_imagenet = assets_imagenet["s_batch"]
+
+        s_batch_imagenet = s_batch_imagenet.reshape(len(x_batch_imagenet), 1, 224, 224)
+
+        # Add to settings.
+        SETTINGS["ImageNet"] = {
+            "x_batch": x_batch_imagenet,
+            "y_batch": y_batch_imagenet,
+            "s_batch": s_batch_imagenet,
+            "models": {
+                "ResNet18": model_imagenet_resnet18,
         #        "VGG16": model_imagenet_vgg16,
-        #        },
-        #    "gc_layers": {
-        #        "ResNet18": 'list(model.named_modules())[61][1]',
+                },
+            "gc_layers": {
+                "ResNet18": 'list(model.named_modules())[61][1]',
         #        "VGG16": 'list(model_imagenet_vgg16.named_modules())[28][1]',
-        #        },
-        #    "estimator_kwargs": {
-        #        "num_classes": 1000,
-        #        "img_size": 224,
-        #        }
-        #    }
+                },
+            "estimator_kwargs": {
+                "num_classes": 1000,
+                "img_size": 224,
+                }
+            }
+        model_name = "ResNet18"
+
+    else:
+        raise ValueError("Provide a supported dataset {'MNIST', 'fMNIST', 'cMNIST' and 'ImageNet'}.")
+
+    return SETTINGS, model_name
+
+
+def setup_analyser_suite(dataset_name: str):
+    # Prepare analyser suite
+    analyser_suite = {}
+
+    if dataset_name in ["MNIST", "fMNIST", "cMNIST"]:
+
+        analyser_suite = {
+            "Model Resilience Test": ModelPerturbationTest(
+                **{
+                    "noise_type": "multiplicative",
+                    "mean": 1.0,
+                    "std": 0.001,
+                    "type": "Resilience",
+                }
+            ),
+            "Model Adversary Test": ModelPerturbationTest(
+                **{
+                    "noise_type": "multiplicative",
+                    "mean": 1.0,
+                    "std": 2.0,
+                    "type": "Adversary",
+                }
+            ),
+            "Input Resilience Test": InputPerturbationTest(
+                **{
+                    "noise": 0.001,
+                    "type": "Resilience",
+                }
+            ),
+            "Input Adversary Test": InputPerturbationTest(
+                **{
+                    "noise": 5.0,
+                    "type": "Adversary",
+                }
+            ),
         }
 
+    return analyser_suite
 
-        return
+
+def setup_faithfulness_estimators(
+        features: int,
+        patch_size: int,
+        num_classes: int,
+        img_size: int,
+        percentage: int,
+) -> Dict:
+    return {
+        "Faithfulness": {
+            "Faithfulness Correlation": (quantus.FaithfulnessCorrelation(
+                subset_size=features,
+                perturb_baseline="uniform",
+                perturb_func=perturb_func.baseline_replacement_by_indices,
+                nr_runs=10,
+                abs=False,
+                normalise=True,
+                normalise_func=normalise_func.normalise_by_average_second_moment_estimate,
+                return_aggregate=False,
+                disable_warnings=True,
+            ), False),
+            "Pixel-Flipping": (quantus.PixelFlipping(
+                features_in_step=features,
+                perturb_baseline="uniform",
+                perturb_func=perturb_func.baseline_replacement_by_indices,
+                abs=False,
+                normalise=True,
+                normalise_func=normalise_func.normalise_by_average_second_moment_estimate,
+                return_aggregate=False,
+                return_auc_per_sample=True,
+                disable_warnings=True,
+            ), False),
+            "MonotinicityCorrelation": (quantus.MonotonicityCorrelation(
+                nr_samples=10,
+                features_in_step=features,
+                perturb_baseline="uniform",
+                perturb_func=quantus.perturb_func.baseline_replacement_by_indices,
+                similarity_func=quantus.similarity_func.correlation_spearman,
+                abs=False,
+                normalise=True,
+                normalise_func=normalise_func.normalise_by_average_second_moment_estimate,
+                return_aggregate=False,
+                disable_warnings=True,
+            ), False),
+            "Infidelity": (quantus.Infidelity(
+                perturb_baseline="uniform",
+                perturb_func=quantus.perturb_func.baseline_replacement_by_indices,
+                n_perturb_samples=10,
+                perturb_patch_sizes=[patch_size],
+                abs=False,
+                normalise=True,
+                normalise_func=normalise_func.normalise_by_average_second_moment_estimate,
+                return_aggregate=False,
+                return_auc_per_sample=True,
+                disable_warnings=True,
+            ), False),
+
+        },
+    }

@@ -4,8 +4,9 @@ import warnings
 import sklearn
 import numpy as np
 
-#from quantus.helpers.model.model_interface import ModelInterface
-#from quantus.metrics.base import Metric, PerturbationMetric
+from quantus.helpers.model.model_interface import ModelInterface
+from quantus.metrics.base import Metric, PerturbationMetric
+
 
 class Analyser(ABC):
     """Implementation of base class."""
@@ -16,9 +17,9 @@ class Analyser(ABC):
     @abstractmethod
     def __call__(
         self,
-        metric, # : Union[Metric, PerturbationMetric]
+        metric: Union[Metric, PerturbationMetric],
         nr_perturbations: int,
-        model, # : ModelInterface
+        model: ModelInterface,
         x_batch: np.ndarray,
         y_batch: Optional[np.ndarray],
         a_batch: Optional[np.ndarray],

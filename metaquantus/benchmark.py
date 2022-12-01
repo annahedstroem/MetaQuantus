@@ -108,13 +108,19 @@ class BenchmarkEstimators:
                             ] = self.master.results_eval_scores_perturbed
                             self.results[dataset_name][model_name][estimator_category][
                                 estimator_name
-                            ]["results_indices_perturbed"] = self.master.results_indices_perturbed
+                            ][
+                                "results_indices_perturbed"
+                            ] = self.master.results_indices_perturbed
                             self.results[dataset_name][model_name][estimator_category][
                                 estimator_name
-                            ]["results_meta_consistency_scores"] = self.master.results_meta_consistency_scores
+                            ][
+                                "results_meta_consistency_scores"
+                            ] = self.master.results_meta_consistency_scores
                             self.results[dataset_name][model_name][estimator_category][
                                 estimator_name
-                            ]["results_consistency_scores"] = self.master.results_consistency_scores
+                            ][
+                                "results_consistency_scores"
+                            ] = self.master.results_consistency_scores
 
                         # Collect garbage.
                         gc.collect()
