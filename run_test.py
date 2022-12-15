@@ -1,24 +1,47 @@
 import os
+import warnings
 import argparse
 import torch
+import numpy as np
+from datetime import datetime
+
+import quantus
+from metaquantus.master import MasterAnalyser
 from metaquantus.configs import (
     setup_estimators,
     setup_xai_methods,
     setup_dataset_models,
     setup_analyser_suite,
 )
+from metaquantus.utils import load_obj
+
+PATH_ASSETS = "../assets/"
+PATH_RESULTS = "/home/amlh/Projects/MetaQuantus/results/"
 
 if __name__ == "__main__":
 
+    ######################
+    # Parsing arguments. #
+    ######################
+
     print(f"Running from path: {os.getcwd()}")
+    warnings.filterwarnings("ignore", category=FutureWarning)
+    warnings.filterwarnings("ignore", category=UserWarning)
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--path_assets")
-    parser.add_argument("--dataset_name")
-
+    parser.add_argument("--dataset")
+    parser.add_argument("--K")
+    parser.add_argument("--iters")
     args = parser.parse_args()
-    arguments = {"path_assets": args.path_assets, "dataset_name": args.dataset_name}
-    print(arguments)
+
+    dataset_name = str(args.dataset)
+    K = int(args.K)
+    iters = int(args.iters)
+    print(dataset_name, K, iters)
+
+    #########
+    # GPUs. #
+    #########
 
     # Setting device on GPU if available, else CPU.
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -33,6 +56,61 @@ if __name__ == "__main__":
         print("Allocated:", round(torch.cuda.memory_allocated(0) / 1024 ** 3, 1), "GB")
         print("Cached:   ", round(torch.cuda.memory_cached(0) / 1024 ** 3, 1), "GB")
 
-    SETTINGS, model = setup_dataset_models(
-        dataset_name=arguments["dataset_name"], device=device
+    ##############################
+    # Dataset-specific settings. #
+    ##############################
+
+    # Get input, outputs settings.
+    SETTINGS, model_name = setup_dataset_models(
+        dataset_name=dataset_name, path_assets=PATH_ASSETS
+    )
+    dataset_settings = {dataset_name: SETTINGS[dataset_name]}
+    dataset_kwargs = dataset_settings[dataset_name]["estimator_kwargs"]
+
+    # Get analyser suite.
+    analyser_suite = setup_analyser_suite(dataset_name=dataset_name)
+
+    # Get estimators.
+    estimators = setup_estimators(
+        features=dataset_kwargs["features"],
+        num_classes=dataset_kwargs["num_classes"],
+        img_size=dataset_kwargs["img_size"],
+        percentage=dataset_kwargs["percentage"],
+    )
+
+    # Get explanation methods.
+    xai_methods = setup_xai_methods(
+        gc_layer=dataset_settings[dataset_name]["gc_layers"][model_name],
+        img_size=dataset_kwargs["img_size"],
+        nr_channels=dataset_kwargs["nr_channels"],
+    )
+
+    ########################
+    # Master run settings. #
+    ########################
+
+    # Define metric.
+    estimator_category = "Complexity"
+    estimator_name = "Sparseness"
+
+    # Define master!
+    master = MasterAnalyser(
+        analyser_suite=analyser_suite,
+        xai_methods=xai_methods,
+        iterations=iters,
+        nr_perturbations=K,
+        write_to_file=False,
+    )
+
+    master(
+        estimator=estimators[estimator_category][estimator_name][0],
+        model=dataset_settings[dataset_name]["models"][model_name],
+        x_batch=dataset_settings[dataset_name]["x_batch"],
+        y_batch=dataset_settings[dataset_name]["y_batch"],
+        a_batch=None,
+        s_batch=dataset_settings[dataset_name]["s_batch"],
+        channel_first=True,
+        softmax=False,
+        device=device,
+        lower_is_better=estimators[estimator_category][estimator_name][1],
     )

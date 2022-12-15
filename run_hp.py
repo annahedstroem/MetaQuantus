@@ -77,8 +77,8 @@ if __name__ == "__main__":
     analyser_suite = setup_analyser_suite(dataset_name=dataset_name)
 
     # Delete IPT, only run MPT.
-    del analyser_suite['Input Resilience Test']
-    del analyser_suite['Input Adversary Test']
+    del analyser_suite["Input Resilience Test"]
+    del analyser_suite["Input Adversary Test"]
     print(analyser_suite)
 
     # Get estimators.
@@ -93,6 +93,7 @@ if __name__ == "__main__":
     xai_methods = setup_xai_methods(
         gc_layer=dataset_settings[dataset_name]["gc_layers"][model_name],
         img_size=dataset_kwargs["img_size"],
+        nr_channels=dataset_kwargs["nr_channels"],
     )
 
     ##############################
@@ -113,61 +114,68 @@ if __name__ == "__main__":
         "Test": [],
         "MC Mean": [],
         "MC Std": [],
-        # "Similarity Function": [],
+        "Nr Runs": [],
         "Baseline Strategy": [],
         "Subset Size": [],
     }
+
     # Define metric.
     estimator_category = "Faithfulness"
     estimator_name = "Faithfulness Correlation"
-    estimators[estimator_category][estimator_name][0].abs = True
 
     # Define some parameter settings to evaluate.
     baseline_strategies = ["black", "uniform", "mean"]
-    subset_sizes = np.array([28, 52, 102, 128])
-    #sim_funcs = {"pearson"<: quantus.similarity_func.correlation_pearson, "spearman": quantus.similarity_func.correlation_spearman}
+    subset_sizes = np.array([52, 102, 128])
+    nr_runs = [10, 25, 50]
 
     # Score explanations!
     i = 0
     for b in baseline_strategies:
         for s in subset_sizes:
-            # for sim, sim_func in sim_funcs.items():
-            # estimators[estimator_category][estimator_name][0].similarity_func = sim_func
+            for n in nr_runs:
 
-            estimators[estimator_category][estimator_name][0].subset_size = s
-            estimators[estimator_category][estimator_name][0].perturb_baseline = b
-            print(estimators[estimator_category][estimator_name][0].get_params)
-            master(estimator=estimators[estimator_category][estimator_name][0],
-                   model=dataset_settings[dataset_name]["models"]["LeNet"],
-                   x_batch=dataset_settings[dataset_name]["x_batch"],
-                   y_batch=dataset_settings[dataset_name]["y_batch"],
-                   a_batch=None,
-                   s_batch=dataset_settings[dataset_name]["s_batch"],
-                   channel_first=True,
-                   softmax=False,
-                   device=device,
-                   lower_is_better=estimators[estimator_category][estimator_name][1],
-                   )
+                estimators[estimator_category][estimator_name][0].subset_size = s
+                estimators[estimator_category][estimator_name][0].perturb_baseline = b
+                estimators[estimator_category][estimator_name][0].nr_runs = n
+                print(estimators[estimator_category][estimator_name][0].get_params)
+                master(
+                    estimator=estimators[estimator_category][estimator_name][0],
+                    model=dataset_settings[dataset_name]["models"][model_name],
+                    x_batch=dataset_settings[dataset_name]["x_batch"],
+                    y_batch=dataset_settings[dataset_name]["y_batch"],
+                    a_batch=None,
+                    s_batch=dataset_settings[dataset_name]["s_batch"],
+                    channel_first=True,
+                    softmax=False,
+                    device=device,
+                    lower_is_better=estimators[estimator_category][estimator_name][1],
+                )
 
-            for (perturbation_type, mc_results) in master.results_meta_consistency_scores.items():
-                if perturbation_type == "Input":
-                    result["Test"].append("IPT")
-                else:
-                    result["Test"].append("MPT")
+                for (
+                    perturbation_type,
+                    mc_results,
+                ) in master.results_meta_consistency_scores.items():
+                    if perturbation_type == "Input":
+                        result["Test"].append("IPT")
+                    else:
+                        result["Test"].append("MPT")
 
-                result["MC Mean"].append(mc_results["MC_mean"])
-                result["MC Std"].append(mc_results["MC_std"])
-                if i == 0:
-                    result = {**result, **{k: list() for k in mc_results["consistency_results"]}}
-                for k, v in mc_results["consistency_results"].items():
-                    result[k].append(v)
-                i += 1
+                    result["MC Mean"].append(mc_results["MC_mean"])
+                    result["MC Std"].append(mc_results["MC_std"])
+                    if i == 0:
+                        result = {
+                            **result,
+                            **{k: list() for k in mc_results["consistency_results"]},
+                        }
+                    for k, v in mc_results["consistency_results"].items():
+                        result[k].append(v)
+                    i += 1
 
-            result["Baseline Strategy"].append(b.capitalize())
-            result["Subset Size"].append(s)
-            # result["Similarity Function"].append(sim)
+                result["Baseline Strategy"].append(b.capitalize())
+                result["Subset Size"].append(s)
+                result["Nr Runs"].append(n)
 
-            print(f"\niter={i+1} results={result}")
+                print(f"\niter={i+1} results={result}")
 
     for k, v in result.items():
         result[k] = np.array(v)
@@ -183,8 +191,8 @@ if __name__ == "__main__":
 
     try:
         df = pd.DataFrame(result)
-        df.to_csv(PATH_RESULTS + f"hp/{today}_hp_tuning_exercise_{str(uuid.uuid4())[:4]}.csv")
+        df.to_csv(
+            PATH_RESULTS + f"hp/{today}_hp_tuning_exercise_{str(uuid.uuid4())[:4]}.csv"
+        )
     except:
         print("Could not hp experiment convert to dataframe.")
-
-

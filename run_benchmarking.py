@@ -26,7 +26,6 @@ if __name__ == "__main__":
     warnings.filterwarnings("ignore", category=UserWarning)
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--path_assets")
     parser.add_argument("--dataset")
     parser.add_argument("--fname")
     parser.add_argument("--K")
@@ -89,6 +88,7 @@ if __name__ == "__main__":
     xai_methods = setup_xai_methods(
         gc_layer=dataset_settings[dataset_name]["gc_layers"][model_name],
         img_size=dataset_kwargs["img_size"],
+        nr_channels=dataset_kwargs["nr_channels"],
     )
 
     ###########################
