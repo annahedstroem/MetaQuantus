@@ -175,6 +175,10 @@ def generate_explanations(
     device: Optional[str],
 ) -> np.array:
 
+    # Collect garbage.
+    gc.collect()
+    torch.cuda.empty_cache()
+
     # Include device in explain_func_kwargs.
     if device is not None and "device" not in explain_func_kwargs:
         explain_func_kwargs["device"] = device
@@ -223,7 +227,7 @@ def default(obj):
 
 def dump_obj(path: str, fname: str, obj: Any, use_json: bool = False) -> None:
     """Using pickle and json."""
-    #print(f"Saving from path: {os.getcwd()}")
+    # print(f"Saving from path: {os.getcwd()}")
 
     # Get path.
     full_name = str(path + fname).split("/")[:-1]

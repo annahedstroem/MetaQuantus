@@ -35,6 +35,7 @@ class MasterAnalyser:
         write_to_file: bool = True,
         uid: Optional[str] = None,
         sanity_check: Optional[str] = None,
+        debug: bool = True,
     ):
         self.analyser_suite = analyser_suite
         self.xai_methods = xai_methods
@@ -47,6 +48,7 @@ class MasterAnalyser:
         self.intra_measure = intra_measure
         self.uid = uid
         self.sanity_check = sanity_check
+        self.debug = debug
 
         # Init empty data holders for results.
         self.results_eval_scores = {k: {} for k in self.analyser_suite}
@@ -233,6 +235,10 @@ class MasterAnalyser:
             ).astype(int)
 
             self.results_indices_correct = self.results_y_true == self.results_y_preds
+            if self.debug:
+                print(
+                    f"Number of correct predictions {np.sum(self.results_indices_correct)} of {len(y_batch)} samples."
+                )
 
             # Loop over all explanation methods and save scores with no perturbation applied.
             for x, (method, explain_func_kwargs) in enumerate(self.xai_methods.items()):
@@ -322,6 +328,14 @@ class MasterAnalyser:
                 self.results_eval_scores_perturbed[test_name][i] = scores_perturbed
                 self.results_y_preds_perturbed[test_name][i] = y_preds_perturbed
                 self.results_indices_perturbed[test_name][i] = indices_perturbed
+
+                # print("!!!!!! batch", len(y_batch), np.sum(indices_perturbed)/(self.nr_perturbations))
+                # print("correct!", np.sum(self.results_indices_correct))
+                # print(y_batch[:10])
+                # print(self.results_y_preds[:10])
+                # for p in range(self.nr_perturbations):
+                #    print(y_preds_perturbed[p][:10])
+                #    print(np.sum(indices_perturbed[p]))
 
                 # Collect garbage.
                 gc.collect()

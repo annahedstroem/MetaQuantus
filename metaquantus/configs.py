@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, List
 import numpy as np
 import quantus
 from quantus.metrics import *
@@ -18,6 +18,7 @@ from metaquantus.input_perturbation_test import InputPerturbationTest
 def setup_xai_methods(
     gc_layer: str,
     img_size: int = 28,
+    nr_channels: int = 1,
 ) -> Dict:
     return {
         "Gradient": {},
@@ -28,7 +29,32 @@ def setup_xai_methods(
             "interpolate": (img_size, img_size),
             "interpolate_mode": "bilinear",
         },
+        "Occlusion": {"window": (nr_channels, int(img_size / 4), int(img_size / 4))},
+        "GradientShap": {},
     }
+
+
+def setup_xai_settings(
+    gc_layer: str,
+    xai_settings: List[str],
+    img_size: int = 28,
+    nr_channels: int = 1,
+) -> Dict:
+    all_methods = {
+        "Gradient": {},
+        "Saliency": {},
+        "IntegratedGradients": {},
+        "GradCAM": {
+            "gc_layer": gc_layer,
+            "interpolate": (img_size, img_size),
+            "interpolate_mode": "bilinear",
+        },
+        "Occlusion": {"window": (nr_channels, int(img_size / 4), int(img_size / 4))},
+        "InputXGradient": {},
+        "GradientShap": {},
+        "Control Var. Random Uniform": {},
+    }
+    return {xai_method: all_methods[xai_method] for xai_method in xai_settings}
 
 
 def setup_estimators(
@@ -84,7 +110,7 @@ def setup_estimators(
                     aggregate_func=np.mean,
                     disable_warnings=True,
                 ),
-                False,
+                True,
             ),
             "Model Parameter Randomisation Test": (
                 quantus.ModelParameterRandomisation(
@@ -236,6 +262,7 @@ def setup_dataset_models(
                 "num_classes": 10,
                 "img_size": 28,
                 "percentage": 0.1,
+                "nr_channels": 1,
             },
         }
         model_name = "LeNet"
@@ -269,6 +296,7 @@ def setup_dataset_models(
                 "num_classes": 10,
                 "img_size": 28,
                 "percentage": 0.1,
+                "nr_channels": 1,
             },
         }
 
@@ -304,6 +332,7 @@ def setup_dataset_models(
                 "num_classes": 10,
                 "img_size": 32,
                 "percentage": 0.1,
+                "nr_channels": 3,
             },
         }
         model_name = "ResNet9"
@@ -312,8 +341,10 @@ def setup_dataset_models(
         pass
 
         # Paths.
-        #path_imagenet_model = path_assets + "models/imagenet_resnet18_model"
-        path_imagenet_assets = path_assets + "test_sets/imagenet_test_set.npy"
+        # path_imagenet_model = path_assets + "models/imagenet_resnet18_model"
+        path_imagenet_assets = (
+            path_assets + "test_sets/imagenet_test_set_6.npy"
+        )  # imagenet_test_set.npy"
 
         # Example for how to reload assets and models to notebook.
         model_imagenet_resnet18 = torchvision.models.resnet18(pretrained=True)
@@ -321,11 +352,13 @@ def setup_dataset_models(
         # model_imagenet_alexnet = torchvision.models.alexnet(pretrained=True)
 
         assets_imagenet = np.load(path_imagenet_assets, allow_pickle=True).item()
-        x_batch_imagenet = assets_imagenet["x_batch"]
-        y_batch_imagenet = assets_imagenet["y_batch"]
-        s_batch_imagenet = assets_imagenet["s_batch"]
+        x_batch_imagenet = assets_imagenet["x_batch"][:150]
+        y_batch_imagenet = assets_imagenet["y_batch"][:150]
+        s_batch_imagenet = assets_imagenet["s_batch"][:150]
 
         s_batch_imagenet = s_batch_imagenet.reshape(len(x_batch_imagenet), 1, 224, 224)
+
+        print(len(s_batch_imagenet))
 
         # Add to settings.
         SETTINGS["ImageNet"] = {
@@ -334,21 +367,26 @@ def setup_dataset_models(
             "s_batch": s_batch_imagenet,
             "models": {
                 "ResNet18": model_imagenet_resnet18,
-        #        "VGG16": model_imagenet_vgg16,
-                },
+                #        "VGG16": model_imagenet_vgg16,
+            },
             "gc_layers": {
-                "ResNet18": 'list(model.named_modules())[61][1]',
-        #        "VGG16": 'list(model_imagenet_vgg16.named_modules())[28][1]',
-                },
+                "ResNet18": "list(model.named_modules())[61][1]",
+                #        "VGG16": 'list(model_imagenet_vgg16.named_modules())[28][1]',
+            },
             "estimator_kwargs": {
                 "num_classes": 1000,
                 "img_size": 224,
-                }
-            }
+                "features": 224 * 4,
+                "percentage": 0.1,
+                "nr_channels": 3,
+            },
+        }
         model_name = "ResNet18"
 
     else:
-        raise ValueError("Provide a supported dataset {'MNIST', 'fMNIST', 'cMNIST' and 'ImageNet'}.")
+        raise ValueError(
+            "Provide a supported dataset {'MNIST', 'fMNIST', 'cMNIST' and 'ImageNet'}."
+        )
 
     return SETTINGS, model_name
 
@@ -390,64 +428,113 @@ def setup_analyser_suite(dataset_name: str):
             ),
         }
 
+    elif dataset_name in ["ImageNet"]:
+
+        analyser_suite = {
+            "Model Resilience Test": ModelPerturbationTest(
+                **{
+                    "noise_type": "multiplicative",
+                    "mean": 1.0,
+                    "std": 0.001,
+                    "type": "Resilience",
+                }
+            ),
+            "Model Adversary Test": ModelPerturbationTest(
+                **{
+                    "noise_type": "multiplicative",
+                    "mean": 1.0,
+                    "std": 2.0,
+                    "type": "Adversary",
+                }
+            ),
+            "Input Resilience Test": InputPerturbationTest(
+                **{
+                    "noise": 0.001,
+                    "type": "Resilience",
+                }
+            ),
+            "Input Adversary Test": InputPerturbationTest(
+                **{
+                    "noise": 5.0,
+                    "type": "Adversary",
+                }
+            ),
+        }
+
+    else:
+        raise ValueError(
+            "Provide a supported dataset {'MNIST', 'fMNIST', 'cMNIST' and 'ImageNet'}."
+        )
+
     return analyser_suite
 
 
 def setup_faithfulness_estimators(
-        features: int,
-        patch_size: int,
-        num_classes: int,
-        img_size: int,
-        percentage: int,
+    features: int,
+    patch_size: int,
+    num_classes: int,
+    img_size: int,
+    percentage: int,
 ) -> Dict:
     return {
         "Faithfulness": {
-            "Faithfulness Correlation": (quantus.FaithfulnessCorrelation(
-                subset_size=features,
-                perturb_baseline="uniform",
-                perturb_func=perturb_func.baseline_replacement_by_indices,
-                nr_runs=10,
-                abs=False,
-                normalise=True,
-                normalise_func=normalise_func.normalise_by_average_second_moment_estimate,
-                return_aggregate=False,
-                disable_warnings=True,
-            ), False),
-            "Pixel-Flipping": (quantus.PixelFlipping(
-                features_in_step=features,
-                perturb_baseline="uniform",
-                perturb_func=perturb_func.baseline_replacement_by_indices,
-                abs=False,
-                normalise=True,
-                normalise_func=normalise_func.normalise_by_average_second_moment_estimate,
-                return_aggregate=False,
-                return_auc_per_sample=True,
-                disable_warnings=True,
-            ), False),
-            "MonotinicityCorrelation": (quantus.MonotonicityCorrelation(
-                nr_samples=10,
-                features_in_step=features,
-                perturb_baseline="uniform",
-                perturb_func=quantus.perturb_func.baseline_replacement_by_indices,
-                similarity_func=quantus.similarity_func.correlation_spearman,
-                abs=False,
-                normalise=True,
-                normalise_func=normalise_func.normalise_by_average_second_moment_estimate,
-                return_aggregate=False,
-                disable_warnings=True,
-            ), False),
-            "Infidelity": (quantus.Infidelity(
-                perturb_baseline="uniform",
-                perturb_func=quantus.perturb_func.baseline_replacement_by_indices,
-                n_perturb_samples=10,
-                perturb_patch_sizes=[patch_size],
-                abs=False,
-                normalise=True,
-                normalise_func=normalise_func.normalise_by_average_second_moment_estimate,
-                return_aggregate=False,
-                return_auc_per_sample=True,
-                disable_warnings=True,
-            ), False),
-
+            "Faithfulness Correlation": (
+                quantus.FaithfulnessCorrelation(
+                    subset_size=features,
+                    perturb_baseline="uniform",
+                    perturb_func=perturb_func.baseline_replacement_by_indices,
+                    nr_runs=10,
+                    abs=False,
+                    normalise=True,
+                    normalise_func=normalise_func.normalise_by_average_second_moment_estimate,
+                    return_aggregate=False,
+                    disable_warnings=True,
+                ),
+                False,
+            ),
+            "Pixel-Flipping": (
+                quantus.PixelFlipping(
+                    features_in_step=features,
+                    perturb_baseline="uniform",
+                    perturb_func=perturb_func.baseline_replacement_by_indices,
+                    abs=False,
+                    normalise=True,
+                    normalise_func=normalise_func.normalise_by_average_second_moment_estimate,
+                    return_aggregate=False,
+                    return_auc_per_sample=True,
+                    disable_warnings=True,
+                ),
+                True,
+            ),
+            "MonotinicityCorrelation": (
+                quantus.MonotonicityCorrelation(
+                    nr_samples=10,
+                    features_in_step=features,
+                    perturb_baseline="uniform",
+                    perturb_func=quantus.perturb_func.baseline_replacement_by_indices,
+                    similarity_func=quantus.similarity_func.correlation_spearman,
+                    abs=False,
+                    normalise=True,
+                    normalise_func=normalise_func.normalise_by_average_second_moment_estimate,
+                    return_aggregate=False,
+                    disable_warnings=True,
+                ),
+                False,
+            ),
+            "Infidelity": (
+                quantus.Infidelity(
+                    perturb_baseline="uniform",
+                    perturb_func=quantus.perturb_func.baseline_replacement_by_indices,
+                    n_perturb_samples=10,
+                    perturb_patch_sizes=[patch_size],
+                    abs=False,
+                    normalise=True,
+                    normalise_func=normalise_func.normalise_by_average_second_moment_estimate,
+                    return_aggregate=False,
+                    return_auc_per_sample=True,
+                    disable_warnings=True,
+                ),
+                False,
+            ),
         },
     }

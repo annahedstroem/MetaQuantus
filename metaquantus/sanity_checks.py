@@ -84,7 +84,7 @@ def sanity_analysis_under_perturbation(
     scores_perturbed = {
         k: np.ndarray((nr_perturbations, items), dtype=float) for k in xai_methods
     }
-    y_preds_perturbed = np.ones((nr_perturbations, items), dtype=bool)
+    y_preds_perturbed = np.ones((nr_perturbations, items), dtype=int)
     indices_perturbed = np.ones((nr_perturbations, items), dtype=bool)
 
     for p in range(nr_perturbations):

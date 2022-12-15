@@ -81,7 +81,7 @@ class ModelPerturbationTest(Analyser):
             y_preds_perturbed[p] = np.argmax(
                 model_perturbed.predict(torch.Tensor(x_batch)),
                 axis=1,
-            )
+            ).astype(int)
 
             # Save indices based on perturbation type.
             if self.type == "resilience":

@@ -20,6 +20,7 @@ class BenchmarkEstimators:
         ],
         experimental_settings: Dict[str, Dict[str, Any]],
         path: str = "/content/drive/MyDrive/Projects/MetaQuantus/results/",
+        folder: str = "benchmarks/",
         write_to_file: bool = True,
         keep_results: bool = False,
         channel_first: Optional[bool] = True,
@@ -31,6 +32,7 @@ class BenchmarkEstimators:
         self.experimental_settings = experimental_settings
         self.keep_results = keep_results
         self.path = path
+        self.folder = folder
         self.write_to_file = write_to_file
         self.channel_first = channel_first
         self.softmax = softmax
@@ -139,9 +141,11 @@ class BenchmarkEstimators:
 
             dump_obj(
                 obj=self.results,
-                path=self.path + f"benchmarks/",
+                path=self.path + self.folder,
                 fname=fname,
                 use_json=True,
             )
+
+        print(f"Benchmarking completed (stored in {self.path + self.folder + fname}).")
 
         return self.results
