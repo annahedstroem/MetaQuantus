@@ -62,6 +62,7 @@ def setup_estimators(
     num_classes: int,
     img_size: int,
     percentage: int,
+    perturb_baseline: str = "uniform"
 ) -> Dict:
     return {
         "Robustness": {
@@ -130,7 +131,7 @@ def setup_estimators(
             "Faithfulness Correlation": (
                 quantus.FaithfulnessCorrelation(
                     subset_size=features,
-                    perturb_baseline="uniform",
+                    perturb_baseline=perturb_baseline,
                     perturb_func=perturb_func.baseline_replacement_by_indices,
                     nr_runs=10,
                     abs=False,
@@ -145,7 +146,7 @@ def setup_estimators(
             "Pixel-Flipping": (
                 quantus.PixelFlipping(
                     features_in_step=features,
-                    perturb_baseline="uniform",
+                    perturb_baseline=perturb_baseline,
                     perturb_func=perturb_func.baseline_replacement_by_indices,
                     abs=False,
                     normalise=True,
@@ -229,6 +230,7 @@ def setup_estimators(
 def setup_dataset_models(
     dataset_name: str,
     path_assets: str,
+    device: str,
 ):
 
     SETTINGS = {}
@@ -241,7 +243,10 @@ def setup_dataset_models(
 
         # Example for how to reload assets and models to notebook.
         model_mnist = LeNet()
-        model_mnist.load_state_dict(torch.load(path_mnist_model))
+        if device.type == "cpu":
+            model_mnist.load_state_dict(torch.load(path_mnist_model, map_location=torch.device('cpu')))
+        else:
+            model_mnist.load_state_dict(torch.load(path_mnist_model))
 
         assets_mnist = np.load(path_mnist_assets, allow_pickle=True).item()
         x_batch_mnist = assets_mnist["x_batch"]
@@ -263,6 +268,8 @@ def setup_dataset_models(
                 "img_size": 28,
                 "percentage": 0.1,
                 "nr_channels": 1,
+                "patch_size": 28*2,
+                "perturb_baseline": "uniform",
             },
         }
         model_name = "LeNet"
@@ -275,7 +282,10 @@ def setup_dataset_models(
 
         # Example for how to reload assets and models to notebook.
         model_fmnist = LeNet()
-        model_fmnist.load_state_dict(torch.load(path_fmnist_model))
+        if device.type == "cpu":
+            model_fmnist.load_state_dict(torch.load(path_fmnist_model, map_location=torch.device('cpu')))
+        else:
+            model_fmnist.load_state_dict(torch.load(path_fmnist_model))
 
         assets_fmnist = np.load(path_fmnist_assets, allow_pickle=True).item()
         x_batch_fmnist = assets_fmnist["x_batch"]
@@ -297,6 +307,8 @@ def setup_dataset_models(
                 "img_size": 28,
                 "percentage": 0.1,
                 "nr_channels": 1,
+                "patch_size": 28 * 2,
+                "perturb_baseline": "uniform",
             },
         }
 
@@ -311,7 +323,10 @@ def setup_dataset_models(
 
         # Example for how to reload assets and models to notebook.
         model_cmnist = ResNet9(nr_channels=3, nr_classes=10)
-        model_cmnist.load_state_dict(torch.load(path_cmnist_model))
+        if device.type == "cpu":
+            model_cmnist.load_state_dict(torch.load(path_cmnist_model, map_location=torch.device('cpu')))
+        else:
+            model_cmnist.load_state_dict(torch.load(path_cmnist_model))
 
         assets_cmnist = np.load(path_cmnist_assets, allow_pickle=True).item()
         x_batch_cmnist = assets_cmnist["x_batch"].detach().numpy()
@@ -333,6 +348,8 @@ def setup_dataset_models(
                 "img_size": 32,
                 "percentage": 0.1,
                 "nr_channels": 3,
+                "patch_size": 32 * 2,
+                "perturb_baseline": "uniform",
             },
         }
         model_name = "ResNet9"
@@ -379,6 +396,7 @@ def setup_dataset_models(
                 "features": 224 * 4,
                 "percentage": 0.1,
                 "nr_channels": 3,
+                "patch_size": 224 * 2,
             },
         }
         model_name = "ResNet18"
@@ -469,19 +487,20 @@ def setup_analyser_suite(dataset_name: str):
     return analyser_suite
 
 
-def setup_faithfulness_estimators(
+def setup_faithfulness_estimators_full(
     features: int,
     patch_size: int,
     num_classes: int,
     img_size: int,
     percentage: int,
+    perturb_baseline: str = "uniform"
 ) -> Dict:
     return {
         "Faithfulness": {
             "Faithfulness Correlation": (
                 quantus.FaithfulnessCorrelation(
                     subset_size=features,
-                    perturb_baseline="uniform",
+                    perturb_baseline=perturb_baseline,
                     perturb_func=perturb_func.baseline_replacement_by_indices,
                     nr_runs=10,
                     abs=False,
@@ -495,7 +514,7 @@ def setup_faithfulness_estimators(
             "Pixel-Flipping": (
                 quantus.PixelFlipping(
                     features_in_step=features,
-                    perturb_baseline="uniform",
+                    perturb_baseline=perturb_baseline,
                     perturb_func=perturb_func.baseline_replacement_by_indices,
                     abs=False,
                     normalise=True,
@@ -506,13 +525,13 @@ def setup_faithfulness_estimators(
                 ),
                 True,
             ),
-            "MonotinicityCorrelation": (
+            "MonotonicityCorrelation": (
                 quantus.MonotonicityCorrelation(
                     nr_samples=10,
                     features_in_step=features,
-                    perturb_baseline="uniform",
-                    perturb_func=quantus.perturb_func.baseline_replacement_by_indices,
-                    similarity_func=quantus.similarity_func.correlation_spearman,
+                    perturb_baseline=perturb_baseline,
+                    perturb_func=perturb_func.baseline_replacement_by_indices,
+                    similarity_func=similarity_func.correlation_spearman,
                     abs=False,
                     normalise=True,
                     normalise_func=normalise_func.normalise_by_average_second_moment_estimate,
@@ -523,7 +542,7 @@ def setup_faithfulness_estimators(
             ),
             "Infidelity": (
                 quantus.Infidelity(
-                    perturb_baseline="uniform",
+                    perturb_baseline=perturb_baseline,
                     perturb_func=quantus.perturb_func.baseline_replacement_by_indices,
                     n_perturb_samples=10,
                     perturb_patch_sizes=[patch_size],
@@ -535,6 +554,127 @@ def setup_faithfulness_estimators(
                     disable_warnings=True,
                 ),
                 False,
+            ),
+        },
+    }
+
+
+
+
+def setup_complexity_estimators(
+    features: int,
+    patch_size: int,
+    num_classes: int,
+    img_size: int,
+    percentage: int,
+    perturb_baseline: str = "uniform"
+) -> Dict:
+    return { "Complexity": {
+
+            "Sparseness": (
+                quantus.Sparseness(
+                    abs=False,
+                    normalise=True,
+                    normalise_func=normalise_func.normalise_by_average_second_moment_estimate,
+                    return_aggregate=False,
+                    aggregate_func=np.mean,
+                    disable_warnings=True,
+                ),
+                False,
+            ),
+            "Complexity": (
+                quantus.Complexity(
+                    abs=False,
+                    normalise=True,
+                    normalise_func=normalise_func.normalise_by_average_second_moment_estimate,
+                    return_aggregate=False,
+                    aggregate_func=np.mean,
+                    disable_warnings=True,
+                ),
+                True,
+            ),
+        }
+    }
+
+
+def setup_faithfulness_estimators(
+    features: int,
+    patch_size: int,
+    num_classes: int,
+    img_size: int,
+    percentage: int,
+    perturb_baseline: str = "uniform"
+) -> Dict:
+    return {"Faithfulness":
+        {
+
+            "Faithfulness Correlation": (
+                quantus.FaithfulnessCorrelation(
+                    subset_size=features,
+                    perturb_baseline=perturb_baseline,
+                    perturb_func=perturb_func.baseline_replacement_by_indices,
+                    nr_runs=10,
+                    abs=False,
+                    normalise=True,
+                    normalise_func=normalise_func.normalise_by_average_second_moment_estimate,
+                    return_aggregate=False,
+                    disable_warnings=True,
+                ),
+                False,
+            ),
+            "Monotonicity Correlation": (
+                quantus.MonotonicityCorrelation(
+                    nr_samples=10,
+                    features_in_step=features,
+                    perturb_baseline=perturb_baseline,
+                    perturb_func=perturb_func.baseline_replacement_by_indices,
+                    similarity_func=similarity_func.correlation_spearman,
+                    abs=False,
+                    normalise=True,
+                    normalise_func=normalise_func.normalise_by_average_second_moment_estimate,
+                    return_aggregate=False,
+                    disable_warnings=True,
+                ),
+                False,
+            ),
+    }
+}
+
+
+def setup_randomisation_estimators(
+    features: int,
+    patch_size: int,
+    num_classes: int,
+    img_size: int,
+    percentage: int,
+    perturb_baseline: str = "uniform"
+) -> Dict:
+    return {"Randomisation": {
+            "Random Logit": (
+                quantus.RandomLogit(
+                    similarity_func=similarity_func.correlation_spearman,
+                    num_classes=num_classes,
+                    abs=False,
+                    normalise=True,
+                    normalise_func=normalise_func.normalise_by_average_second_moment_estimate,
+                    return_aggregate=False,
+                    aggregate_func=np.mean,
+                    disable_warnings=True,
+                ),
+                True,
+            ),
+            "Model Parameter Randomisation Test": (
+                quantus.ModelParameterRandomisation(
+                    similarity_func=similarity_func.correlation_spearman,
+                    return_sample_correlation=True,
+                    abs=False,
+                    normalise=True,
+                    normalise_func=normalise_func.normalise_by_average_second_moment_estimate,
+                    return_aggregate=False,
+                    aggregate_func=np.mean,
+                    disable_warnings=True,
+                ),
+                True,
             ),
         },
     }

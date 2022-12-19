@@ -61,7 +61,7 @@ if __name__ == "__main__":
 
     # Get input, outputs settings.
     SETTINGS, model_name = setup_dataset_models(
-        dataset_name=dataset_name, path_assets=PATH_ASSETS
+        dataset_name=dataset_name, path_assets=PATH_ASSETS, device=device
     )
     dataset_settings = {dataset_name: SETTINGS[dataset_name]}
     dataset_kwargs = dataset_settings[dataset_name]["estimator_kwargs"]
@@ -75,6 +75,7 @@ if __name__ == "__main__":
         num_classes=dataset_kwargs["num_classes"],
         img_size=dataset_kwargs["img_size"],
         percentage=dataset_kwargs["percentage"],
+        perturb_baseline=dataset_kwargs["perturb_baseline"],
     )
     estimators = {
         "Localisation": estimators["Localisation"],

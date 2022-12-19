@@ -19,20 +19,16 @@ python3 run_benchmarking.py --dataset=fMNIST --fname=f --K=5 --iters=3
 python3 run_benchmarking.py --dataset=cMNIST --fname=f --K=5 --iters=3
 ```
 
-```
-python3 run_benchmarking.py --dataset=MNIST --fname=K10 --K=10 --iters=3
-python3 run_benchmarking.py --dataset=fMNIST --fname=K10 --K=10 --iters=3
-python3 run_benchmarking.py --dataset=cMNIST --fname=K10 --K=10 --iters=3
-python3 run_benchmarking.py --dataset=MNIST --fname=I5 --K=5 --iters=5
-python3 run_benchmarking.py --dataset=fMNIST --fname=I5 --K=5 --iters=5
-python3 run_benchmarking.py --dataset=cMNIST --fname=I5 --K=5 --iters=5
+Run motivating example.
+```bash
+python3 run_example.py --dataset=fMNIST --fname=ran --K=5 --iters=3
 ```
 
-Run L dependency experiments. 
+Run l dependency experiments. 
 ```bash
-python3 run_L_experiments.py --dataset=MNIST --K=5 --iters=3 --reversed_order=False 
-python3 run_L_experiments.py --dataset=fMNIST --K=5 --iters=3 --reversed_order=False 
-python3 run_L_experiments.py --dataset=cMNIST --K=5 --iters=3 --reversed_order=False
+python3 run_l_dependency.py --dataset=MNIST --K=5 --iters=3 --reversed_order=False 
+python3 run_l_dependency.py --dataset=fMNIST --K=5 --iters=3 --reversed_order=False 
+python3 run_l_dependency.py --dataset=cMNIST --K=5 --iters=3 --reversed_order=False
 ```
 
 Run hp experiments.

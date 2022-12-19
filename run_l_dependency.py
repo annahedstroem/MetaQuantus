@@ -76,7 +76,7 @@ if __name__ == "__main__":
 
     # Get input, outputs settings.
     SETTINGS, model_name = setup_dataset_models(
-        dataset_name=dataset_name, path_assets=PATH_ASSETS
+        dataset_name=dataset_name, path_assets=PATH_ASSETS, device=device
     )
     dataset_settings = {dataset_name: SETTINGS[dataset_name]}
     dataset_kwargs = dataset_settings[dataset_name]["estimator_kwargs"]
@@ -90,6 +90,7 @@ if __name__ == "__main__":
         num_classes=dataset_kwargs["num_classes"],
         img_size=dataset_kwargs["img_size"],
         percentage=dataset_kwargs["percentage"],
+        perturb_baseline=dataset_kwargs["perturb_baseline"],
     )
     estimators = {
         "Localisation": estimators["Localisation"],
@@ -109,32 +110,25 @@ if __name__ == "__main__":
         "2_GR_IG": ["Gradient", "IntegratedGradients"],
         "2_GR_OC": ["Gradient", "Occlusion"],
         "2_GR_IX": ["Gradient", "InputXGradient"],
-        "3_GR_SA_IG": ["Gradient", "Saliency", "IntegratedGradients"],
-        "3_GR_GC_GS": ["Gradient", "GradCAM", "GradientShap"],
-        "4_GR_SA_OC_LR": ["Gradient", "Saliency", "Occlusion", "GradCAM"],
-        "4_GR_SA_IX_GC": [
-            "Gradient",
-            "Saliency",
-            "InputXGradient",
-            "IntegratedGradients",
-        ],
+        #"3_GR_SA_IG": ["Gradient", "Saliency", "IntegratedGradients"],
+        #"3_GR_GC_GS": ["Gradient", "GradCAM", "GradientShap"],
+        #"4_GR_SA_OC_LR": ["Gradient", "Saliency", "Occlusion", "GradCAM"],
+        #"4_GR_SA_IX_GC": [
+        #    "Gradient",
+        #    "Saliency",
+        #    "InputXGradient",
+        #    "IntegratedGradients",
+        #],
     }
 
     if reversed_order:
         xai_settings = {
             "4_GR_SA_IX_GC": [
-                "Gradient",
-                "Saliency",
-                "InputXGradient",
-                "IntegratedGradients",
-            ],
-            "4_GR_SA_OC_GC": ["Gradient", "Saliency", "Occlusion", "GradCAM"],
-            "3_GR_GC_GS": ["Gradient", "GradCAM", "GradientShap"],
-            "3_GR_SA_IG": ["Gradient", "Saliency", "IntegratedGradients"],
-            "2_GR_IX": ["Gradient", "InputXGradient"],
-            "2_GR_OC": ["Gradient", "Occlusion"],
-            "2_GR_IG": ["Gradient", "IntegratedGradients"],
-            "2_GR_SA": ["Gradient", "Saliency"],
+            "Gradient",
+            "Saliency",
+            "InputXGradient",
+            "IntegratedGradients",
+        ],
         }
 
     for xai_setting_name, xai_setting in xai_settings.items():
