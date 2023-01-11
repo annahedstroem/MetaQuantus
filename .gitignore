@@ -1,3 +1,4 @@
 results/
+scraps/
 *__pycache__*
 .DS_store

@@ -19,30 +19,6 @@ if version_info[1] <= 7:
 else:
     from importlib.metadata import version
 
-# Define extras.
-EXTRAS = {}
-EXTRAS["torch"] = (
-    ["torch==1.10.1", "torchvision==0.11.2"]
-    if not (util.find_spec("torch") and version("torch") >= "1.2")
-    else []
-)
-EXTRAS["tensorflow"] = (
-    ["tensorflow==2.6.2"]
-    if not (util.find_spec("tensorflow") and version("tensorflow") >= "2.0")
-    else []
-)
-EXTRAS["captum"] = (
-    (EXTRAS["torch"] + ["captum==0.4.1"]) if not util.find_spec("captum") else []
-)
-EXTRAS["tf-explain"] = (
-    (EXTRAS["tensorflow"] + ["tf-explain==0.3.1"])
-    if not util.find_spec("tf-explain")
-    else []
-)
-EXTRAS["zennit"] = (
-    (EXTRAS["torch"] + ["zennit==0.4.5"]) if not util.find_spec("zennit") else []
-)
-
 # Define setup.
 setup(
     name="MetaQuantus",
@@ -53,7 +29,7 @@ setup(
     install_requires=[
         "MetaQuantus"
     ],
-    extras_require=EXTRAS,
+    #extras_require=EXTRAS,
     url="http://github.com/understandable-machine-intelligence-lab/MetaQuantus",
     author="Anna Hedstrom",
     author_email="hedstroem.anna@gmail.com",
