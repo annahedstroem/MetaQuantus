@@ -1,5 +1,13 @@
+"""This module contains different functions to configure the experiments to perform meta-evaluation."""
+
+# This file is part of MetaQuantus.
+# MetaQuantus is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+# MetaQuantus is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+# You should have received a copy of the GNU Lesser General Public License along with MetaQuantus. If not, see <https://www.gnu.org/licenses/>.
+
 from typing import Dict, List
 import numpy as np
+import torch
 import quantus
 from quantus.metrics import *
 from quantus.functions import (
@@ -10,9 +18,9 @@ from quantus.functions import (
 )
 import torch
 import torchvision
-from metaquantus.models import LeNet, ResNet9
-from metaquantus.model_perturbation_test import ModelPerturbationTest
-from metaquantus.input_perturbation_test import InputPerturbationTest
+from metaquantus.helpers.models import LeNet, ResNet9
+from metaquantus.helpers.tests.model_perturbation_test import ModelPerturbationTest
+from metaquantus.helpers.tests.input_perturbation_test import InputPerturbationTest
 
 
 def setup_xai_methods(
@@ -62,7 +70,8 @@ def setup_estimators(
     num_classes: int,
     img_size: int,
     percentage: int,
-    perturb_baseline: str = "uniform"
+    patch_size: int,
+    perturb_baseline: str = "uniform",
 ) -> Dict:
     return {
         "Robustness": {
@@ -230,7 +239,7 @@ def setup_estimators(
 def setup_dataset_models(
     dataset_name: str,
     path_assets: str,
-    device: str,
+    device: torch.device,
 ):
 
     SETTINGS = {}
@@ -244,7 +253,9 @@ def setup_dataset_models(
         # Example for how to reload assets and models to notebook.
         model_mnist = LeNet()
         if device.type == "cpu":
-            model_mnist.load_state_dict(torch.load(path_mnist_model, map_location=torch.device('cpu')))
+            model_mnist.load_state_dict(
+                torch.load(path_mnist_model, map_location=torch.device("cpu"))
+            )
         else:
             model_mnist.load_state_dict(torch.load(path_mnist_model))
 
@@ -268,7 +279,7 @@ def setup_dataset_models(
                 "img_size": 28,
                 "percentage": 0.1,
                 "nr_channels": 1,
-                "patch_size": 28*2,
+                "patch_size": 28 * 2,
                 "perturb_baseline": "uniform",
             },
         }
@@ -283,7 +294,9 @@ def setup_dataset_models(
         # Example for how to reload assets and models to notebook.
         model_fmnist = LeNet()
         if device.type == "cpu":
-            model_fmnist.load_state_dict(torch.load(path_fmnist_model, map_location=torch.device('cpu')))
+            model_fmnist.load_state_dict(
+                torch.load(path_fmnist_model, map_location=torch.device("cpu"))
+            )
         else:
             model_fmnist.load_state_dict(torch.load(path_fmnist_model))
 
@@ -324,7 +337,9 @@ def setup_dataset_models(
         # Example for how to reload assets and models to notebook.
         model_cmnist = ResNet9(nr_channels=3, nr_classes=10)
         if device.type == "cpu":
-            model_cmnist.load_state_dict(torch.load(path_cmnist_model, map_location=torch.device('cpu')))
+            model_cmnist.load_state_dict(
+                torch.load(path_cmnist_model, map_location=torch.device("cpu"))
+            )
         else:
             model_cmnist.load_state_dict(torch.load(path_cmnist_model))
 
@@ -493,7 +508,7 @@ def setup_faithfulness_estimators_full(
     num_classes: int,
     img_size: int,
     percentage: int,
-    perturb_baseline: str = "uniform"
+    perturb_baseline: str = "uniform",
 ) -> Dict:
     return {
         "Faithfulness": {
@@ -559,18 +574,16 @@ def setup_faithfulness_estimators_full(
     }
 
 
-
-
 def setup_complexity_estimators(
     features: int,
     patch_size: int,
     num_classes: int,
     img_size: int,
     percentage: int,
-    perturb_baseline: str = "uniform"
+    perturb_baseline: str = "uniform",
 ) -> Dict:
-    return { "Complexity": {
-
+    return {
+        "Complexity": {
             "Sparseness": (
                 quantus.Sparseness(
                     abs=False,
@@ -603,11 +616,10 @@ def setup_faithfulness_estimators(
     num_classes: int,
     img_size: int,
     percentage: int,
-    perturb_baseline: str = "uniform"
+    perturb_baseline: str = "uniform",
 ) -> Dict:
-    return {"Faithfulness":
-        {
-
+    return {
+        "Faithfulness": {
             "Faithfulness Correlation": (
                 quantus.FaithfulnessCorrelation(
                     subset_size=features,
@@ -637,8 +649,8 @@ def setup_faithfulness_estimators(
                 ),
                 False,
             ),
+        }
     }
-}
 
 
 def setup_randomisation_estimators(
@@ -647,9 +659,10 @@ def setup_randomisation_estimators(
     num_classes: int,
     img_size: int,
     percentage: int,
-    perturb_baseline: str = "uniform"
+    perturb_baseline: str = "uniform",
 ) -> Dict:
-    return {"Randomisation": {
+    return {
+        "Randomisation": {
             "Random Logit": (
                 quantus.RandomLogit(
                     similarity_func=similarity_func.correlation_spearman,

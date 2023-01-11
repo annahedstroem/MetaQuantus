@@ -2,6 +2,7 @@ from typing import Dict
 import os
 import uuid
 import warnings
+import random
 import argparse
 from datetime import datetime
 import gc
@@ -11,9 +12,9 @@ import numpy as np
 import pandas as pd
 import scipy
 
-from metaquantus.master import MasterAnalyser
+from metaquantus.meta_evaluation import MetaEvaluation
 from metaquantus.utils import dump_obj
-from metaquantus.benchmark import BenchmarkEstimators
+from metaquantus.meta_evaluation_multiple import MetaEvaluationMultiple
 from metaquantus.configs import (
     setup_estimators,
     setup_complexity_estimators,
@@ -96,13 +97,8 @@ if __name__ == "__main__":
     )
 
     # Get explanation methods.
-    xai_setting = ["Gradient", "GradCAM", "GradientShap", "Saliency", "IntegratedGradients", "InputXGradient"]
-    xai_methods = setup_xai_settings(
-        xai_settings=xai_setting,
-        gc_layer=dataset_settings[dataset_name]["gc_layers"][model_name],
-        img_size=dataset_kwargs["img_size"],
-        nr_channels=dataset_kwargs["nr_channels"],
-    )
+    xai_setting_all = ["Gradient", "GradCAM", "GradientShap", "IntegratedGradients", "InputXGradient"]
+
 
     '''
     ###########################
@@ -110,7 +106,7 @@ if __name__ == "__main__":
     ###########################
     
     # Define master!
-    master = MasterAnalyser(
+    master = MetaEvaluation(
         analyser_suite=analyser_suite,
         xai_methods=xai_methods,
         iterations=iters,
@@ -119,7 +115,7 @@ if __name__ == "__main__":
     )
 
     # Benchmark!
-    benchmark = BenchmarkEstimators(
+    benchmark = MetaEvaluationMultiple(
         master=master,
         estimators=estimators,
         experimental_settings=dataset_settings,
@@ -148,25 +144,32 @@ if __name__ == "__main__":
     # We hope that this one produces the lowest scores for a random explanation.
     # What is hard that they do not share the same bound and direct interpretation, unless both corr.
     winner_is_same = True
-    ranking_df = pd.DataFrame()
+    df = pd.DataFrame()
 
     while winner_is_same:
 
-        try:
-            winner_is_same = ranking_df.loc[
-            (ranking_df["Estimator"] == "Faithfulness Correlation (↑)") & (ranking_df["Rank"] == 1.0), "Method"].values[
-            0] == \
-        ranking_df.loc[(ranking_df["Estimator"] == "Pixel-Flipping (↓)") & (ranking_df["Rank"] == 1.0), "Method"].values[0]
+        xai_setting = random.choices(xai_setting_all, k=3)
+        xai_methods = setup_xai_settings(
+            xai_settings=xai_setting,
+            gc_layer=dataset_settings[dataset_name]["gc_layers"][model_name],
+            img_size=dataset_kwargs["img_size"],
+            nr_channels=dataset_kwargs["nr_channels"],
+        )
 
-            xai_setting = ["Gradient", "GradCAM", "GradientShap", "IntegratedGradients", "InputXGradient"]
+        try:
+            estimator_names = [e for e in estimators[category]]
+            winner_is_same = df.loc[
+            (df["Estimator"] == estimator_names[0]) & (df["Rank"] == 1.0), "Method"].values[
+            0] == df.loc[(df["Estimator"] == estimator_names[1]) & (df["Rank"] == 1.0), "Method"].values[0]
 
         except:
-            print("...Winner method is the same.\n")
+            if not df.empty:
+                print("...Winner method is the same.\n")
 
         uiid = uuid.uuid4()
         results = {}
         for method, kwargs in xai_methods.items():
-            print(method, kwargs)
+            print(method)
             results[method] = {}
 
             model = dataset_settings[dataset_name]["models"]["ResNet9"].eval().cpu()
@@ -174,7 +177,7 @@ if __name__ == "__main__":
             random_explanations = generate_random_explanation(model=model,
                                                               inputs=x_batch,
                                                               targets=y_batch)
-            # normal_explanations = quantus.explain(model=model, inputs=x_batch, targets=y_batch, **{**{"method": method}, **kwargs})
+            #normal_explanations = quantus.explain(model=model, inputs=x_batch, targets=y_batch, **{**{"method": method}, **kwargs})
 
             scores_norm = {estimator_name: np.array(estimator_func[0](model=model,
                                                                       x_batch=x_batch,
@@ -211,7 +214,7 @@ if __name__ == "__main__":
             torch.cuda.empty_cache()
 
             for (estimator_name, scores_n), (_, scores_r) in zip(scores_norm.items(), scores_ran.items()):
-                print(f"{estimator_name}: {np.nanmean(scores_n):.4f} ({np.std(scores_n):.2f})")
+                print(f"\t{estimator_name}: {np.nanmean(scores_n):.4f} ({np.std(scores_n):.2f}) {np.median(scores_n):.4f}")
                 #print(f"{estimator_name}")
                 #print(f"\tScores NORMAL: {np.nanmean(scores_n):.4f} ({np.std(scores_n):.2f})")
                 #print(f"\tScores RAND: {np.nanmean(scores_r):.4f} ({np.std(scores_r):.2f})")
@@ -243,11 +246,11 @@ if __name__ == "__main__":
                     row += mx + ex
                     scores_n = results[method][estimator]["scores_norm"]
                     # print(f"\tScores {method} {estimator}: {np.nanmean(scores_n):.4f} ({np.std(scores_n):.2f})")
-                    if estimator == "Pixel-Flipping":
-                        estimator_name = estimator + " (↓)"
-                    else:
-                        estimator_name = estimator + " (↑)"
-                    df.loc[row, "Estimator"] = estimator_name
+                    #if estimator == "Pixel-Flipping":
+                    #    estimator_name = estimator + " (↓)"
+                    #else:
+                    #    estimator_name = estimator + " (↑)"
+                    df.loc[row, "Estimator"] = estimator
                     df.loc[row, "Method"] = method
                     df.loc[row, "Faithfulness Score"] = np.nanmean(scores_n)
 
@@ -307,33 +310,5 @@ def generate_random_explanation(model, inputs, targets, **kwargs):
     size=inputs.shape,
     )
     return random_explanations
-def make_dataset_example(benchmark: dict,
-                         estimators: dict):
-    df = pd.DataFrame(columns=["Category", "Estimator", "Test", "IAC_{NR}", "IAC_{AR}", "IEC_{NR}", "IEC_{AR}", "MC", "IAC_{NR} std", "IAC_{AR} std", "IEC_{NR} std", "IEC_{AR} std", "MC std"])
-    scores = ["IAC_{NR}", "IAC_{AR}", "IEC_{NR}", "IEC_{AR}"]
 
-    row= 0
-    for ex1, (estimator_category, metrics) in enumerate(estimators.items()):
-        for ex2, estimator_name in enumerate(metrics):
-            for px, perturbation_type in enumerate(["Model", "Input"]):
-
-                if estimator_category in benchmark:
-                    if estimator_name in benchmark[estimator_category]:
-                        row += ex1+ex2+px
-                        df.loc[row, "Test"] = perturbation_type
-                        df.loc[row, "Category"] = estimator_category
-                        df.loc[row, "Estimator"] = estimator_name
-                        
-                        for s in scores:
-                            score = np.array(benchmark[estimator_category][estimator_name]["results_meta_consistency_scores"][perturbation_type]["consistency_scores"][s])
-                            df.loc[row, s] = score.mean()
-                            df.loc[row, s+" std"] = score.std()*2
-
-                        df.loc[row, "MC"] = benchmark[estimator_category][estimator_name]["results_meta_consistency_scores"][perturbation_type]["MC_mean"]
-                        df.loc[row, "MC std"] = benchmark[estimator_category][estimator_name]["results_meta_consistency_scores"][perturbation_type]["MC_std"]*2
-
-    return df
-
-summary_df = make_dataset_example(benchmark=benchmark_cmnist_1, estimators={"Faithfulness": estimators["Faithfulness"]})
-summary_df
 """

@@ -3,8 +3,8 @@ import warnings
 import argparse
 import torch
 
-from metaquantus.master import MasterAnalyser
-from metaquantus.benchmark import BenchmarkEstimators
+from metaquantus.meta_evaluation import MetaEvaluation
+from metaquantus.meta_evaluation_multiple import MetaEvaluationMultiple
 from metaquantus.configs import (
     setup_estimators,
     setup_xai_settings,
@@ -90,6 +90,7 @@ if __name__ == "__main__":
         num_classes=dataset_kwargs["num_classes"],
         img_size=dataset_kwargs["img_size"],
         percentage=dataset_kwargs["percentage"],
+        patch_size=dataset_kwargs["patch_size"],
         perturb_baseline=dataset_kwargs["perturb_baseline"],
     )
     estimators = {
@@ -144,7 +145,7 @@ if __name__ == "__main__":
         )
 
         # Define master!
-        master = MasterAnalyser(
+        master = MetaEvaluation(
             analyser_suite=analyser_suite,
             xai_methods=xai_methods,
             iterations=iters,
@@ -155,7 +156,7 @@ if __name__ == "__main__":
         )
 
         # Benchmark!
-        benchmark = BenchmarkEstimators(
+        benchmark = MetaEvaluationMultiple(
             master=master,
             estimators=estimators,
             experimental_settings=dataset_settings,

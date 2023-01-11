@@ -6,7 +6,7 @@ import numpy as np
 from datetime import datetime
 
 import quantus
-from metaquantus.master import MasterAnalyser
+from metaquantus.meta_evaluation import MetaEvaluation
 from metaquantus.configs import (
     setup_estimators,
     setup_xai_methods,
@@ -76,6 +76,7 @@ if __name__ == "__main__":
         num_classes=dataset_kwargs["num_classes"],
         img_size=dataset_kwargs["img_size"],
         percentage=dataset_kwargs["percentage"],
+        patch_size=dataset_kwargs["patch_size"],
         perturb_baseline=dataset_kwargs["perturb_baseline"],
     )
     estimators = {
@@ -98,7 +99,7 @@ if __name__ == "__main__":
     ###########################
 
     # Define master NR!
-    master_nr = MasterAnalyser(
+    master_nr = MetaEvaluation(
         analyser_suite=analyser_suite,
         xai_methods=xai_methods,
         iterations=iters,
@@ -123,7 +124,7 @@ if __name__ == "__main__":
     uid_nr = master_nr.uid
 
     # Define master AR!
-    master_ar = MasterAnalyser(
+    master_ar = MetaEvaluation(
         analyser_suite=analyser_suite,
         xai_methods=xai_methods,
         iterations=iters,

@@ -7,9 +7,9 @@ import pandas as pd
 import uuid
 from datetime import datetime
 
-from metaquantus.master import MasterAnalyser
-from metaquantus.utils import dump_obj
-from metaquantus.configs import (
+from metaquantus.meta_evaluation import MetaEvaluation
+from metaquantus.helpers.utils import dump_obj
+from metaquantus.helpers.configs import (
     setup_estimators,
     setup_xai_methods,
     setup_dataset_models,
@@ -87,6 +87,7 @@ if __name__ == "__main__":
         num_classes=dataset_kwargs["num_classes"],
         img_size=dataset_kwargs["img_size"],
         percentage=dataset_kwargs["percentage"],
+        patch_size=dataset_kwargs["patch_size"],
         perturb_baseline=dataset_kwargs["perturb_baseline"],
     )
 
@@ -102,7 +103,7 @@ if __name__ == "__main__":
     ##############################
 
     # Define master!
-    master = MasterAnalyser(
+    master = MetaEvaluation(
         analyser_suite=analyser_suite,
         xai_methods=xai_methods,
         iterations=iters,
@@ -196,4 +197,4 @@ if __name__ == "__main__":
             PATH_RESULTS + f"hp/{today}_hp_tuning_exercise_{str(uuid.uuid4())[:4]}.csv"
         )
     except:
-        print("Could not hp experiment convert to dataframe.")
+        print("Could not convert hp experiment to dataframe.")

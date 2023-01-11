@@ -1,20 +1,25 @@
+"""This module contains the implementation for runnning benchmarking of the Meta Evaluation class."""
+
+# This file is part of MetaQuantus.
+# MetaQuantus is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+# MetaQuantus is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+# You should have received a copy of the GNU Lesser General Public License along with MetaQuantus. If not, see <https://www.gnu.org/licenses/>.
+
 from typing import Dict, Any, Tuple
 import torch
 import gc
 import uuid
 from datetime import datetime
-from quantus import explain
 from quantus.metrics.base import Metric, PerturbationMetric
 
-from .base import Analyser
-from .master import MasterAnalyser
-from .utils import *
+from .meta_evaluation import MetaEvaluation
+from .helpers.utils import *
 
 
-class BenchmarkEstimators:
+class MetaEvaluationMultiple:
     def __init__(
         self,
-        master: MasterAnalyser,
+        master: MetaEvaluation,
         estimators: Dict[
             str, Dict[str, Tuple[Union[Metric, PerturbationMetric], bool]]
         ],
@@ -27,6 +32,21 @@ class BenchmarkEstimators:
         softmax: Optional[bool] = False,
         device: Optional[str] = None,
     ):
+        """
+
+        Parameters
+        ----------
+        master
+        estimators
+        experimental_settings
+        path
+        folder
+        write_to_file
+        keep_results
+        channel_first
+        softmax
+        device
+        """
         self.master = master
         self.estimators = estimators
         self.experimental_settings = experimental_settings

@@ -1,3 +1,10 @@
+"""This module contains the implementation for the Input Perturbation Test."""
+
+# This file is part of MetaQuantus.
+# MetaQuantus is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+# MetaQuantus is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+# You should have received a copy of the GNU Lesser General Public License along with MetaQuantus. If not, see <https://www.gnu.org/licenses/>.
+
 from typing import Union, Dict, List, Any, Optional, Callable, Tuple
 import copy
 import gc
@@ -9,21 +16,31 @@ from quantus.helpers.model.model_interface import ModelInterface
 from quantus.metrics.base import Metric, PerturbationMetric
 
 
-from .base import Analyser
-from .utils import generate_explanations
+from .base import PerturbationTestBase
+from MetaQuantus.metaquantus.utils import generate_explanations
 
 
-class InputPerturbationTest(Analyser):
+class InputPerturbationTest(PerturbationTestBase):
     def __init__(
         self,
         type: str,
         noise: float,
     ):
+        """
+        Implementation of Input Perturbation Test.
+
+        Parameters
+        ----------
+        type: str
+            The space which the perturbation is applied: either 'resilience' or 'adversary'.
+        noise: float
+            Noise type
+        """
         super().__init__()
         self.noise = noise
         self.type = type.lower()
 
-        assert self.noise != 0.0, "Model noise ('std') cannot be zero."
+        assert self.noise != 0.0, "Model noise ('noise') cannot be zero."
 
     def __call__(
         self,
@@ -125,4 +142,4 @@ class InputPerturbationTest(Analyser):
                 gc.collect()
                 torch.cuda.empty_cache()
 
-        return (scores, y_preds_perturbed, indices_perturbed)
+        return scores, y_preds_perturbed, indices_perturbed

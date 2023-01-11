@@ -6,14 +6,14 @@ import numpy as np
 from datetime import datetime
 
 import quantus
-from metaquantus.master import MasterAnalyser
-from metaquantus.configs import (
+from metaquantus.meta_evaluation import MetaEvaluation
+from metaquantus.helpers.configs import (
     setup_estimators,
     setup_xai_methods,
     setup_dataset_models,
     setup_analyser_suite,
 )
-from metaquantus.utils import load_obj
+from metaquantus.helpers.utils import load_obj
 
 PATH_ASSETS = "../assets/"
 PATH_RESULTS = "/home/amlh/Projects/MetaQuantus/results/"
@@ -76,6 +76,8 @@ if __name__ == "__main__":
         num_classes=dataset_kwargs["num_classes"],
         img_size=dataset_kwargs["img_size"],
         percentage=dataset_kwargs["percentage"],
+        patch_size=dataset_kwargs["patch_size"],
+        perturb_baseline=dataset_kwargs["perturb_baseline"],
     )
 
     # Get explanation methods.
@@ -94,7 +96,7 @@ if __name__ == "__main__":
     estimator_name = "Sparseness"
 
     # Define master!
-    master = MasterAnalyser(
+    master = MetaEvaluation(
         analyser_suite=analyser_suite,
         xai_methods=xai_methods,
         iterations=iters,

@@ -1,4 +1,11 @@
-from typing import Callable, List, Union, Dict, Tuple, Optional, Any
+"""This module contains the main implementation for the meta-evaluation framework."""
+
+# This file is part of MetaQuantus.
+# MetaQuantus is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+# MetaQuantus is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+# You should have received a copy of the GNU Lesser General Public License along with MetaQuantus. If not, see <https://www.gnu.org/licenses/>.
+
+from typing import Callable, Union, Dict, Optional, Any
 import numpy as np
 import scipy
 import torch
@@ -11,20 +18,20 @@ from quantus.helpers import utils
 from quantus import explain
 from quantus.metrics.base import Metric, PerturbationMetric
 
-from .utils import (
+from .helpers.utils import (
     generate_explanations,
     compute_iac_score,
     compute_iec_score,
     dump_obj,
 )
-from .base import Analyser
-from .sanity_checks import sanity_analysis, sanity_analysis_under_perturbation
+from .tests.base import PerturbationTestBase
+from .helpers.sanity_checks import sanity_analysis, sanity_analysis_under_perturbation
 
 
-class MasterAnalyser:
+class MetaEvaluation:
     def __init__(
         self,
-        analyser_suite: Dict[str, Analyser],
+        test_suite: Dict[str, PerturbationTestBase],
         xai_methods: Dict[str, Any],
         iterations: int = 5,
         nr_perturbations: int = 10,
@@ -37,7 +44,26 @@ class MasterAnalyser:
         sanity_check: Optional[str] = None,
         debug: bool = True,
     ):
-        self.analyser_suite = analyser_suite
+        """
+        This implementation takes a dictionary of different PerturbationTest and runs the meta-evaluation framework.
+
+        Parameters
+        ----------
+        test_suite
+        xai_methods
+        iterations
+        nr_perturbations
+        explain_func
+        intra_measure
+        path
+        fname
+        write_to_file
+        uid
+        sanity_check
+        debug:
+
+        """
+        self.test_suite = test_suite
         self.xai_methods = xai_methods
         self.path = path
         self.fname = fname
@@ -51,10 +77,10 @@ class MasterAnalyser:
         self.debug = debug
 
         # Init empty data holders for results.
-        self.results_eval_scores = {k: {} for k in self.analyser_suite}
-        self.results_eval_scores_perturbed = {k: {} for k in self.analyser_suite}
-        self.results_y_preds_perturbed = {k: {} for k in self.analyser_suite}
-        self.results_indices_perturbed = {k: {} for k in self.analyser_suite}
+        self.results_eval_scores = {k: {} for k in self.test_suite}
+        self.results_eval_scores_perturbed = {k: {} for k in self.test_suite}
+        self.results_y_preds_perturbed = {k: {} for k in self.test_suite}
+        self.results_indices_perturbed = {k: {} for k in self.test_suite}
         self.results_y_true = None
         self.results_y_preds = None
         self.results_indices_correct = None
@@ -115,8 +141,8 @@ class MasterAnalyser:
         self.run_inter_analysis(lower_is_better=lower_is_better)
 
         # Check that both test parts exist in the test suite.
-        if any("Resilience" in test for test in list(self.analyser_suite)) and any(
-            "Adversary" in test for test in list(self.analyser_suite)
+        if any("Resilience" in test for test in list(self.test_suite)) and any(
+            "Adversary" in test for test in list(self.test_suite)
         ):
             self.run_meta_consistency_analysis()
             self.print_meta_consistency_scores()
@@ -188,10 +214,10 @@ class MasterAnalyser:
     ):
 
         # It is important to wipe out earlier results of the same master init when benchmarking.
-        self.results_eval_scores = {k: {} for k in self.analyser_suite}
-        self.results_eval_scores_perturbed = {k: {} for k in self.analyser_suite}
-        self.results_y_preds_perturbed = {k: {} for k in self.analyser_suite}
-        self.results_indices_perturbed = {k: {} for k in self.analyser_suite}
+        self.results_eval_scores = {k: {} for k in self.test_suite}
+        self.results_eval_scores_perturbed = {k: {} for k in self.test_suite}
+        self.results_y_preds_perturbed = {k: {} for k in self.test_suite}
+        self.results_indices_perturbed = {k: {} for k in self.test_suite}
         self.results_y_true = y_batch
         self.results_y_preds = np.zeros_like(y_batch)
         self.results_indices_correct = np.zeros_like(y_batch)
@@ -200,7 +226,7 @@ class MasterAnalyser:
         self.results_meta_consistency_scores = {}
         self.results_consistency_scores = {}
 
-        for a, (test_name, test) in enumerate(self.analyser_suite.items()):
+        for a, (test_name, test) in enumerate(self.test_suite.items()):
 
             self.results_eval_scores[test_name] = {}
             self.results_eval_scores_perturbed[test_name] = {}
@@ -329,14 +355,6 @@ class MasterAnalyser:
                 self.results_y_preds_perturbed[test_name][i] = y_preds_perturbed
                 self.results_indices_perturbed[test_name][i] = indices_perturbed
 
-                # print("!!!!!! batch", len(y_batch), np.sum(indices_perturbed)/(self.nr_perturbations))
-                # print("correct!", np.sum(self.results_indices_correct))
-                # print(y_batch[:10])
-                # print(self.results_y_preds[:10])
-                # for p in range(self.nr_perturbations):
-                #    print(y_preds_perturbed[p][:10])
-                #    print(np.sum(indices_perturbed[p]))
-
                 # Collect garbage.
                 gc.collect()
                 torch.cuda.empty_cache()
@@ -344,9 +362,9 @@ class MasterAnalyser:
     def run_intra_analysis(self, reverse_scoring: bool = True) -> Dict:
         """Make IAC inference after perturbing inputs to the evaluation problem and then storing scores."""
 
-        self.results_intra_scores = {k: {} for k in self.analyser_suite}
+        self.results_intra_scores = {k: {} for k in self.test_suite}
 
-        for a, (test_name, test) in enumerate(self.analyser_suite.items()):
+        for a, (test_name, test) in enumerate(self.test_suite.items()):
             for x, method in enumerate(self.xai_methods.keys()):
                 self.results_intra_scores[test_name][method] = []
 
@@ -394,7 +412,7 @@ class MasterAnalyser:
         self.results_inter_scores = {}
         shape = (self.iterations, self.nr_perturbations)
 
-        for a, (test_name, test) in enumerate(self.analyser_suite.items()):
+        for a, (test_name, test) in enumerate(self.test_suite.items()):
 
             self.results_inter_scores[test_name] = []
 
@@ -452,7 +470,7 @@ class MasterAnalyser:
         dict
             The meta-consistency results.
         """
-        perturbation_types = np.unique([k.split(" ")[0] for k in self.analyser_suite])
+        perturbation_types = np.unique([k.split(" ")[0] for k in self.test_suite])
 
         for perturbation_type in perturbation_types:
 
@@ -574,6 +592,8 @@ class MasterAnalyser:
                     else:
                         print(f"\t{mc_metric}: {result}")
             print("")
+
+    """Getters."""
 
     def get_results_eval_scores(self):
         return self.results_eval_scores

@@ -1,3 +1,10 @@
+"""This module contains different utilities used to support the meta-evaluation framework."""
+
+# This file is part of MetaQuantus.
+# MetaQuantus is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+# MetaQuantus is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+# You should have received a copy of the GNU Lesser General Public License along with MetaQuantus. If not, see <https://www.gnu.org/licenses/>.
+
 import os
 from typing import Union, Callable, Optional, Any, Dict
 import numpy as np
@@ -24,8 +31,33 @@ def compute_iac_score(
     zero_method: str = "zsplit",
     reverse_scoring: bool = True,
 ) -> float:
-    """Compare evaluation scores by computing the p-value to test if the scores are statistically different.
+    """
+    Compare evaluation scores by computing the p-value to test if the scores are statistically different.
     Returns p-value Wilcoxon Signed Rank test to see that the scores originates from different distributions.
+
+    Parameters
+    ----------
+    q: np.array
+        An array of quality estimates.
+    q_hat: np.array
+        An array of perturbed quality estimates.
+    indices: np.array
+        The list of indices to perform the analysis on.
+    test_name: string
+        The type of test: either 'Adversary' or "'Resilience'.
+    measure: callable
+        A Callable such as scipy.stats.wilcoxon  or similar.
+    alternative: string
+        A string describing if it is two-sided or not.
+    zero_method: string
+        A string describing the method of how to treat zero differences.
+    reverse_scoring: bool
+        A boolean describing if reverse scoring should be applied.
+
+    Returns
+    -------
+    float
+
     """
     assert isinstance(indices[0], np.bool_), "Indices must be of type bool."
     assert (
@@ -51,8 +83,23 @@ def compute_joint_p_value(
     method: str = "fisher",
     measure: Callable = scipy.stats.combine_pvalues,
 ) -> float:
-    """Perform a Non-Parametric Combination (NPC) of existing pvalues
-    from K perturbations - return a joint statistic in forms of a p-value."""
+    """
+    Perform a Non-Parametric Combination (NPC) of existing pvalues
+    from K perturbations - return a joint statistic in forms of a p-value.
+
+    Parameters
+    ----------
+    pvals: np.array
+        An array of p values.
+    method: string
+        Description of what underlying method to use aggregation with.
+    measure: callable
+        A Callable such as scipy.stats.combine_pvalues  or similar.
+
+    Returns
+    -------
+
+    """
     return measure(np.array(pvals).flatten(), method=method)[1]
 
 
