@@ -6,7 +6,7 @@
 <p align="center">
   PyTorch
 
-_MetaQuantus is currently under active development so carefully note the MetaQuantus release version to ensure reproducibility of your work._
+_MetaQuantus is currently under active development so carefully note the release version to ensure reproducibility of your work._
 
 [![Getting started!](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/understandable-machine-intelligence-lab/Quantus/blob/main/tutorials/Tutorial_ImageNet_Example_All_Metrics.ipynb)
 [![Launch Tutorials](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/understandable-machine-intelligence-lab/Quantus/HEAD?labpath=tutorials)
@@ -80,47 +80,5 @@ pytorch>=1.10.1
 
 ## Getting started
 
-To get started, ............ 
-
-## Reproduciability
-
-To reproduce the experiments in the paper, first, you need to generate the results. This is done by running the python scripts as listed below. 
-Ensure to have GPUs enabled at this stage as this will speed up computation considerably. Feel free to change the hyperparameters if you want to run similar experiments on other explanation methods,datasets or models. The results are then analysed in a separate notebook {LINK} where the visualisations are created.
-
-Run a simple test that meta-evaluation work.
-```bash
-python3 run_test.py --dataset=ImageNet --K=3 --iters=2
-```
-
-Run the benchmarking experiments (also used for category convergence analysis).
-```bash
-python3 run_benchmarking.py --dataset=MNIST --fname=f --K=5 --iters=3
-python3 run_benchmarking.py --dataset=fMNIST --fname=f --K=5 --iters=3
-python3 run_benchmarking.py --dataset=cMNIST --fname=f --K=5 --iters=3
-```
-
-Run the faithfulness ranking exercise.
-```bash
-python3 run_ranking.py --dataset=cMNIST --fname=f --K=5 --iters=3 --category=Faithfulness
-```
-
-Run hyperparameter optimisation experiments.
-```bash
-python3 run_hp.py --dataset=MNIST --K=3 --iters=2
-python3 run_hp.py --dataset=ImageNet --K=3 --iters=2
-```
-
-Run sanity-checking exercise: L dependency.
-```bash
-python3 run_l_dependency.py --dataset=MNIST --K=5 --iters=3 --reversed_order=False 
-python3 run_l_dependency.py --dataset=fMNIST --K=5 --iters=3 --reversed_order=False 
-python3 run_l_dependency.py --dataset=cMNIST --K=5 --iters=3 --reversed_order=False
-```
-
-Run sanity-checking exercise: adversarial estimators.
-```bash
-python3 run_hp.py --dataset=MNIST --K=3 --iters=2
-python3 run_sanity_checks.py --dataset=ImageNet --K=3 --iters=2
-```
-
+To get started, ......
 
