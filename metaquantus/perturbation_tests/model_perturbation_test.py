@@ -27,13 +27,8 @@ class ModelPerturbationTest(PerturbationTestBase):
         std: float,
     ):
         """
-        Implementation of Input Perturbation Test.
+        Implementation of Model Perturbation Test.
 
-        Parameters
-        ----------
-
-        noise: float
-            Noise type
         Parameters
         ----------
         type: str
@@ -69,6 +64,42 @@ class ModelPerturbationTest(PerturbationTestBase):
         softmax: Optional[bool],
         device: Optional[str],
     ) -> Tuple[dict, np.ndarray, dict]:
+        """
+        This method runs the Model Perturbation Test.
+
+        Parameters
+        ----------
+        estimator: metric, perturbationmetric
+            The estimator to run the test on.
+        nr_perturbations: int
+            The number of perturbation
+        xai_methods: dict
+            A list of explanation methods.
+        model: torch.nn
+            The model used in evaluation.
+        x_batch: np.array
+            The input data.
+        y_batch: np.array
+            The labels.
+        a_batch: np.array
+            The explantions.
+        s_batch: np.array
+            The segmentation masks
+        channel_first: bool
+            Indicates if channels is first.
+        explain_func: callable
+        The function used for creating the explanation.
+        model_predict_kwargs: dict
+            Extra kwargs when running model.predict.
+        softmax: bool
+            Indicates if the softmax (or logits) are used.
+        device: torch.device
+            The device used, to enable GPUs.
+
+        Returns
+        -------
+        tuple
+        """
 
         # Determine the shape of results.
         scores = {

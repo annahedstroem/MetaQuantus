@@ -16,7 +16,7 @@ from .meta_evaluation import MetaEvaluation
 from .helpers.utils import *
 
 
-class MetaEvaluationMultiple:
+class MetaEvaluationBenchmarking:
     def __init__(
         self,
         master: MetaEvaluation,

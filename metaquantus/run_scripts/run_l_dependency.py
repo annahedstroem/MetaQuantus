@@ -111,25 +111,25 @@ if __name__ == "__main__":
         "2_GR_IG": ["Gradient", "IntegratedGradients"],
         "2_GR_OC": ["Gradient", "Occlusion"],
         "2_GR_IX": ["Gradient", "InputXGradient"],
-        #"3_GR_SA_IG": ["Gradient", "Saliency", "IntegratedGradients"],
-        #"3_GR_GC_GS": ["Gradient", "GradCAM", "GradientShap"],
-        #"4_GR_SA_OC_LR": ["Gradient", "Saliency", "Occlusion", "GradCAM"],
-        #"4_GR_SA_IX_GC": [
+        # "3_GR_SA_IG": ["Gradient", "Saliency", "IntegratedGradients"],
+        # "3_GR_GC_GS": ["Gradient", "GradCAM", "GradientShap"],
+        # "4_GR_SA_OC_LR": ["Gradient", "Saliency", "Occlusion", "GradCAM"],
+        # "4_GR_SA_IX_GC": [
         #    "Gradient",
         #    "Saliency",
         #    "InputXGradient",
         #    "IntegratedGradients",
-        #],
+        # ],
     }
 
     if reversed_order:
         xai_settings = {
             "4_GR_SA_IX_GC": [
-            "Gradient",
-            "Saliency",
-            "InputXGradient",
-            "IntegratedGradients",
-        ],
+                "Gradient",
+                "Saliency",
+                "InputXGradient",
+                "IntegratedGradients",
+            ],
         }
 
     for xai_setting_name, xai_setting in xai_settings.items():

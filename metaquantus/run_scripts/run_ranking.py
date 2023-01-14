@@ -97,10 +97,15 @@ if __name__ == "__main__":
     )
 
     # Get explanation methods.
-    xai_setting_all = ["Gradient", "GradCAM", "GradientShap", "IntegratedGradients", "InputXGradient"]
+    xai_setting_all = [
+        "Gradient",
+        "GradCAM",
+        "GradientShap",
+        "IntegratedGradients",
+        "InputXGradient",
+    ]
 
-
-    '''
+    """
     ###########################
     # Benchmarking settings. #
     ###########################
@@ -115,7 +120,7 @@ if __name__ == "__main__":
     )
 
     # Benchmark!
-    benchmark = MetaEvaluationMultiple(
+    benchmark = MetaEvaluationBenchmarking(
         master=master,
         estimators=estimators,
         experimental_settings=dataset_settings,
@@ -126,7 +131,7 @@ if __name__ == "__main__":
         softmax=False,
         device=device,
     )()
-    '''
+    """
 
     def generate_random_explanation(model, inputs, targets, **kwargs):
         random_explanations = np.random.uniform(
@@ -158,9 +163,16 @@ if __name__ == "__main__":
 
         try:
             estimator_names = [e for e in estimators[category]]
-            winner_is_same = df.loc[
-            (df["Estimator"] == estimator_names[0]) & (df["Rank"] == 1.0), "Method"].values[
-            0] == df.loc[(df["Estimator"] == estimator_names[1]) & (df["Rank"] == 1.0), "Method"].values[0]
+            winner_is_same = (
+                df.loc[
+                    (df["Estimator"] == estimator_names[0]) & (df["Rank"] == 1.0),
+                    "Method",
+                ].values[0]
+                == df.loc[
+                    (df["Estimator"] == estimator_names[1]) & (df["Rank"] == 1.0),
+                    "Method",
+                ].values[0]
+            )
 
         except:
             if not df.empty:
@@ -174,54 +186,80 @@ if __name__ == "__main__":
 
             model = dataset_settings[dataset_name]["models"]["ResNet9"].eval().cpu()
 
-            random_explanations = generate_random_explanation(model=model,
-                                                              inputs=x_batch,
-                                                              targets=y_batch)
-            #normal_explanations = quantus.explain(model=model, inputs=x_batch, targets=y_batch, **{**{"method": method}, **kwargs})
+            random_explanations = generate_random_explanation(
+                model=model, inputs=x_batch, targets=y_batch
+            )
+            # normal_explanations = quantus.explain(model=model, inputs=x_batch, targets=y_batch, **{**{"method": method}, **kwargs})
 
-            scores_norm = {estimator_name: np.array(estimator_func[0](model=model,
-                                                                      x_batch=x_batch,
-                                                                      y_batch=y_batch,
-                                                                      a_batch=None,
-                                                                      # a_batch=normal_explanations,
-                                                                      device=device,
-                                                                      explain_func=quantus.explain,
-                                                                      explain_func_kwargs={**{"method": method, },
-                                                                                           **kwargs},
-                                                                      )) for estimator_name, estimator_func in
-                           estimators[category].items()}
-            scores_ran = {estimator_name: np.array(estimator_func[0](model=model,
-                                                                     x_batch=x_batch,
-                                                                     y_batch=y_batch,
-                                                                     a_batch=random_explanations,
-                                                                     device=device,
-                                                                     explain_func=generate_random_explanation,
-                                                                     )) for estimator_name, estimator_func in
-                          estimators[category].items()}
+            scores_norm = {
+                estimator_name: np.array(
+                    estimator_func[0](
+                        model=model,
+                        x_batch=x_batch,
+                        y_batch=y_batch,
+                        a_batch=None,
+                        # a_batch=normal_explanations,
+                        device=device,
+                        explain_func=quantus.explain,
+                        explain_func_kwargs={
+                            **{
+                                "method": method,
+                            },
+                            **kwargs,
+                        },
+                    )
+                )
+                for estimator_name, estimator_func in estimators[category].items()
+            }
+            scores_ran = {
+                estimator_name: np.array(
+                    estimator_func[0](
+                        model=model,
+                        x_batch=x_batch,
+                        y_batch=y_batch,
+                        a_batch=random_explanations,
+                        device=device,
+                        explain_func=generate_random_explanation,
+                    )
+                )
+                for estimator_name, estimator_func in estimators[category].items()
+            }
 
             for estimator_name in scores_norm.keys():
                 results[method][estimator_name] = {
                     "scores_norm": scores_norm[estimator_name],
                     "scores_ran": scores_ran[estimator_name],
-                    "norm": np.linalg.norm(scores_norm[estimator_name] - scores_ran[estimator_name]),
-                    "p_val": scipy.stats.wilcoxon(scores_norm[estimator_name], scores_ran[estimator_name])[1],
-                    "p_corr": scipy.stats.pearsonr(scores_norm[estimator_name], scores_ran[estimator_name])[1],
-                    "s_corr": scipy.stats.spearmanr(scores_norm[estimator_name], scores_ran[estimator_name])[1],
+                    "norm": np.linalg.norm(
+                        scores_norm[estimator_name] - scores_ran[estimator_name]
+                    ),
+                    "p_val": scipy.stats.wilcoxon(
+                        scores_norm[estimator_name], scores_ran[estimator_name]
+                    )[1],
+                    "p_corr": scipy.stats.pearsonr(
+                        scores_norm[estimator_name], scores_ran[estimator_name]
+                    )[1],
+                    "s_corr": scipy.stats.spearmanr(
+                        scores_norm[estimator_name], scores_ran[estimator_name]
+                    )[1],
                 }
 
             # Collect garbage.
             gc.collect()
             torch.cuda.empty_cache()
 
-            for (estimator_name, scores_n), (_, scores_r) in zip(scores_norm.items(), scores_ran.items()):
-                print(f"\t{estimator_name}: {np.nanmean(scores_n):.4f} ({np.std(scores_n):.2f}) {np.median(scores_n):.4f}")
-                #print(f"{estimator_name}")
-                #print(f"\tScores NORMAL: {np.nanmean(scores_n):.4f} ({np.std(scores_n):.2f})")
-                #print(f"\tScores RAND: {np.nanmean(scores_r):.4f} ({np.std(scores_r):.2f})")
-                #print(f'\tNorm: {results[method][estimator_name]["norm"]}')
-                #print(f'\tP-val: {results[method][estimator_name]["p_val"]}')
-                #print(f'\tP corr: {results[method][estimator_name]["p_corr"]}')
-                #print(f'\tS corr: {results[method][estimator_name]["s_corr"]}')
+            for (estimator_name, scores_n), (_, scores_r) in zip(
+                scores_norm.items(), scores_ran.items()
+            ):
+                print(
+                    f"\t{estimator_name}: {np.nanmean(scores_n):.4f} ({np.std(scores_n):.2f}) {np.median(scores_n):.4f}"
+                )
+                # print(f"{estimator_name}")
+                # print(f"\tScores NORMAL: {np.nanmean(scores_n):.4f} ({np.std(scores_n):.2f})")
+                # print(f"\tScores RAND: {np.nanmean(scores_r):.4f} ({np.std(scores_r):.2f})")
+                # print(f'\tNorm: {results[method][estimator_name]["norm"]}')
+                # print(f'\tP-val: {results[method][estimator_name]["p_val"]}')
+                # print(f'\tP corr: {results[method][estimator_name]["p_corr"]}')
+                # print(f'\tS corr: {results[method][estimator_name]["s_corr"]}')
 
             # plot_motivating_example(scores_norm, scores_ran, x_batch, random_explanations, gradient_explanations, method)
 
@@ -238,7 +276,9 @@ if __name__ == "__main__":
 
         try:
 
-            df = pd.DataFrame(columns=["Estimator", "Method", "Faithfulness Score", "Rank"])  # , "Score_std"])
+            df = pd.DataFrame(
+                columns=["Estimator", "Method", "Faithfulness Score", "Rank"]
+            )  # , "Score_std"])
 
             row = 0
             for mx, method in enumerate(results.keys()):
@@ -246,9 +286,9 @@ if __name__ == "__main__":
                     row += mx + ex
                     scores_n = results[method][estimator]["scores_norm"]
                     # print(f"\tScores {method} {estimator}: {np.nanmean(scores_n):.4f} ({np.std(scores_n):.2f})")
-                    #if estimator == "Pixel-Flipping":
+                    # if estimator == "Pixel-Flipping":
                     #    estimator_name = estimator + " (↓)"
-                    #else:
+                    # else:
                     #    estimator_name = estimator + " (↑)"
                     df.loc[row, "Estimator"] = estimator
                     df.loc[row, "Method"] = method
@@ -257,12 +297,15 @@ if __name__ == "__main__":
             # Rank!
             df = df.sort_values(by="Estimator")
             df.index = np.arange(0, len(df))
-            df.loc[:len(xai_methods), "Rank"] = df.groupby(["Estimator"])["Faithfulness Score"].rank(ascending=False)[
-                                                :len(xai_methods)]
-            df.loc[len(xai_methods):, "Rank"] = df.groupby(["Estimator"])["Faithfulness Score"].rank(ascending=True)[
-                                                len(xai_methods):]
+            df.loc[: len(xai_methods), "Rank"] = df.groupby(["Estimator"])[
+                "Faithfulness Score"
+            ].rank(ascending=False)[: len(xai_methods)]
+            df.loc[len(xai_methods) :, "Rank"] = df.groupby(["Estimator"])[
+                "Faithfulness Score"
+            ].rank(ascending=True)[len(xai_methods) :]
             df.to_csv(
-                    PATH_RESULTS + f"example/{today}_{category.lower()}_df_{str(uiid)[:4]}.csv"
+                PATH_RESULTS
+                + f"example/{today}_{category.lower()}_df_{str(uiid)[:4]}.csv"
             )
         except:
             print("Could not convert example experiment to dataframe.")

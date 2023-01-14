@@ -9,6 +9,8 @@ import torch
 
 
 class LeNet(torch.nn.Module):
+    """LeNet model with torch.nn"""
+
     def __init__(self):
         super().__init__()
         self.conv1 = torch.nn.Conv2d(

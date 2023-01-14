@@ -44,7 +44,7 @@ class InputPerturbationTest(PerturbationTestBase):
 
     def __call__(
         self,
-        metric: Union[Metric, PerturbationMetric],
+        estimator: Union[Metric, PerturbationMetric],
         nr_perturbations: int,
         xai_methods: Dict[str, dict],
         model: ModelInterface,
@@ -58,6 +58,42 @@ class InputPerturbationTest(PerturbationTestBase):
         softmax: Optional[bool],
         device: Optional[str],
     ) -> Tuple[dict, np.ndarray, dict]:
+        """
+        This method runs the Input Perturbation Test.
+
+        Parameters
+        ----------
+        estimator: metric, perturbationmetric
+            The estimator to run the test on.
+        nr_perturbations: int
+            The number of perturbation
+        xai_methods: dict
+            A list of explanation methods.
+        model: torch.nn
+            The model used in evaluation.
+        x_batch: np.array
+            The input data.
+        y_batch: np.array
+            The labels.
+        a_batch: np.array
+            The explantions.
+        s_batch: np.array
+            The segmentation masks
+        channel_first: bool
+            Indicates if channels is first.
+        explain_func: callable
+        The function used for creating the explanation.
+        model_predict_kwargs: dict
+            Extra kwargs when running model.predict.
+        softmax: bool
+            Indicates if the softmax (or logits) are used.
+        device: torch.device
+            The device used, to enable GPUs.
+
+        Returns
+        -------
+        tuple
+        """
 
         # Determine the shape of results.
         scores = {
@@ -116,15 +152,15 @@ class InputPerturbationTest(PerturbationTestBase):
                     y_batch=y_batch,
                     explain_func=explain_func,
                     explain_func_kwargs={**explain_func_kwargs, **{"method": method}},
-                    abs=metric.abs,
-                    normalise=metric.normalise,
-                    normalise_func=metric.normalise_func,
-                    normalise_func_kwargs=metric.normalise_func_kwargs,
+                    abs=estimator.abs,
+                    normalise=estimator.normalise,
+                    normalise_func=estimator.normalise_func,
+                    normalise_func_kwargs=estimator.normalise_func_kwargs,
                     device=device,
                 )
 
                 # Evaluate explanations with perturbed input.
-                scores[method][p] = metric(
+                scores[method][p] = estimator(
                     model=model,
                     x_batch=x_batch_perturbed,
                     y_batch=y_batch,

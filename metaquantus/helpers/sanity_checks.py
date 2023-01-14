@@ -17,9 +17,9 @@ def sanity_analysis(
 ):
     """
     Supporting function to get sanity scores depending on the sanity type.
-        - If Estimator_Different: we sample scores from different distributions
-        when perturbed vs unperturbed.
-        - If Estimator_Same: we pass the unperturbed as the perturbed sample.
+    If Estimator_Different: we sample scores from different distributions
+    when perturbed vs unperturbed or if Estimator_Same: we pass the unperturbed
+    as the perturbed sample.
 
     Parameters
     ----------
@@ -30,7 +30,7 @@ def sanity_analysis(
 
     Returns
     -------
-    A numpy array of scores.
+    np.array
     """
 
     if sanity_type == "Estimator_Different":
@@ -84,7 +84,7 @@ def sanity_analysis_under_perturbation(
 
     Returns
     -------
-
+    tuple
     """
 
     # Determine shape of results.
