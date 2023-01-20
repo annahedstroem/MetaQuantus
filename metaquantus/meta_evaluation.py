@@ -20,11 +20,9 @@ from quantus.metrics.base import Metric, PerturbationMetric
 
 from .helpers.utils import (
     generate_explanations,
-    compute_iac_score,
-    compute_iec_score,
     dump_obj,
 )
-from .tests.base import PerturbationTestBase
+from .perturbation_tests.base import PerturbationTestBase
 from .helpers.sanity_checks import sanity_analysis, sanity_analysis_under_perturbation
 
 
@@ -374,7 +372,7 @@ class MetaEvaluation:
 
                     for p in range(self.nr_perturbations):
 
-                        p_value = compute_iac_score(
+                        p_value = self.compute_iac_score(
                             q=self.results_eval_scores[test_name][method],
                             q_hat=self.results_eval_scores_perturbed[test_name][i][
                                 method
@@ -439,7 +437,7 @@ class MetaEvaluation:
                         ][k]
 
                     # Different conditions for calculating IEC depending on perturbation type.
-                    iec_score = compute_iec_score(
+                    iec_score = self.compute_iec_score(
                         Q_star=Q_star,
                         Q_hat=Q_hat,
                         indices=self.results_indices_perturbed[test_name][i][k],

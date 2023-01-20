@@ -19,8 +19,12 @@ from quantus.functions import (
 import torch
 import torchvision
 from metaquantus.helpers.models import LeNet, ResNet9
-from metaquantus.helpers.tests.model_perturbation_test import ModelPerturbationTest
-from metaquantus.helpers.tests.input_perturbation_test import InputPerturbationTest
+from metaquantus.helpers.perturbation_tests.model_perturbation_test import (
+    ModelPerturbationTest,
+)
+from metaquantus.helpers.perturbation_tests.input_perturbation_test import (
+    InputPerturbationTest,
+)
 
 
 def setup_xai_methods(
