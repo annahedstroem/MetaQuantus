@@ -16,19 +16,11 @@ _MetaQuantus is currently under active development so carefully note the release
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 ## Motivation
-A ResNet9 model (He et al., 2016) is trained to classify digits from 0 to 9 on Customised-MNST dataset
-(Bykov et al., 2021) (i.e., MNIST digits pasted on CIFAR-10 backgrounds). To understand the model’s prediction, we
-use several explanation methods including Gradient (Mørch et al., 1995; Baehrens et al., 2010), Integrated Gradients
-(Sundararajan et al., 2017), and GradientShap (Lundberg & Lee, 2017), which are distinguished by their respective
-colours. To evaluate the quality of the explanations, we apply different estimators of faithfulness such as Faithfulness
-Correlation (FC) (Bhatt et al., 2020) and Pixel-Flipping (PF) (Bach et al., 2015), which return a correlation coefficient
-and an AUC score, respectively. However, since the scores vary depending on the estimator, both in range and
-direction, with lower or higher scores indicating more faithful explanations, interpreting the resulting faithfulness
-scores remains difficult for the practitioner.
+An illustration of the Problem of Meta-Evaluation through three phases: (i) Modeling, (ii) Explaining and (iii) Evaluating. (i) A ResNet9 model \citep{he2015deep} is trained to classify digits from $0$ to $9$ on Customised-MNST dataset \citep{bykov2021noisegrad} (i.e., MNIST digits pasted on CIFAR-10 backgrounds). (ii) To understand the model's prediction, we use several explanation methods including \textit{Gradient} \citep{morch, baehrens}, \textit{Integrated Gradients} \citep{sundararajan2017axiomatic} and \textit{GradientShap} \citep{lundberg2017unified}, which are distinguished by their respective colours. (iii) To evaluate the quality of the explanations, we apply different estimators of faithfulness such as  \textit{Faithfulness Correlation} (FC) \citep{bhatt2020} and \textit{Pixel-Flipping} (PF) \citep{bach2015pixel}, which return a correlation coefficient and an AUC score, respectively. However, since the scores vary depending on the estimator, both in range and direction, with lower or higher scores indicating more faithful explanations, interpreting the resulting faithfulness scores remains difficult for the practitioner.
 
 </p>
 <p align="center">
-  <img width="800" src="https://raw.githubusercontent.com/understandable-machine-intelligence-lab/Quantus/main/fig1.png">
+  <img width="550" src="https://github.com/annahedstroem/MetaQuantus/blob/main/fig1-cmnist.png?raw=true">
 </p>
 
 
