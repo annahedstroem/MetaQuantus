@@ -1,8 +1,8 @@
 <p align="center">
-  <img width="350" src="https://raw.githubusercontent.com/annahedstroem/MetaQuantus/main/logo.png">
+  <img width="550" src="https://github.com/annahedstroem/MetaQuantus/blob/main/logo.png?raw=true">
 </p>
 <!--<h1 align="center"><b>MetaQuantus</b></h1>-->
-<h3 align="center"><b>Meta-evaluation of XAI performance metrics</b></h3>
+<h3 align="center"><b>A library to meta-evaluate XAI performance metrics</b></h3>
 <p align="center">
   PyTorch
 
