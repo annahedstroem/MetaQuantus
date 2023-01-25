@@ -3,9 +3,9 @@ import warnings
 import argparse
 import torch
 
-from metaquantus.meta_evaluation import MetaEvaluation
-from metaquantus.meta_evaluation_multiple import MetaEvaluationMultiple
-from metaquantus.configs import (
+from metaquantu import MetaEvaluation
+from metaquantus import MetaEvaluationBenchmarking
+from metaquantus import (
     setup_estimators,
     setup_xai_methods,
     setup_dataset_models,
@@ -107,7 +107,7 @@ if __name__ == "__main__":
     )
 
     # Benchmark!
-    benchmark = MetaEvaluationMultiple(
+    benchmark = MetaEvaluationBenchmarking(
         master=master,
         estimators=estimators,
         experimental_settings=dataset_settings,

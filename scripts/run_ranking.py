@@ -12,10 +12,10 @@ import numpy as np
 import pandas as pd
 import scipy
 
-from metaquantus.meta_evaluation import MetaEvaluation
-from metaquantus.utils import dump_obj
-from metaquantus.meta_evaluation_multiple import MetaEvaluationMultiple
-from metaquantus.configs import (
+from metaquantus import MetaEvaluation
+from metaquantus import dump_obj
+from metaquantus import MetaEvaluationBenchmarking
+from metaquantus import (
     setup_estimators,
     setup_complexity_estimators,
     setup_faithfulness_estimators,

@@ -7,9 +7,9 @@ import pandas as pd
 import uuid
 from datetime import datetime
 
-from metaquantus.meta_evaluation import MetaEvaluation
-from metaquantus.helpers.utils import dump_obj
-from metaquantus.helpers.configs import (
+from metaquantus import MetaEvaluation
+from metaquantus import dump_obj
+from metaquantus import (
     setup_estimators,
     setup_xai_methods,
     setup_dataset_models,

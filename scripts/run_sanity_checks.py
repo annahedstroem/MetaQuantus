@@ -6,14 +6,14 @@ import numpy as np
 from datetime import datetime
 
 import quantus
-from metaquantus.meta_evaluation import MetaEvaluation
-from metaquantus.configs import (
+from metaquantus import MetaEvaluation
+from metaquantus import (
     setup_estimators,
     setup_xai_methods,
     setup_dataset_models,
     setup_analyser_suite,
 )
-from metaquantus.utils import load_obj
+from metaquantus import load_obj
 
 PATH_ASSETS = "../assets/"
 PATH_RESULTS = "/home/amlh/Projects/MetaQuantus/results/"
