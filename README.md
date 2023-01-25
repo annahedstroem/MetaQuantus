@@ -8,43 +8,30 @@
 
 _MetaQuantus is currently under active development so carefully note the release version to ensure reproducibility of your work._
 
-[![Getting started!](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/understandable-machine-intelligence-lab/Quantus/blob/main/tutorials/Tutorial_ImageNet_Example_All_Metrics.ipynb)
-[![Launch Tutorials](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/understandable-machine-intelligence-lab/Quantus/HEAD?labpath=tutorials)
-[![Python package](https://github.com/understandable-machine-intelligence-lab/Quantus/actions/workflows/python-package.yml/badge.svg)](https://github.com/understandable-machine-intelligence-lab/Quantus/actions/workflows/python-package.yml)
+[![Getting started!](https://colab.research.google.com/assets/colab-badge.svg)](anonymous)
+[![Launch Tutorials](https://mybinder.org/badge_logo.svg)](anonymous)
 ![Python version](https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9-blue.svg)
-[![PyPI version](https://badge.fury.io/py/quantus.svg)](https://badge.fury.io/py/quantus)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+<!--[![Python package](https://github.com/understandable-machine-intelligence-lab/Quantus/actions/workflows/python-package.yml/badge.svg)](https://github.com/understandable-machine-intelligence-lab/Quantus/actions/workflows/python-package.yml)-->
+<!--[![PyPI version](https://badge.fury.io/py/metaquantus.svg)](https://badge.fury.io/py/metaquantus)-->
 
 ## Motivation
-An illustration of the Problem of Meta-Evaluation through three phases: (i) Modeling, (ii) Explaining and (iii) Evaluating. (i) A ResNet9 model \citep{he2015deep} is trained to classify digits from $0$ to $9$ on Customised-MNST dataset \citep{bykov2021noisegrad} (i.e., MNIST digits pasted on CIFAR-10 backgrounds). (ii) To understand the model's prediction, we use several explanation methods including \textit{Gradient} \citep{morch, baehrens}, \textit{Integrated Gradients} \citep{sundararajan2017axiomatic} and \textit{GradientShap} \citep{lundberg2017unified}, which are distinguished by their respective colours. (iii) To evaluate the quality of the explanations, we apply different estimators of faithfulness such as  \textit{Faithfulness Correlation} (FC) \citep{bhatt2020} and \textit{Pixel-Flipping} (PF) \citep{bach2015pixel}, which return a correlation coefficient and an AUC score, respectively. However, since the scores vary depending on the estimator, both in range and direction, with lower or higher scores indicating more faithful explanations, interpreting the resulting faithfulness scores remains difficult for the practitioner.
+
+This repository contains the code and experimental results for the paper "MetaQuantus: A Framework for Meta-Evaluation of Quality Estimators in Explainable AI"
+
+### Problem
+In Explainable AI, the problem of meta-evalaution, that is, the process of of evaluating the evaluation method, is crucial but often overlooked. This is particularly important when selecting and quantitatively comparing explanation methods for a given model, dataset, and task. However, the use of multiple metrics or evalaution techqniues can lead to conflicting results. For example, scores from different metrics vary, both in range and direction, with lower or higher scores indicating higher quality explanations, making it difficult for practitioners to interpret the scores and select the best explanation method. 
+
+### Library
+
+With MetaQuantus, we address this problem by providing a simple yet comprehensive framework whose primary purpose is to provide an objective, independent view of the estimator by evaluating it against two failure modes: resilience to noise and reactivity to adversary. In a similar way that software systems undergo vulnerability and penetration tests before deployment, this tool is designed to stress test the evalaution methods e.g., as provided by Quantus.
 
 </p>
 <p align="center">
-  <img width="550" src="https://github.com/annahedstroem/MetaQuantus/blob/main/fig1-cmnist.png?raw=true">
+  <img width="800" src="https://raw.githubusercontent.com/understandable-machine-intelligence-lab/Quantus/main/fig1.png">
 </p>
 
-
-With MetaQuantus, we address this problem by providing a simple yet comprehensive framework called \texttt{MetaQuantus} whose primary purpose is to provide an objective, independent view of the estimator by evaluating it against two failure modes: resilience to noise and reactivity to adversary. 
-
-## Citation
-
-If you find this toolkit or its companion paper
-[**The Meta-Evaluation Problem in Explainable AI:
-Rethinking Performance Estimation with MetaQuantus**](INSERT_PREPRINT_LINK)
-interesting or useful in your research, use the following Bibtex annotation to cite us:
-
-```bibtex
-@article{hedstrom2023meta,
-      title={The Meta-Evaluation Problem in Explainable AI: Rethinking Performance Evaluation in Explainable AI with MetaQuantus}, 
-      author={anonymous},
-      year={2023},
-      eprint={INSERT},
-      archivePrefix={INSERT},
-      primaryClass={INSERT}
-}
-```
-
-When applying the individual metrics of Quantus, please make sure to also properly cite the work of the original authors (as linked above).
+MetaQuantus is the first open-sourced, general-purpose solution that support developers in XAI and ML with a theoretically-grounded, practical tool a meta-evaluate newly developed, or existing metrics. It provides a easy-to-use API that makes the selection of metrics easier, with a few lines of code, metrics can be evaluated and chosen in its unique explainability context. XAI explanation methods with minimal code.
 
 ## Installation
 
@@ -68,9 +55,25 @@ The package requirements are as follows:
 ```
 python>=3.7.0
 pytorch>=1.10.1
+quantus>=0.3.2
+captum>=0.4.1
 ```
+
 
 ## Getting started
 
-To get started, ......
+Please see [
+Tutorial-Getting-Started-with-MetaQuantus.ipynb](anonymous) under tutorials/ folder to run code similar to this example. Note that [PyTorch](https://pytorch.org/) framework and the XAI evalaution library [Quantus](https://github.com/understandable-machine-intelligence-lab/Quantus) is needed to run MetaQuantus
+
+  
+## Reproduce the experiments
+
+To reproduce the results of this paper, you will need to follow these steps:
+
+1. Data Generation: Run the notebook [
+Tutorial-Data-Generation-Experiments.ipynb](anonymous) to generate the necessary data for the analysis. This notebook will guide you through the process of downloading and preprocessing the data. Make sure to follow the instructions carefully and to have all the necessary packages installed.
+
+2. Results Analysis: Once the data generation step is complete, run the [
+Tutorial-Reproduce-Experiments.ipynb](anonymous) to analyse the results. Make sure to adjust local path so that approriate files can be retrieved including having all the necessary packages installed. Please note that the results may slightly vary depending on the random seed and other hyperparameters, but the overall trends and conclusions should remain the same.
+
 

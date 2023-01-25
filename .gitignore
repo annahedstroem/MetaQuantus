@@ -3,3 +3,6 @@ local/
 assets/
 *__pycache__*
 .DS_store
+build/
+dist/
+*.egg-info/
