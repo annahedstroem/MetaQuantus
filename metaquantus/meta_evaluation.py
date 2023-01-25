@@ -376,7 +376,7 @@ class MetaEvaluation:
 
                     # Run test!
                     scores_perturbed, y_preds_perturbed, indices_perturbed = test(
-                        metric=estimator,
+                        estimator=estimator,
                         nr_perturbations=self.nr_perturbations,
                         xai_methods=self.xai_methods,
                         model=model,

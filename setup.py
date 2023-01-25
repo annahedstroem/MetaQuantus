@@ -23,7 +23,7 @@ else:
 setup(
     name="MetaQuantus",
     version="0.0.1",
-    description="MetaMetaQuantus is a toolkit to estimate performance of evaluator of explanation quality.",
+    description="MetaQuantus is a toolkit to estimate performance of evaluator of explanation quality.",
     long_description=open("README.md", "r").read(),
     long_description_content_type="text/markdown",
     install_requires=[
