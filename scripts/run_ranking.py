@@ -12,6 +12,7 @@ import numpy as np
 import pandas as pd
 import scipy
 
+import metaquantus
 from metaquantus import MetaEvaluation
 from metaquantus import dump_obj
 from metaquantus import MetaEvaluationBenchmarking

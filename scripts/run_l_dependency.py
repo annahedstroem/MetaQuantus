@@ -3,6 +3,7 @@ import warnings
 import argparse
 import torch
 
+import metaquantus
 from metaquantus import MetaEvaluation
 from metaquantus import MetaEvaluationBenchmarking
 from metaquantus import (

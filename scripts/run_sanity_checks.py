@@ -6,6 +6,8 @@ import numpy as np
 from datetime import datetime
 
 import quantus
+
+import metaquantus
 from metaquantus import MetaEvaluation
 from metaquantus import (
     setup_estimators,

@@ -7,6 +7,7 @@ import pandas as pd
 import uuid
 from datetime import datetime
 
+import metaquantus
 from metaquantus import MetaEvaluation
 from metaquantus import dump_obj
 from metaquantus import (

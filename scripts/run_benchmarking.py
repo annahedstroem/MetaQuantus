@@ -3,7 +3,8 @@ import warnings
 import argparse
 import torch
 
-from metaquantu import MetaEvaluation
+import metaquantus
+from metaquantus import MetaEvaluation
 from metaquantus import MetaEvaluationBenchmarking
 from metaquantus import (
     setup_estimators,

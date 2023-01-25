@@ -34,7 +34,13 @@ MetaQuantus is the first open-sourced, general-purpose solution that support dev
 
 ## Installation
 
-The most light-weight version of MetaQuantus can be obtained from [PyPI](https://pypi.org/project/metaquantus/) as follows:
+The simplest way to install MetaQuantus is to download a local copy and then run:
+
+```setup
+pip install -e . --user 
+```
+
+Alternatively, another light-weight version of MetaQuantus can be obtained from [PyPI](https://pypi.org/project/metaquantus/) as follows:
 
 ```setup
 pip install metaquantus
