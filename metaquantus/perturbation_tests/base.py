@@ -9,10 +9,8 @@ from typing import Union, Optional, Callable, Dict, Any
 from abc import ABC, abstractmethod
 import numpy as np
 import scipy
-
-from quantus.helpers.model.model_interface import ModelInterface
-from quantus.metrics.base import Metric, PerturbationMetric
-
+import torch
+import quantus
 
 class PerturbationTestBase(ABC):
     """Implementation of base class for the PerturbationTest."""
@@ -23,9 +21,9 @@ class PerturbationTestBase(ABC):
     @abstractmethod
     def __call__(
         self,
-        metric: Union[Metric, PerturbationMetric],
+        estimator,
         nr_perturbations: int,
-        model: ModelInterface,
+        model: torch.nn.Module,
         x_batch: np.ndarray,
         y_batch: Optional[np.ndarray],
         a_batch: Optional[np.ndarray],

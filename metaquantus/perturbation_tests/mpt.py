@@ -10,13 +10,9 @@ import gc
 import torch
 import numpy as np
 
-import quantus
-from quantus.helpers import utils
-from quantus.helpers.model.model_interface import ModelInterface
-from quantus.metrics.base import Metric, PerturbationMetric
-
 from .base import PerturbationTestBase
 from ..helpers.utils import generate_explanations
+from ..helpers.utils_quantus import get_wrapped_model
 
 
 class ModelPerturbationTest(PerturbationTestBase):
@@ -51,10 +47,10 @@ class ModelPerturbationTest(PerturbationTestBase):
 
     def __call__(
         self,
-        estimator: Union[Metric, PerturbationMetric],
+        estimator,
         xai_methods: Dict[str, dict],
         nr_perturbations: int,
-        model: ModelInterface,
+        model,
         x_batch: np.ndarray,
         y_batch: Optional[np.ndarray],
         a_batch: Optional[np.ndarray],

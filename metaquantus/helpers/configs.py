@@ -8,15 +8,8 @@
 from typing import Dict, List
 import numpy as np
 import torch
-import quantus
-from quantus.metrics import *
-from quantus.functions import (
-    perturb_func,
-    similarity_func,
-    norm_func,
-    normalise_func,
-)
 
+from quantus import *
 import torch
 import torchvision
 

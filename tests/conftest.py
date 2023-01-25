@@ -2,8 +2,7 @@ import pytest
 import pickle
 import torch
 import numpy as np
-
-from quantus.helpers.model.models import LeNet
+import pandas as pd
 
 CIFAR_IMAGE_SIZE = 32
 MNIST_IMAGE_SIZE = 28

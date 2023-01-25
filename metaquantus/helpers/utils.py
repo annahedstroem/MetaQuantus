@@ -16,14 +16,11 @@ import pickle
 import scipy
 import pathlib
 
-import quantus
-from quantus.helpers import asserts
-from quantus.helpers import utils
-from quantus.helpers.model.model_interface import ModelInterface
+from ..helpers.utils_quantus import expand_attribution_channel
 
 
 def generate_explanations(
-    model: ModelInterface,
+    model,
     x_batch: np.ndarray,
     y_batch: Optional[np.ndarray],
     explain_func: Callable,
@@ -73,9 +70,6 @@ def generate_explanations(
     if device is not None and "device" not in explain_func_kwargs:
         explain_func_kwargs["device"] = device
 
-    # Asserts.
-    asserts.assert_explain_func(explain_func=explain_func)
-
     # Generate explanations.
     a_batch = explain_func(
         model=model,
@@ -86,7 +80,6 @@ def generate_explanations(
 
     # Expand attributions to input dimensionality, asserts and inference of axes.
     a_batch = utils.expand_attribution_channel(a_batch, x_batch)
-    asserts.assert_attributions(x_batch=x_batch, a_batch=a_batch)
 
     # Normalise with specified keyword arguments if requested.
     if normalise:
