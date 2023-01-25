@@ -16,6 +16,7 @@ import pickle
 import scipy
 import pathlib
 
+import quantus
 from quantus.helpers import asserts
 from quantus.helpers import utils
 from quantus.helpers.model.model_interface import ModelInterface

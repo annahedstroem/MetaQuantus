@@ -33,19 +33,34 @@ class MetaEvaluationBenchmarking:
         device: Optional[str] = None,
     ):
         """
+        This class implements the main logic to conduct benchmarking.
 
         Parameters
         ----------
-        master
-        estimators
-        experimental_settings
-        path
-        folder
-        write_to_file
-        keep_results
-        channel_first
-        softmax
-        device
+        master: metaevaluation
+            An intialised MetaEvalaution object.
+        estimators: dict
+            A dictionary of the estimators to benchmark.
+        experimental_settings: dict
+            A dictionary of the experimental settings including model, data, label etc.
+        path: str
+            The path for saving the plot.
+        folder: str
+            The folder name.
+        write_to_file: boolean
+            Indicates if writing to file.
+        keep_results boolean
+            Indicates if saving results.
+        channel_first: bool
+            Indicates if channels is first.
+        softmax: bool
+            Indicates if the softmax (or logits) are used.
+        device: torch.device
+            The device used, to enable GPUs.
+
+        Returns
+        -------
+        None
         """
         self.master = master
         self.estimators = estimators

@@ -461,7 +461,7 @@ def plot_benchmarking_scatter_bar_plots_combined(
     None
     """
     legend_elements = [
-        matplotlib.lines.mlines.Line2D(
+        matplotlib.lines.Line2D(
             [],
             [],
             color="black",
@@ -470,7 +470,7 @@ def plot_benchmarking_scatter_bar_plots_combined(
             markersize=10,
             label="IPT",
         ),
-        matplotlib.lines.mlines.Line2D(
+        matplotlib.lines.Line2D(
             [],
             [],
             color="black",
@@ -630,9 +630,7 @@ def plot_benchmarking_scatter_bar_plots_combined(
         barlist[i].set_edgecolor("black")
 
     # Set the labels and titles.
-    ax[2].set_xticks(
-        ticks=labels_ticks, labels=metrics_short, fontsize=20
-    )
+    ax[2].set_xticks(ticks=labels_ticks, labels=metrics_short, fontsize=20)
     ax[2].set_ylabel("$\mathbf{MC}$", fontsize=20)
     ax[2].set_yticks(
         ticks=np.linspace(0.5, 1.0, 10),
@@ -652,7 +650,9 @@ def plot_benchmarking_scatter_bar_plots_combined(
         )
     plt.show()
 
+
 from typing import Dict
+
 
 def make_benchmarking_df_as_str(benchmark: Dict, estimators: Dict):
     """
@@ -674,12 +674,11 @@ def make_benchmarking_df_as_str(benchmark: Dict, estimators: Dict):
             "Category",
             "Estimator",
             "Test",
+            "MC_bar" "MC",
             "IAC_{NR}",
             "IAC_{AR}",
             "IEC_{NR}",
             "IEC_{AR}",
-            "MC",
-            "MC_bar"
         ]
     )
     scores = ["IAC_{NR}", "IAC_{AR}", "IEC_{NR}", "IEC_{AR}"]
@@ -740,7 +739,9 @@ def make_benchmarking_df_as_str(benchmark: Dict, estimators: Dict):
                     df.loc[row, "MC_bar"] = ""
                 elif px == 1:
                     df.loc[row, "MC_bar"] = (
-                            f"{np.mean(np.array(means_bar).flatten()):.3f}" + " $\pm$ " + f"{np.mean(np.array(stds_bar).flatten()) * 2:.3f}"
+                        f"{np.mean(np.array(means_bar).flatten()):.3f}"
+                        + " $\pm$ "
+                        + f"{np.mean(np.array(stds_bar).flatten()) * 2:.3f}"
                     )
 
     return df
@@ -858,7 +859,6 @@ def aggregate_benchmarking_datasets(
             cmnist_stds_per = []
 
             for px, perturbation_type in enumerate(perturbation_types):
-                # print(estimator_category, estimator_name)
 
                 mnist_mean = benchmark_mnist[estimator_category][estimator_name][
                     "results_meta_consistency_scores"
@@ -1218,7 +1218,6 @@ def plot_top_ranking_distribution(
     plt.show()
 
 
-
 def make_category_convergence_df(benchmark: Dict, estimators: Dict):
     """
     Create the category convergence df.
@@ -1308,31 +1307,32 @@ def make_category_convergence_df(benchmark: Dict, estimators: Dict):
 
                             df.loc[row, "Type"] = (
                                 score_type.replace("scores_", "")
-                                    .replace("intra", "IAC")
-                                    .replace("inter", "IEC")
-                                    .replace("res", "NR")
-                                    .replace("adv", "AR")
+                                .replace("intra", "IAC")
+                                .replace("inter", "IEC")
+                                .replace("res", "NR")
+                                .replace("adv", "AR")
                             )
                             df.loc[row, "Failure Mode"] = (
                                 score_type.replace("_scores_", "")
-                                    .replace("intra", "")
-                                    .replace("inter", "")
-                                    .replace("res", "NR")
-                                    .replace("adv", "AR")
+                                .replace("intra", "")
+                                .replace("inter", "")
+                                .replace("res", "NR")
+                                .replace("adv", "AR")
                             )
                             df.loc[row, "Criterion"] = (
                                 score_type.replace("_scores_", "")
-                                    .replace("intra", "IAC")
-                                    .replace("inter", "IEC")
-                                    .replace("res", "")
-                                    .replace("adv", "")
+                                .replace("intra", "IAC")
+                                .replace("inter", "IEC")
+                                .replace("res", "")
+                                .replace("adv", "")
                             )
 
     return df
 
 
-def plot_category_convergence(means: np.array, stds: np.array, save: bool,
-                              path: str):
+def plot_category_convergence(
+    means: np.array, stds: np.array, save: bool, path: str
+) -> None:
     """
 
     Parameters
@@ -1346,10 +1346,9 @@ def plot_category_convergence(means: np.array, stds: np.array, save: bool,
     path: str
         The path for saving the plot.
 
-
     Returns
     -------
-
+    None
     """
     fig, ax = plt.subplots(1, 1, figsize=(7.75, 5))
 
@@ -1379,15 +1378,22 @@ def plot_category_convergence(means: np.array, stds: np.array, save: bool,
     ]
 
     ax.legend(
-        handles=legend_elements, labels=["MNIST", "fMNIST", "cMNIST"], ncol=3, fontsize=15, loc="upper left"
+        handles=legend_elements,
+        labels=["MNIST", "fMNIST", "cMNIST"],
+        ncol=3,
+        fontsize=15,
+        loc="upper left",
     )
-    ax.set_yticks(ticks=np.linspace(0, 1, 11),
-                  labels=[0.0, "", 0.2, "", 0.4, "", 0.6, "", 0.8, "", 1.0],
-                  fontsize=18,
-                  )
+    ax.set_yticks(
+        ticks=np.linspace(0, 1, 11),
+        labels=[0.0, "", 0.2, "", 0.4, "", 0.6, "", 0.8, "", 1.0],
+        fontsize=18,
+    )
     ax.set_ylabel("Spearman Rank Correlation", fontsize=18)
     ax.set_xticks(
-        ticks=x, labels=["", "Outside-Category", "", "", "Within-Category", ""], fontsize=18
+        ticks=x,
+        labels=["", "Outside-Category", "", "", "Within-Category", ""],
+        fontsize=18,
     )
     ax.grid()
 
@@ -1397,12 +1403,12 @@ def plot_category_convergence(means: np.array, stds: np.array, save: bool,
     plt.show()
 
 
-def plot_hp_bar(df_result: pd.DataFrame,
-                dataset_name: str,
-                save: bool,
-                path: str) -> None:
+def plot_hp_bar(
+    df_result: pd.DataFrame, dataset_name: str, save: bool, path: str
+) -> None:
     """
-    Plot the
+    Plot the hp plot.
+
     Parameters
     ----------
     df_result: pd.DataFrame
@@ -1420,38 +1426,76 @@ def plot_hp_bar(df_result: pd.DataFrame,
     """
 
     settings = np.arange(0, len(df_result), 1)
-    mc_scores = df_result['MC Mean'].values
-    mc_scores_std = df_result['MC Std'].values
-    iac_nr = df_result['IAC_{NR} mean'].values
-    iac_ar = df_result['IAC_{AR} mean'].values
-    iec_nr = df_result['IEC_{NR} mean'].values
-    iec_ar = df_result['IEC_{AR} mean'].values
+    mc_scores = df_result["MC Mean"].values
+    mc_scores_std = df_result["MC Std"].values
+    iac_nr = df_result["IAC_{NR} mean"].values
+    iac_ar = df_result["IAC_{AR} mean"].values
+    iec_nr = df_result["IEC_{NR} mean"].values
+    iec_ar = df_result["IEC_{AR} mean"].values
 
     fig, ax = plt.subplots(1, 1, figsize=(8, 5))
 
-    barlist1 = ax.bar(settings, iec_nr, alpha=0.65, color='#5a86ad', label="IEC_NR", edgecolor="black")  ##aaa662
-    barlist2 = ax.bar(settings, iac_nr, alpha=0.65, bottom=iec_nr, color='gray', label="IAC_NR", hatch="",
-                      edgecolor="black")  ##719f91
-    barlist3 = ax.bar(settings, iec_ar, alpha=0.65, bottom=(iac_nr + iec_nr), color='#b1d1fc', label="IEC_AR",
-                      edgecolor="black")  ##c87f89
-    barlist4 = ax.bar(settings, iac_ar, alpha=0.65, bottom=(iec_ar + iac_nr + iec_nr), yerr=mc_scores_std,
-                      color='#c5c9c7', label="IAC_AR", hatch="", edgecolor="black")  # 738595#afa88b
+    barlist1 = ax.bar(
+        settings, iec_nr, alpha=0.65, color="#5a86ad", label="IEC_NR", edgecolor="black"
+    )  ##aaa662
+    barlist2 = ax.bar(
+        settings,
+        iac_nr,
+        alpha=0.65,
+        bottom=iec_nr,
+        color="gray",
+        label="IAC_NR",
+        hatch="",
+        edgecolor="black",
+    )  ##719f91
+    barlist3 = ax.bar(
+        settings,
+        iec_ar,
+        alpha=0.65,
+        bottom=(iac_nr + iec_nr),
+        color="#b1d1fc",
+        label="IEC_AR",
+        edgecolor="black",
+    )  ##c87f89
+    barlist4 = ax.bar(
+        settings,
+        iac_ar,
+        alpha=0.65,
+        bottom=(iec_ar + iac_nr + iec_nr),
+        yerr=mc_scores_std,
+        color="#c5c9c7",
+        label="IAC_AR",
+        hatch="",
+        edgecolor="black",
+    )  # 738595#afa88b
 
     # plt.plot(2+mc_scores, "-o", c="black")
 
     for i in settings:
         if mc_scores[i] == mc_scores.max():
-            plt.annotate(xy=(i - 0.4, 1.7 + mc_scores[i]), text=f"{(str(mc_scores[i]))[:5]}", fontsize=15, c="#3b719f")
+            plt.annotate(
+                xy=(i - 0.4, 1.7 + mc_scores[i]),
+                text=f"{(str(mc_scores[i]))[:5]}",
+                fontsize=15,
+                c="#3b719f",
+            )
         else:
-            plt.annotate(xy=(i - 0.4, 1.7 + mc_scores[i]), text=f"{(str(mc_scores[i]))[:5]}", fontsize=15)
+            plt.annotate(
+                xy=(i - 0.4, 1.7 + mc_scores[i]),
+                text=f"{(str(mc_scores[i]))[:5]}",
+                fontsize=15,
+            )
 
         plt.vlines(x=i, ymin=0, ymax=1.6 + mc_scores[i], color="black")
 
-    ax.set_yticks(ticks=np.linspace(0, 3, 15),
-                  labels=["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""],
-                  fontsize=18,
-                  )
-    ax.set_xticks(ticks=settings, labels=[f"P{i + 1}" for i in range(len(df_result))], fontsize=20)
+    ax.set_yticks(
+        ticks=np.linspace(0, 3, 15),
+        labels=["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""],
+        fontsize=18,
+    )
+    ax.set_xticks(
+        ticks=settings, labels=[f"P{i + 1}" for i in range(len(df_result))], fontsize=20
+    )
     ax.grid()
 
     plt.xlabel(" ", fontsize=18)
@@ -1465,6 +1509,3 @@ def plot_hp_bar(df_result: pd.DataFrame,
     if save:
         plt.savefig(path + "plots/" + f"hp_{dataset_name}.png", dpi=1000)
     plt.show()
-
-
-

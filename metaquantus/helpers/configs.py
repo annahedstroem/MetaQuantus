@@ -16,15 +16,13 @@ from quantus.functions import (
     norm_func,
     normalise_func,
 )
+
 import torch
 import torchvision
-from metaquantus.helpers.models import LeNet, ResNet9
-from metaquantus.helpers.perturbation_tests.model_perturbation_test import (
-    ModelPerturbationTest,
-)
-from metaquantus.helpers.perturbation_tests.input_perturbation_test import (
-    InputPerturbationTest,
-)
+
+from .models import LeNet, ResNet9
+from ..perturbation_tests.mpt import ModelPerturbationTest
+from ..perturbation_tests.ipt import InputPerturbationTest
 
 
 def setup_xai_methods(
@@ -36,7 +34,7 @@ def setup_xai_methods(
         "Gradient": {},
         "Saliency": {},
         "IntegratedGradients": {},
-        "GradCAM": {
+        "LayerGradCam": {
             "gc_layer": gc_layer,
             "interpolate": (img_size, img_size),
             "interpolate_mode": "bilinear",
@@ -56,7 +54,7 @@ def setup_xai_settings(
         "Gradient": {},
         "Saliency": {},
         "IntegratedGradients": {},
-        "GradCAM": {
+        "LayerGradCam": {
             "gc_layer": gc_layer,
             "interpolate": (img_size, img_size),
             "interpolate_mode": "bilinear",
@@ -208,23 +206,6 @@ def setup_estimators(
                 ),
                 False,
             ),
-            # "Top-K Intersection": (quantus.TopKIntersection(
-            #    k=int((img_size*img_size)*percentage),
-            #    abs=False,
-            #    normalise=True,
-            #    normalise_func=normalise_func.normalise_by_average_second_moment_estimate,
-            #    return_aggregate=False,
-            #    aggregate_func=np.mean,
-            #    disable_warnings=True,
-            # ), False),
-            # "Relevance Rank Accuracy": (quantus.RelevanceRankAccuracy(
-            #    abs=False,
-            #    normalise=True,
-            #    normalise_func=normalise_func.normalise_by_average_second_moment_estimate,
-            #    return_aggregate=False,
-            #    aggregate_func=np.mean,
-            #    disable_warnings=True,
-            # ), False),
             "Relevance Mass Accuracy": (
                 quantus.RelevanceMassAccuracy(
                     abs=False,

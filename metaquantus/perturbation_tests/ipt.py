@@ -1,4 +1,4 @@
-"""This module contains the implementation for the Model Perturbation Test."""
+"""This module contains the implementation for the Input Perturbation Test."""
 
 # This file is part of MetaQuantus.
 # MetaQuantus is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
@@ -6,53 +6,47 @@
 # You should have received a copy of the GNU Lesser General Public License along with MetaQuantus. If not, see <https://www.gnu.org/licenses/>.
 
 from typing import Union, Dict, List, Any, Optional, Callable, Tuple
+import copy
 import gc
 import torch
 import numpy as np
 
+import quantus
 from quantus.helpers import utils
 from quantus.helpers.model.model_interface import ModelInterface
 from quantus.metrics.base import Metric, PerturbationMetric
 
 from .base import PerturbationTestBase
-from MetaQuantus.metaquantus.utils import generate_explanations
+from ..helpers.utils import generate_explanations
 
 
-class ModelPerturbationTest(PerturbationTestBase):
+class InputPerturbationTest(PerturbationTestBase):
     def __init__(
         self,
         type: str,
-        noise_type: str,
-        mean: float,
-        std: float,
+        noise: float,
     ):
         """
-        Implementation of Model Perturbation Test.
+        Implementation of Input Perturbation Test.
 
         Parameters
         ----------
         type: str
             The space which the perturbation is applied: either 'resilience' or 'adversary'.
-        noise_type: str
-            The type of noise applied: either 'multiplicative' or 'additive'.
-        mean: float
-            The mean of the normal distribution.
-        std: float
-            The mean of the normal distribution.
+        noise: float
+            Noise type
         """
         super().__init__()
+        self.noise = noise
         self.type = type.lower()
-        self.noise_type = noise_type
-        self.mean = mean
-        self.std = std
 
-        assert self.std != 0.0, "Model std ('std') cannot be zero."
+        assert self.noise != 0.0, "Model noise ('noise') cannot be zero."
 
     def __call__(
         self,
-        metric: Union[Metric, PerturbationMetric],
-        xai_methods: Dict[str, dict],
+        estimator: Union[Metric, PerturbationMetric],
         nr_perturbations: int,
+        xai_methods: Dict[str, dict],
         model: ModelInterface,
         x_batch: np.ndarray,
         y_batch: Optional[np.ndarray],
@@ -65,14 +59,14 @@ class ModelPerturbationTest(PerturbationTestBase):
         device: Optional[str],
     ) -> Tuple[dict, np.ndarray, dict]:
         """
-        This method runs the Model Perturbation Test.
+        This method runs the Input Perturbation Test.
 
         Parameters
         ----------
         estimator: metric, perturbationmetric
             The estimator to run the test on.
         nr_perturbations: int
-            The number of perturbation
+            The number of perturbations.
         xai_methods: dict
             A list of explanation methods.
         model: torch.nn
@@ -84,11 +78,11 @@ class ModelPerturbationTest(PerturbationTestBase):
         a_batch: np.array
             The explantions.
         s_batch: np.array
-            The segmentation masks
+            The segmentation masks.
         channel_first: bool
             Indicates if channels is first.
         explain_func: callable
-        The function used for creating the explanation.
+            The function used for creating the explanation.
         model_predict_kwargs: dict
             Extra kwargs when running model.predict.
         softmax: bool
@@ -111,23 +105,22 @@ class ModelPerturbationTest(PerturbationTestBase):
 
         for p in range(nr_perturbations):
 
-            # Create a perturbed model, to re-generate explanations with.
-            model_perturbed = utils.get_wrapped_model(
+            # Perturb the input.
+            x_batch_perturbed = copy.copy(x_batch)
+            x_batch_perturbed += np.random.uniform(
+                low=-self.noise,
+                high=self.noise,
+                size=x_batch_perturbed.shape,
+            )
+
+            # Clip the input so that it is within same domain.
+            x_batch_perturbed = np.clip(
+                x_batch_perturbed, x_batch.min(), x_batch_perturbed.max()
+            )
+
+            # Wrap the model.
+            model_wrapped = utils.get_wrapped_model(
                 model=model,
-                channel_first=channel_first,
-                softmax=softmax,
-                device=device,
-                model_predict_kwargs=model_predict_kwargs,
-            )
-
-            # Add noise to model weights.
-            model_perturbed = model_perturbed.sample(
-                mean=self.mean, std=self.std, noise_type=self.noise_type
-            )
-
-            # Wrap model.
-            model_perturbed = utils.get_wrapped_model(
-                model=model_perturbed,
                 channel_first=channel_first,
                 softmax=softmax,
                 device=device,
@@ -136,7 +129,7 @@ class ModelPerturbationTest(PerturbationTestBase):
 
             # Make predictions with perturbed input.
             y_preds_perturbed[p] = np.argmax(
-                model_perturbed.predict(torch.Tensor(x_batch)),
+                model_wrapped.predict(torch.Tensor(x_batch_perturbed)),
                 axis=1,
             ).astype(int)
 
@@ -154,22 +147,22 @@ class ModelPerturbationTest(PerturbationTestBase):
 
                 # Generate explanations based on predictions.
                 a_batch_preds = generate_explanations(
-                    model=model_perturbed.get_model(),
+                    model=model,
                     x_batch=x_batch,
                     y_batch=y_batch,
                     explain_func=explain_func,
                     explain_func_kwargs={**explain_func_kwargs, **{"method": method}},
-                    abs=metric.abs,
-                    normalise=metric.normalise,
-                    normalise_func=metric.normalise_func,
-                    normalise_func_kwargs=metric.normalise_func_kwargs,
+                    abs=estimator.abs,
+                    normalise=estimator.normalise,
+                    normalise_func=estimator.normalise_func,
+                    normalise_func_kwargs=estimator.normalise_func_kwargs,
                     device=device,
                 )
 
-                # Evaluate explanations with perturbed model.
-                scores[method][p] = metric(
-                    model=model_perturbed.get_model(),
-                    x_batch=x_batch,
+                # Evaluate explanations with perturbed input.
+                scores[method][p] = estimator(
+                    model=model,
+                    x_batch=x_batch_perturbed,
                     y_batch=y_batch,
                     a_batch=a_batch_preds,
                     s_batch=s_batch,
