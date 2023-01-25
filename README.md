@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="650" src="https://github.com/annahedstroem/MetaQuantus/blob/main/logo.png?raw=true">
+  <img width="450" src="https://github.com/annahedstroem/MetaQuantus/blob/main/logo.png?raw=true">
 </p>
 <!--<h1 align="center"><b>MetaQuantus</b></h1>-->
 <h3 align="center"><b>A XAI performance tool for performing meta-evaluation</b></h3>
