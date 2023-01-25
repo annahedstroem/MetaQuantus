@@ -6,7 +6,7 @@
 <p align="center">
   PyTorch
   
-  This repository contains the code and experimental results for the paper [The Meta-Evaluation Problem in Explainable AI: Rethinking Performance Estimation with MetaQuantus](anonymous). 
+This repository contains the code and experimental results for the paper [The Meta-Evaluation Problem in Explainable AI: Rethinking Performance Estimation with MetaQuantus](anonymous). 
 
 [![Getting started!](https://colab.research.google.com/assets/colab-badge.svg)](anonymous)
 [![Launch Tutorials](https://mybinder.org/badge_logo.svg)](anonymous)
@@ -19,18 +19,23 @@ _MetaQuantus is currently under active development so carefully note the release
 
 ## Motivation
 
-In Explainable AI, the problem of meta-evalaution, that is, the process of evaluating the evaluation method, is crucial but often overlooked. This is particularly important when selecting and quantitatively comparing explanation methods for a given model, dataset, and task. However, the use of multiple metrics or evalaution techqniues can lead to conflicting results. For example, scores from different metrics vary, both in range and direction, with lower or higher scores indicating higher quality explanations, making it difficult for practitioners to interpret the scores and select the best explanation method. 
-
+In Explainable AI, the problem of meta-evaluation, that is, the process of evaluating the evaluation method itself, is critical but often overlooked. This problem arises as we select and quantitatively compare explanation methods for a given model, dataset and task where the use of multiple metrics or evalaution techqniues oftentimes lead to conflicting results. For example, scores from different metrics vary, both in range and direction, with lower or higher scores indicating higher quality explanations, making it difficult for practitioners to interpret the scores and select the best explanation method. As illustrated in the Figure below, the two metrics, i.e, Faithfulness Correlation (FC) <a href="https://www.ijcai.org/Proceedings/2020/0417.pdf">(Bhatt et al., 2020)</a> and Pixel-Flipping (PF) <a href="https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0130140">(Bach et al., 2015)</a> rank the same explanation methods differently. For example., the Gradient method <a href="https://ieeexplore.ieee.org/document/488997/">(Mørch et al., 1995)</a> <a href="https://www.jmlr.org/papers/volume11/baehrens10a/baehrens10a.pdf">(Baehrens et al., 2010)</a> is both ranked the highest (R=1) and the lowest (R=3) depending on the metric used.
 </p>
 <p align="center">
   <img width="600" src="https://github.com/annahedstroem/MetaQuantus/blob/main/fig1-cmnist.png?raw=true">
 </p>
 
+
+
+With MetaQuantus, we address this problem by providing a simple yet comprehensive evalaution framework whose primary purpose is to provide an objective, independent view of the metric by evaluating it against two failure modes: resilience to noise and reactivity to adversary. In a similar way that software systems undergo vulnerability and penetration tests before deployment, this open-sourced tool is designed to stress test the evalaution methods, e.g., as provided by <a href="https://github.com/understandable-machine-intelligence-lab/Quantus">Quantus</a>.
+
 ## Library
 
-With MetaQuantus, we address this problem by providing a simple yet comprehensive framework whose primary purpose is to provide an objective, independent view of the estimator by evaluating it against two failure modes: resilience to noise and reactivity to adversary. In a similar way that software systems undergo vulnerability and penetration tests before deployment, this tool is designed to stress test the evalaution methods e.g., as provided by Quantus.
+MetaQuantus is the first open-sourced, general-purpose solution that support developers in XAI and ML with a theoretically-grounded, practical tool a meta-evaluate newly developed, or existing metrics. It provides a easy-to-use API that makes the selection of metrics easier. With a few lines of code, metrics can be evaluated and chosen in its unique explainability context. XAI explanation methods with minimal code. It includes:
 
-MetaQuantus is the first open-sourced, general-purpose solution that support developers in XAI and ML with a theoretically-grounded, practical tool a meta-evaluate newly developed, or existing metrics. It provides a easy-to-use API that makes the selection of metrics easier, with a few lines of code, metrics can be evaluated and chosen in its unique explainability context. XAI explanation methods with minimal code.
+- A series of pre-built tests (`ModelPerturbationTest` and `InputPertubrationTest`), applicable across a wide range of metrics
+- Supporting source code, e.g., plotting functionality
+- Various tutotrials e.g., [Getting-Started-with-MetaQuantus](anonymous) and [Reproduce-Experiments](anonymous)
 
 ## Installation
 
@@ -67,19 +72,21 @@ captum>=0.4.1
 ## Getting started
 
 Please see [
-Tutorial-Getting-Started-with-MetaQuantus.ipynb](anonymous) under tutorials/ folder to run code similar to this example. Note that [PyTorch](https://pytorch.org/) framework and the XAI evalaution library [Quantus](https://github.com/understandable-machine-intelligence-lab/Quantus) is needed to run MetaQuantus. 
+Tutorial-Getting-Started-with-MetaQuantus.ipynb](anonymous) under `tutorials/` folder to run code similar to the example given above. Note that [PyTorch](https://pytorch.org/) framework and the XAI evalaution library [Quantus](https://github.com/understandable-machine-intelligence-lab/Quantus) is needed to run `MetaQuantus`. 
 
 ## Reproduce the experiments
 
 To reproduce the results of this paper, you will need to follow these steps:
 
 1. **Dataset Generation**: Run the notebook [
-Tutorial-Data-Generation-Experiments.ipynb](anonymous) to generate the necessary data for the analysis. This notebook will guide you through the process of downloading and preprocessing the data. Make sure to follow the instructions carefully and to have all the necessary packages installed.
+Tutorial-Data-Generation-Experiments.ipynb](anonymous) to generate the necessary data for the experiments. This notebook will guide you through the process of downloading and preprocessing the data in order to save it to approriate test sets.
 
-2. **Results Analysis**: Once the data generation step is complete, run the [Tutorial-Reproduce-Experiments.ipynb](anonymous) to produce and analyse the results. In the notebook, we reference to different python files which allows you to run different experiments. These files are located in the scripts/ folder. Ensure to have GPUs enabled at this stage as this will speed up computation considerably. Also, make sure to adjust local path so that approriate files can be retrieved including having all the necessary packages installed. Please note that the results may slightly vary depending on the random seed and other hyperparameters, but the overall trends and conclusions should remain the same.
+2. **Results Analysis**: Once the dataset generation step is complete, run the [Tutorial-Reproduce-Experiments.ipynb](anonymous) to produce and analyse the results. Inside the notebook, for each experiment, we will describe which python scripts to run in order to produce the results. All these python files are located in the `scripts/` folder. Please note that the results may slightly vary depending on the random seed and other hyperparameters, but the overall trends and conclusions should remain the same.
+
+For both steps, make sure to adjust local paths so that the approriate files can be retrieved including having all the necessary packages installed. Ensure to have GPUs enabled throughout the computing as this will speed up the experimentation considerably. 
 
 <details>
-<summary><b><big>More details on how to run the scripts.</big></b></summary>
+<summary><b><big>More details on how to run the scripts for step 2.</big></b></summary>
 
 In the second step, you have to run the python scripts for the respective experiment as listed below (it is also referenced in the notebook). Feel free to change the hyperparameters if you want to run similar experiments on other explanation methods, datasets or models. 
 
