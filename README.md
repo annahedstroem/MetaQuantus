@@ -2,7 +2,7 @@
   <img width="650" src="https://github.com/annahedstroem/MetaQuantus/blob/main/logo.png?raw=true">
 </p>
 <!--<h1 align="center"><b>MetaQuantus</b></h1>-->
-<h3 align="center"><b>A XAI tool for Meta-Evaluation of evaluation metrics</b></h3>
+<h3 align="center"><b>A XAI performance tool for performing meta-evaluation</b></h3>
 <p align="center">
   PyTorch
   
@@ -67,10 +67,46 @@ Tutorial-Getting-Started-with-MetaQuantus.ipynb](anonymous) under tutorials/ fol
 
 To reproduce the results of this paper, you will need to follow these steps:
 
-1. Data Generation: Run the notebook [
+1. **Dataset Generation**: Run the notebook [
 Tutorial-Data-Generation-Experiments.ipynb](anonymous) to generate the necessary data for the analysis. This notebook will guide you through the process of downloading and preprocessing the data. Make sure to follow the instructions carefully and to have all the necessary packages installed.
 
-2. Results Analysis: Once the data generation step is complete, run the [
-Tutorial-Reproduce-Experiments.ipynb](anonymous) to analyse the results. Make sure to adjust local path so that approriate files can be retrieved including having all the necessary packages installed. Please note that the results may slightly vary depending on the random seed and other hyperparameters, but the overall trends and conclusions should remain the same.
+2. **Results Analysis**: Once the data generation step is complete, run the [Tutorial-Reproduce-Experiments.ipynb](anonymous) to produce and analyse the results. In the notebook, we reference to different python files which allows you to run different experiments. These files are located in the scripts/ folder. Ensure to have GPUs enabled at this stage as this will speed up computation considerably. Also, make sure to adjust local path so that approriate files can be retrieved including having all the necessary packages installed. Please note that the results may slightly vary depending on the random seed and other hyperparameters, but the overall trends and conclusions should remain the same.
 
+In the second setp, you have to run the python scripts for the respective experiment as listed below (it is also referenced in the notebook). Feel free to change the hyperparameters if you want to run similar experiments on other explanation methods, datasets or models. 
+
+Test -- Run a simple test that meta-evaluation work.
+```bash
+python3 run_test.py --dataset=ImageNet --K=3 --iters=2
+```
+
+Application -- Run the benchmarking experiments (also used for category convergence analysis).
+```bash
+python3 run_benchmarking.py --dataset=MNIST --fname=f --K=5 --iters=3
+python3 run_benchmarking.py --dataset=fMNIST --fname=f --K=5 --iters=3
+python3 run_benchmarking.py --dataset=cMNIST --fname=f --K=5 --iters=3
+```
+
+Application -- Run hyperparameter optimisation experiment.
+```bash
+python3 run_hp.py --dataset=MNIST --K=3 --iters=2
+python3 run_hp.py --dataset=ImageNet --K=3 --iters=2
+```
+
+Experiment -- Run the faithfulness ranking exercise.
+```bash
+python3 run_ranking.py --dataset=cMNIST --fname=f --K=5 --iters=3 --category=Faithfulness
+```
+
+Sanity-Check -- Run sanity-checking exercise: L dependency.
+```bash
+python3 run_l_dependency.py --dataset=MNIST --K=5 --iters=3
+python3 run_l_dependency.py --dataset=fMNIST --K=5 --iters=3
+python3 run_l_dependency.py --dataset=cMNIST --K=5 --iters=3
+```
+
+Sanity-Check -- Run sanity-checking exercise: adversarial estimators.
+```bash
+python3 run_hp.py --dataset=MNIST --K=3 --iters=2
+python3 run_sanity_checks.py --dataset=ImageNet --K=3 --iters=2
+```
 
