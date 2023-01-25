@@ -72,41 +72,45 @@ Tutorial-Data-Generation-Experiments.ipynb](anonymous) to generate the necessary
 
 2. **Results Analysis**: Once the data generation step is complete, run the [Tutorial-Reproduce-Experiments.ipynb](anonymous) to produce and analyse the results. In the notebook, we reference to different python files which allows you to run different experiments. These files are located in the scripts/ folder. Ensure to have GPUs enabled at this stage as this will speed up computation considerably. Also, make sure to adjust local path so that approriate files can be retrieved including having all the necessary packages installed. Please note that the results may slightly vary depending on the random seed and other hyperparameters, but the overall trends and conclusions should remain the same.
 
-In the second setp, you have to run the python scripts for the respective experiment as listed below (it is also referenced in the notebook). Feel free to change the hyperparameters if you want to run similar experiments on other explanation methods, datasets or models. 
+<details>
+<summary><b><big>More details on how to run the scripts.</big></b></summary>
 
-Test -- Run a simple test that meta-evaluation work.
+In the second step, you have to run the python scripts for the respective experiment as listed below (it is also referenced in the notebook). Feel free to change the hyperparameters if you want to run similar experiments on other explanation methods, datasets or models. 
+
+**Test**: Run a simple test that meta-evaluation work.
 ```bash
 python3 run_test.py --dataset=ImageNet --K=3 --iters=2
 ```
 
-Application -- Run the benchmarking experiments (also used for category convergence analysis).
+**Application**: Run the benchmarking experiments (also used for category convergence analysis).
 ```bash
 python3 run_benchmarking.py --dataset=MNIST --fname=f --K=5 --iters=3
 python3 run_benchmarking.py --dataset=fMNIST --fname=f --K=5 --iters=3
 python3 run_benchmarking.py --dataset=cMNIST --fname=f --K=5 --iters=3
 ```
 
-Application -- Run hyperparameter optimisation experiment.
+**Application**: Run hyperparameter optimisation experiment.
 ```bash
 python3 run_hp.py --dataset=MNIST --K=3 --iters=2
 python3 run_hp.py --dataset=ImageNet --K=3 --iters=2
 ```
 
-Experiment -- Run the faithfulness ranking exercise.
+**Experiment**: Run the faithfulness ranking disagreement exercise.
 ```bash
 python3 run_ranking.py --dataset=cMNIST --fname=f --K=5 --iters=3 --category=Faithfulness
 ```
 
-Sanity-Check -- Run sanity-checking exercise: L dependency.
+**Sanity-Check**: Run sanity-checking exercise: L dependency.
 ```bash
 python3 run_l_dependency.py --dataset=MNIST --K=5 --iters=3
 python3 run_l_dependency.py --dataset=fMNIST --K=5 --iters=3
 python3 run_l_dependency.py --dataset=cMNIST --K=5 --iters=3
 ```
 
-Sanity-Check -- Run sanity-checking exercise: adversarial estimators.
+**Sanity-Check**: Run sanity-checking exercise: adversarial estimators.
 ```bash
 python3 run_hp.py --dataset=MNIST --K=3 --iters=2
 python3 run_sanity_checks.py --dataset=ImageNet --K=3 --iters=2
 ```
 
+</details>
