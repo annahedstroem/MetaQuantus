@@ -9,6 +9,7 @@ from typing import Dict, List
 import numpy as np
 import torch
 
+import quantus
 from quantus import *
 import torch
 import torchvision

@@ -26,15 +26,16 @@ In Explainable AI, the problem of meta-evaluation, that is, the process of evalu
 </p>
 
 
-With MetaQuantus, we address this problem by providing a simple yet comprehensive evalaution framework whose primary purpose is to provide an objective, independent view of the metric by evaluating it against two failure modes: resilience to noise and reactivity to adversary. In a similar way that software systems undergo vulnerability and penetration tests before deployment, this open-sourced tool is designed to stress test the evalaution methods, e.g., as provided by <a href="https://github.com/understandable-machine-intelligence-lab/Quantus">Quantus</a>.
+With MetaQuantus, we address the problem of meta-evaluation by providing a simple yet comprehensive evaluation framework that evaluates metrics against two failure modes: resilience to noise and reactivity to adversaries. In a similar way that software systems undergo vulnerability and penetration tests before deployment, this open-sourced tool is designed to stress test the evalaution methods, e.g., as provided by <a href="https://github.com/understandable-machine-intelligence-lab/Quantus">Quantus</a>.
 
 ## Library
 
-MetaQuantus is the first open-sourced, general-purpose solution that support developers in XAI and ML with a theoretically-grounded, practical tool a meta-evaluate newly developed, or existing metrics. It provides a easy-to-use API that makes the selection of metrics easier. With a few lines of code, metrics can be evaluated and chosen in its unique explainability context. XAI explanation methods with minimal code. It includes:
+MetaQuantus is an open-source, general-purpose tool that helps developers in XAI and ML evaluate new or existing metrics. It offers an easy-to-use API that simplifies metric selection such that the explanation method selection in XAI can be performed more reliably, with minimal code. MetaQuantus includes:
 
-- A series of pre-built tests (`ModelPerturbationTest` and `InputPertubrationTest`), applicable across a wide range of metrics
-- Supporting source code, e.g., plotting functionality
-- Various tutotrials e.g., [Getting-Started-with-MetaQuantus](anonymous) and [Reproduce-Experiments](anonymous)
+- A series of pre-built tests such as `ModelPerturbationTest` and `InputPertubrationTest` that can be applied to various metrics
+- Supporting source code such as for plotting and analysis
+- Various tutorials e.g., [Getting-Started-with-MetaQuantus](anonymous) and [Reproduce-Experiments](anonymous)
+
 
 ## Installation
 
