@@ -11,8 +11,7 @@ import torch
 import numpy as np
 
 from .base import PerturbationTestBase
-from ..helpers.utils import generate_explanations
-from ..helpers import utils_quantus
+from ..helpers.utils import generate_explanations, get_wrapped_model
 
 
 class ModelPerturbationTest(PerturbationTestBase):
@@ -109,7 +108,7 @@ class ModelPerturbationTest(PerturbationTestBase):
         for p in range(nr_perturbations):
 
             # Create a perturbed model, to re-generate explanations with.
-            model_perturbed = utils_quantus.get_wrapped_model(
+            model_perturbed = get_wrapped_model(
                 model=model,
                 channel_first=channel_first,
                 softmax=softmax,
@@ -123,7 +122,7 @@ class ModelPerturbationTest(PerturbationTestBase):
             )
 
             # Wrap model.
-            model_perturbed = utils_quantus.get_wrapped_model(
+            model_perturbed = get_wrapped_model(
                 model=model_perturbed,
                 channel_first=channel_first,
                 softmax=softmax,

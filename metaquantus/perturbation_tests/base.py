@@ -12,6 +12,7 @@ import scipy
 import torch
 import quantus
 
+
 class PerturbationTestBase(ABC):
     """Implementation of base class for the PerturbationTest."""
 

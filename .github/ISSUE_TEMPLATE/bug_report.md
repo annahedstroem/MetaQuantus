@@ -21,4 +21,4 @@ assignees: ''
 
 ### Minimum acceptance criteria
 - Specify what is necessary for the issue to be closed.
-- @mentions of the person that is apt to review these changes e.g., @annahedstroem
+- @mentions of the person that is apt to review these changes

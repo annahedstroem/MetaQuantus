@@ -12,8 +12,7 @@ import torch
 import numpy as np
 
 from .base import PerturbationTestBase
-from ..helpers.utils import generate_explanations
-from ..helpers import utils_quantus
+from ..helpers.utils import generate_explanations, get_wrapped_model
 
 
 class InputPerturbationTest(PerturbationTestBase):
@@ -115,7 +114,7 @@ class InputPerturbationTest(PerturbationTestBase):
             )
 
             # Wrap the model.
-            model_wrapped = utils_quantus.get_wrapped_model(
+            model_wrapped = get_wrapped_model(
                 model=model,
                 channel_first=channel_first,
                 softmax=softmax,
