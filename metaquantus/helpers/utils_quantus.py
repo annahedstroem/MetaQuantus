@@ -104,6 +104,8 @@ def infer_attribution_axes(a_batch: np.ndarray, x_batch: np.ndarray) -> Sequence
     """
     Infers the axes in x_batch that are covered by a_batch.
 
+    Source code: https://github.com/understandable-machine-intelligence-lab/Quantus
+
     Parameters
     ----------
     x_batch: np.ndarray

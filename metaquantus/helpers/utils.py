@@ -16,7 +16,7 @@ import pickle
 import scipy
 import pathlib
 
-from ..helpers.utils_quantus import expand_attribution_channel
+from ..helpers import utils_quantus
 
 
 def generate_explanations(
@@ -79,7 +79,7 @@ def generate_explanations(
     )
 
     # Expand attributions to input dimensionality, asserts and inference of axes.
-    a_batch = utils.expand_attribution_channel(a_batch, x_batch)
+    a_batch = utils_quantus.expand_attribution_channel(a_batch, x_batch)
 
     # Normalise with specified keyword arguments if requested.
     if normalise:

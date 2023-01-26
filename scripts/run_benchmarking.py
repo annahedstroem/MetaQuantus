@@ -14,7 +14,7 @@ from metaquantus import (
 )
 
 PATH_ASSETS = "../assets/"
-PATH_RESULTS = "/home/amlh/Projects/MetaQuantus/results/"
+PATH_RESULTS = "../results/"
 
 if __name__ == "__main__":
 

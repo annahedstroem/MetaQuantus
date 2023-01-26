@@ -84,7 +84,6 @@ class MetaEvaluation:
         self.intra_measure = intra_measure
         self.uid = uid
         self.sanity_check = sanity_check
-        self.debug = debug
 
         # Init empty data holders for results.
         self.results_eval_scores = {k: {} for k in self.test_suite}

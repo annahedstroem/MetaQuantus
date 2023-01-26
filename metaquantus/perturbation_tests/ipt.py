@@ -13,7 +13,7 @@ import numpy as np
 
 from .base import PerturbationTestBase
 from ..helpers.utils import generate_explanations
-from ..helpers.utils_quantus import get_wrapped_model
+from ..helpers import utils_quantus
 
 
 class InputPerturbationTest(PerturbationTestBase):
@@ -115,7 +115,7 @@ class InputPerturbationTest(PerturbationTestBase):
             )
 
             # Wrap the model.
-            model_wrapped = utils.get_wrapped_model(
+            model_wrapped = utils_quantus.get_wrapped_model(
                 model=model,
                 channel_first=channel_first,
                 softmax=softmax,

@@ -14,7 +14,7 @@ from metaquantus import (
 )
 
 PATH_ASSETS = "../assets/"
-PATH_RESULTS = "/home/amlh/Projects/MetaQuantus/results/"
+PATH_RESULTS = "../results/"
 
 
 def create_fname(xai_setting_name, estimators):

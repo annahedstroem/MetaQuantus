@@ -30,9 +30,9 @@ setup(
         "MetaQuantus"
     ],
     #extras_require=EXTRAS,
-    url="http://github.com/understandable-machine-intelligence-lab/MetaQuantus",
-    author="Anna Hedstrom",
-    author_email="hedstroem.anna@gmail.com",
+    url="anonymous",
+    author="anonymous",
+    author_email="anonymous",
     keywords=["explainable ai", "evaluation", "xai", "machine learning", "deep learning"],
     license="GNU LESSER GENERAL PUBLIC LICENSE VERSION 3",
     packages=find_packages(),
