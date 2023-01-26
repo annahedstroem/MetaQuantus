@@ -3,17 +3,37 @@ import pickle
 import torch
 import numpy as np
 
-CIFAR_IMAGE_SIZE = 32
-MNIST_IMAGE_SIZE = 28
-MINI_BATCH_SIZE = 8
-
+import metaquantus
+from metaquantus import setup_dataset_models
 
 @pytest.fixture(scope="session", autouse=True)
-def load_mnist_model():
-    """Load a pre-trained LeNet classification model (architecture at quantus/helpers/models)."""
-    model = LeNet()
-    model.load_state_dict(
-        torch.load("tests/assets/mnist", map_location="cpu", pickle_module=pickle)
-    )
-    return model
+def load_cmnist_experimental_settings():
+    """Load the experimental settings for cMNIST dataset."""
 
+    dataset_name = "cMNIST"
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+    dataset_settings, model_name = setup_dataset_models(
+        dataset_name=dataset_name, path_assets="tests/assets/", device=device
+    )
+    dataset_kwargs = dataset_settings[dataset_name]["estimator_kwargs"]
+
+    return dataset_settings
+
+@pytest.fixture(scope="session", autouse=True)
+def load_cmnist_experimental_settings():
+    """Load the experimental settings for cMNIST dataset."""
+
+    dataset_name = "cMNIST"
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+    dataset_settings, model_name = setup_dataset_models(
+        dataset_name=dataset_name, path_assets="tests/assets/", device=device
+    )
+    return dataset_settings["cMNIST"], model_name
+
+
+
+
+
+"""python -m pytest"""
