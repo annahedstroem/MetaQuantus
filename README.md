@@ -6,7 +6,7 @@
 <p align="center">
   PyTorch
   
-This repository contains the code and experimental results for the paper [The Meta-Evaluation Problem in Explainable AI: Rethinking Performance Estimation with MetaQuantus](anonymous). 
+This repository contains the code and experimental results for the paper [The Meta-Evaluation Problem in Explainable AI: Identifying Reliable Estimators with MetaQuantus](anonymous). 
 
 [![Getting started!](https://colab.research.google.com/assets/colab-badge.svg)](anonymous)
 [![Launch Tutorials](https://mybinder.org/badge_logo.svg)](anonymous)
