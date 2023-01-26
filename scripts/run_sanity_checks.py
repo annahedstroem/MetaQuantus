@@ -102,7 +102,7 @@ if __name__ == "__main__":
 
     # Define master NR!
     master_nr = MetaEvaluation(
-        analyser_suite=analyser_suite,
+        test_suite=analyser_suite,
         xai_methods=xai_methods,
         iterations=iters,
         fname="Estimator_Different",
@@ -127,7 +127,7 @@ if __name__ == "__main__":
 
     # Define master AR!
     master_ar = MetaEvaluation(
-        analyser_suite=analyser_suite,
+        test_suite=analyser_suite,
         xai_methods=xai_methods,
         iterations=iters,
         fname="Estimator_Same",

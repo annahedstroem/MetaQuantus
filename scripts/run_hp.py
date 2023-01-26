@@ -105,7 +105,7 @@ if __name__ == "__main__":
 
     # Define master!
     master = MetaEvaluation(
-        analyser_suite=analyser_suite,
+        test_suite=analyser_suite,
         xai_methods=xai_methods,
         iterations=iters,
         fname="hp",

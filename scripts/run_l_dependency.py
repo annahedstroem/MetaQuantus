@@ -4,8 +4,7 @@ import argparse
 import torch
 
 import metaquantus
-from metaquantus import MetaEvaluation
-from metaquantus import MetaEvaluationBenchmarking
+from metaquantus import MetaEvaluation, MetaEvaluationBenchmarking
 from metaquantus import (
     setup_estimators,
     setup_xai_settings,
@@ -147,7 +146,7 @@ if __name__ == "__main__":
 
         # Define master!
         master = MetaEvaluation(
-            analyser_suite=analyser_suite,
+            test_suite=analyser_suite,
             xai_methods=xai_methods,
             iterations=iters,
             fname=create_fname(

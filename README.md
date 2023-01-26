@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="450" src="https://github.com/annahedstroem/MetaQuantus/blob/main/logo.png?raw=true">
+  <img width="450" src="logo.png">
 </p>
 <!--<h1 align="center"><b>MetaQuantus</b></h1>-->
 <h3 align="center"><b>A XAI performance tool for identifying reliable metrics</b></h3>
@@ -22,7 +22,7 @@ _MetaQuantus is currently under active development so carefully note the release
 In Explainable AI, the problem of meta-evaluation, that is, the process of evaluating the evaluation method itself, is critical but often overlooked. This problem arises as we select and quantitatively compare explanation methods for a given model, dataset and task---where the use of multiple metrics or evaluation techniques oftentimes lead to conflicting results. For example, scores from different metrics vary, both in range and direction, with lower or higher scores indicating higher quality explanations, making it difficult for practitioners to interpret the scores and select the best explanation method. As illustrated in the Figure below, the two metrics, i.e, Faithfulness Correlation (FC) <a href="https://www.ijcai.org/Proceedings/2020/0417.pdf">(Bhatt et al., 2020)</a> and Pixel-Flipping (PF) <a href="https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0130140">(Bach et al., 2015)</a> rank the same explanation methods differently. For example., the Gradient method <a href="https://ieeexplore.ieee.org/document/488997/">(Mørch et al., 1995)</a> <a href="https://www.jmlr.org/papers/volume11/baehrens10a/baehrens10a.pdf">(Baehrens et al., 2010)</a> is both ranked the highest (R=1) and the lowest (R=3) depending on the metric used.
 </p>
 <p align="center">
-  <img width="600" src="https://github.com/annahedstroem/MetaQuantus/blob/main/fig1-cmnist.png?raw=true">
+  <img width="600" src="fig1-cmnist.png">
 </p>
 
 

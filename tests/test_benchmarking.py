@@ -89,7 +89,7 @@ def test_benchmarking(
         write_to_file=False,
     )
 
-    # Benchmark localisation metrics, using the intialised meta-evaluator.
+    # Benchmark a category of metrics, using the intialised meta-evaluator.
     benchmark = MetaEvaluationBenchmarking(
         master=meta_evaluator,
         estimators=estimators_category,
