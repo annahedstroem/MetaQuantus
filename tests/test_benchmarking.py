@@ -70,7 +70,7 @@ def test_benchmarking(
         patch_size=dataset_kwargs["patch_size"],
         perturb_baseline=dataset_kwargs["perturb_baseline"],
     )
-    estimators_localisation = {estimator_category: estimators[estimator_category]}
+    estimators_category = {estimator_category: estimators[estimator_category]}
 
     ########################
     # Master run settings. #
@@ -92,7 +92,7 @@ def test_benchmarking(
     # Benchmark localisation metrics, using the intialised meta-evaluator.
     benchmark = MetaEvaluationBenchmarking(
         master=meta_evaluator,
-        estimators=estimators_localisation,
+        estimators=estimators_category,
         experimental_settings=dataset_settings,
         write_to_file=False,
         keep_results=True,

@@ -26,6 +26,23 @@ MINI_BATCH = 5
             "Sparseness",
             {"min": 0, "max": 1},
         ),
+        (
+            lazy_fixture("load_cmnist_experimental_settings"),
+            ["IntegratedGradients", "LayerGradCam"],
+            lazy_fixture("load_test_suite"),
+            "Localisation",
+            "Pointing-Game",
+            {"min": 0, "max": 1},
+        ),
+        (
+            lazy_fixture("load_cmnist_experimental_settings"),
+            ["Saliency", "Gradient"],
+            lazy_fixture("load_test_suite"),
+            "Complexity",
+            "Complexity",
+            {"min": 0, "max": 1},
+        ),
+
     ],
 )
 def test_meta_evaluation(
@@ -51,25 +68,6 @@ def test_meta_evaluation(
         img_size=dataset_kwargs["img_size"],
         nr_channels=dataset_kwargs["nr_channels"],
     )
-    #torch.autograd.set_detect_anomaly(False)
-
-    # Generate explanations.
-    #explanations = {}
-    #for method, kwargs in xai_methods.items():
-        #model = model.eval().cpu()
-        #explanations[method] = quantus.explain(model=model, inputs=x_batch[:MINI_BATCH], targets=y_batch[:MINI_BATCH], **{**{"method": method}, **kwargs})
-
-        #for module in model.modules():
-        #    if isinstance(module, torch.nn.ReLU):
-        #        module.inplace = False
-        #model = model.cpu()
-        #inputs = copy.copy(x_batch)
-        #targets = copy.copy(y_batch)
-        #if not isinstance(x_batch, torch.Tensor):
-        #    inputs = torch.Tensor(inputs).cpu()
-        #if not isinstance(y_batch, torch.Tensor):
-        #    targets = torch.as_tensor(targets).cpu()
-        # Saliency(model).attribute(inputs=inputs, target=targets)
 
     # Get estimators.
     estimators = setup_estimators(
