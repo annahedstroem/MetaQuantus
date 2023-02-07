@@ -13,7 +13,7 @@ import os
 def load_cmnist_experimental_settings():
     """Load the experimental settings for cMNIST dataset."""
 
-    print(os.getcwd())
+    print("PATH!!!!!", os.getcwd())
     dataset_name = "cMNIST"
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
