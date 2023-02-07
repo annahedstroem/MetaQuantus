@@ -86,6 +86,7 @@ def test_benchmarking_mnist(
         channel_first=True,
         softmax=False,
         device=device,
+        path="tests/assets/results/",
     )()
     estimator_names = list(benchmark.results[dataset_name][model_name][estimator_category].keys())
 
