@@ -31,7 +31,7 @@ def load_mnist_experimental_settings():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     dataset_settings, model_name = setup_dataset_models(
-        dataset_name=dataset_name, path_assets="assets/", device=device
+        dataset_name=dataset_name, path_assets="tests/assets/", device=device
     )
     dataset_kwargs = dataset_settings[dataset_name]["estimator_kwargs"]
 
@@ -46,7 +46,7 @@ def load_fmnist_experimental_settings():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     dataset_settings, model_name = setup_dataset_models(
-        dataset_name=dataset_name, path_assets="assets/", device=device
+        dataset_name=dataset_name, path_assets="tests/assets/", device=device
     )
     dataset_kwargs = dataset_settings[dataset_name]["estimator_kwargs"]
 
