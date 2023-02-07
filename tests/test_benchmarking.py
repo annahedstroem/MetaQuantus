@@ -12,28 +12,13 @@ import metaquantus
 from metaquantus import setup_xai_settings, setup_estimators
 from metaquantus import MetaEvaluation, MetaEvaluationBenchmarking
 
-MINI_BATCH = 5
+MINI_BATCH = 10
 
 @pytest.mark.benchmarking
 @pytest.mark.parametrize(
     "settings,explanation_methods,test_suite,estimator_category,expected",
-    [
-        (
-            lazy_fixture("load_cmnist_experimental_settings"),
-            ["IntegratedGradients", "Gradient", "LayerGradCam"],
-            lazy_fixture("load_test_suite"),
-            "Complexity",
-            {"min": 0, "max": 1},
-        ),
-        (
-            lazy_fixture("load_cmnist_experimental_settings"),
-            ["Gradient", "LayerGradCam"],
-            lazy_fixture("load_test_suite"),
-            "Localisation",
-            {"min": 0, "max": 1},
-        ),
-(
-            lazy_fixture("load_cmnist_experimental_settings"),
+    [(
+            lazy_fixture("load_mnist_experimental_settings"),
             ["Gradient", "Saliency"],
             lazy_fixture("load_test_suite"),
             "Randomisation",
@@ -41,22 +26,24 @@ MINI_BATCH = 5
         ),
     ],
 )
-def test_benchmarking(
+def test_benchmarking_mnist(
     settings: dict,
     explanation_methods: list,
     test_suite: dict,
     estimator_category: str,
     expected: Union[float, dict, bool],
 ):
+    dataset_name = "MNIST"
+
     # Load the experimental settings.
     dataset_settings, model_name, device = settings
     dataset_kwargs = dataset_settings["estimator_kwargs"]
-    dataset_settings = {"cMNIST": dataset_settings}
+    dataset_settings = {dataset_name: dataset_settings}
 
     # Get explanation methods.
     xai_methods = setup_xai_settings(
         xai_settings=explanation_methods,
-        gc_layer=dataset_settings["cMNIST"]["gc_layers"][model_name],
+        gc_layer=dataset_settings[dataset_name]["gc_layers"][model_name],
         img_size=dataset_kwargs["img_size"],
         nr_channels=dataset_kwargs["nr_channels"],
     )

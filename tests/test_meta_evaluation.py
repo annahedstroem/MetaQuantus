@@ -12,8 +12,7 @@ import metaquantus
 from metaquantus import setup_xai_settings, setup_estimators
 from metaquantus import MetaEvaluation
 
-MINI_BATCH = 5
-
+MINI_BATCH = 10
 
 
 @pytest.mark.meta_evaluation
@@ -117,9 +116,6 @@ def test_meta_evaluation_mnist(
 
     scores_1 = np.array(list(meta_evaluator.results_meta_consistency_scores["Model"]["consistency_results"].values()))
     scores_2 = np.array(list(meta_evaluator.results_meta_consistency_scores["Input"]["consistency_results"].values()))
-
-    print(type(scores_1), scores_1)
-    print(type(scores_2), scores_2)
 
     assert np.all(
         ((scores_1 >= expected["min"]) & (scores_1 <= expected["max"])
@@ -228,9 +224,6 @@ def test_meta_evaluation_fmnist(
 
     scores_1 = np.array(list(meta_evaluator.results_meta_consistency_scores["Model"]["consistency_results"].values()))
     scores_2 = np.array(list(meta_evaluator.results_meta_consistency_scores["Input"]["consistency_results"].values()))
-
-    print(type(scores_1), scores_1)
-    print(type(scores_2), scores_2)
 
     assert np.all(
         ((scores_1 >= expected["min"]) & (scores_1 <= expected["max"])
