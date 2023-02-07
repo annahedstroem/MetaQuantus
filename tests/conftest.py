@@ -7,13 +7,11 @@ import metaquantus
 from metaquantus import setup_dataset_models
 from metaquantus import ModelPerturbationTest, InputPerturbationTest
 
-import os
 
 @pytest.fixture(scope="session", autouse=True)
 def load_cmnist_experimental_settings():
     """Load the experimental settings for cMNIST dataset."""
 
-    print("PATH!!!!!", os.getcwd())
     dataset_name = "cMNIST"
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -22,7 +20,37 @@ def load_cmnist_experimental_settings():
     )
     dataset_kwargs = dataset_settings[dataset_name]["estimator_kwargs"]
 
-    return dataset_settings["cMNIST"], model_name, device
+    return dataset_settings[dataset_name], model_name, device
+
+
+@pytest.fixture(scope="session", autouse=True)
+def load_mnist_experimental_settings():
+    """Load the experimental settings for cMNIST dataset."""
+
+    dataset_name = "MNIST"
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+    dataset_settings, model_name = setup_dataset_models(
+        dataset_name=dataset_name, path_assets="assets/", device=device
+    )
+    dataset_kwargs = dataset_settings[dataset_name]["estimator_kwargs"]
+
+    return dataset_settings[dataset_name], model_name, device
+
+
+@pytest.fixture(scope="session", autouse=True)
+def load_fmnist_experimental_settings():
+    """Load the experimental settings for cMNIST dataset."""
+
+    dataset_name = "fMNIST"
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+    dataset_settings, model_name = setup_dataset_models(
+        dataset_name=dataset_name, path_assets="assets/", device=device
+    )
+    dataset_kwargs = dataset_settings[dataset_name]["estimator_kwargs"]
+
+    return dataset_settings[dataset_name], model_name, device
 
 
 @pytest.fixture(scope="session", autouse=True)

@@ -104,12 +104,14 @@ def test_benchmarking(
 
     for estimator_name in estimator_names:
 
-        scores_1 = benchmark.results["cMNIST"][model_name][estimator_category][estimator_name][
+        scores_1 = np.array(
+            list(benchmark.results["cMNIST"][model_name][estimator_category][estimator_name][
             "results_meta_consistency_scores"
-        ]["Model"]["consistency_results"].values()
-        scores_2 = benchmark.results["cMNIST"][model_name][estimator_category][estimator_name][
+        ]["Model"]["consistency_results"].values()))
+        scores_2 = np.array(
+            list(benchmark.results["cMNIST"][model_name][estimator_category][estimator_name][
             "results_meta_consistency_scores"
-        ]["Input"]["consistency_results"].values()
+        ]["Input"]["consistency_results"].values()))
 
         assert np.all(
             ((scores_1 >= expected["min"]) & (scores_1 <= expected["max"])
