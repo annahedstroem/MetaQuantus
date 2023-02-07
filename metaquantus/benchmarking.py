@@ -27,6 +27,7 @@ class MetaEvaluationBenchmarking:
         path: str = "/content/drive/MyDrive/Projects/MetaQuantus/results/",
         folder: str = "benchmarks/",
         write_to_file: bool = True,
+        save: bool = False,
         keep_results: bool = False,
         channel_first: Optional[bool] = True,
         softmax: Optional[bool] = False,
@@ -45,6 +46,8 @@ class MetaEvaluationBenchmarking:
             A dictionary of the experimental settings including model, data, label etc.
         path: str
             The path for saving the plot.
+        save: boolean
+            Indicates if writing benchmarking file.
         folder: str
             The folder name.
         write_to_file: boolean
@@ -67,6 +70,7 @@ class MetaEvaluationBenchmarking:
         self.experimental_settings = experimental_settings
         self.keep_results = keep_results
         self.path = path
+        self.save = save
         self.folder = folder
         self.write_to_file = write_to_file
         self.channel_first = channel_first
@@ -174,12 +178,13 @@ class MetaEvaluationBenchmarking:
             if fname.endswith("_"):
                 fname = fname[:-1]
 
-            dump_obj(
-                obj=self.results,
-                path=self.path + self.folder,
-                fname=fname,
-                use_json=True,
-            )
+            if self.save:
+                dump_obj(
+                    obj=self.results,
+                    path=self.path + self.folder,
+                    fname=fname,
+                    use_json=True,
+                )
 
         print(f"Benchmarking completed (stored in {self.path + self.folder + fname}).")
 
