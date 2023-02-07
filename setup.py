@@ -21,7 +21,7 @@ else:
 
 # Define setup.
 setup(
-    name="MetaQuantus",
+    name="metaquantus",
     version="0.0.1",
     description="MetaQuantus is a toolkit to estimate performance of evaluator of explanation quality.",
     long_description=open("README.md", "r").read(),
@@ -35,7 +35,7 @@ setup(
     ],
     # extras_require=EXTRAS,
     url="https://github.com/annahedstroem/MetaQuantus",
-    author="Anna Hedström",
+    author="Anna Hedstrom",
     author_email="hedstroem.anna@gmail.com",
     keywords=[
         "explainable ai",
