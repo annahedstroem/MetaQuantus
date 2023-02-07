@@ -10,14 +10,22 @@
 This repository contains the code and experimental results for the paper [The Meta-Evaluation Problem in Explainable AI: Identifying Reliable Estimators with MetaQuantus](anonymous). 
 
 [![Getting started!](https://colab.research.google.com/assets/colab-badge.svg)](anonymous)
-[![Launch Tutorials](https://mybinder.org/badge_logo.svg)](anonymous)
 ![Python version](https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9-blue.svg)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+<!--[![Launch Tutorials](https://mybinder.org/badge_logo.svg)](anonymous)-->
 <!--[![Python package](https://github.com/understandable-machine-intelligence-lab/Quantus/actions/workflows/python-package.yml/badge.svg)](https://github.com/understandable-machine-intelligence-lab/Quantus/actions/workflows/python-package.yml)-->
 <!--[![PyPI version](https://badge.fury.io/py/metaquantus.svg)](https://badge.fury.io/py/metaquantus)-->
 
 _MetaQuantus is currently under active development so carefully note the release version to ensure reproducibility of your work._
 
+## Table of Contents
+1. [Motivation](#motivation)
+2. [Library](#library)
+3. [Installation](#installation)
+4. [Getting started](#getting-started)
+5. [MetaQuantus methodology](#metaquantus-methodology)
+6. [Reproduce the experiments](#reproduce-the-experiments)
+  
 ## Motivation
 
 In Explainable AI (XAI), the problem of meta-evaluation (i.e., the process of evaluating the evaluation method itself) arises as we select and quantitatively compare explanation methods for a given model, dataset and task---where the use of multiple metrics or evaluation techniques oftentimes lead to conflicting results. For example, scores from different metrics vary, both in range and direction, with lower or higher scores indicating higher quality explanations, making it difficult for practitioners to interpret the scores and select the best explanation method. 
@@ -29,19 +37,7 @@ As illustrated in the Figure below, the two metrics, Faithfulness Correlation (F
   <img width="600" src="fig1-cmnist.png">
 </p>
 
-With MetaQuantus, we address the problem of meta-evaluation by providing a simple yet comprehensive evaluation framework that evaluates metrics against two failure modes: resilience to noise (NR) and reactivity to adversaries (AR). In a similar way that software systems undergo vulnerability and penetration tests before deployment, this open-sourced tool is designed to stress test the evalaution methods, e.g., as provided by <a href="https://github.com/understandable-machine-intelligence-lab/Quantus">Quantus</a>. We release our work under an open-source license to serve as a development tool for XAI researchers and Machine Learning (ML) practitioners to verify and benchmark newly constructed metrics (i.e., ``quality estimators'').
-
-### Methodology steps
-
-Meta-evaluation of quality estimators is performed in 3 steps: (1) Perturbing, (2) Scoring and (3) Integrating. 
-  1. **Perturbing.** A minor or disruptive perturbation is induced depending on the failure mode: NR or AR.
-  2. **Scoring.** To assess each performance dimension, the estimator’s IAC and IEC scores are calculated. 
-  3. **Integrating.** We combine the IAC and IEC scores to produce an MC score that summarises the estimator’s performance.
-
-</p>
-<p align="center">
-  <img width="1000" src="fig4.png">
-</p>
+With MetaQuantus, we address the problem of meta-evaluation by providing a simple yet comprehensive evaluation framework that evaluates metrics against two failure modes: resilience to noise (NR) and reactivity to adversaries (AR). In a similar way that software systems undergo vulnerability and penetration tests before deployment, this open-sourced tool is designed to stress test the evalaution methods, e.g., as provided by <a href="https://github.com/understandable-machine-intelligence-lab/Quantus">Quantus</a>. MetaQuantus is meant to serve as a development tool for XAI researchers and Machine Learning (ML) practitioners to verify and benchmark newly constructed metrics (i.e., ``quality estimators'').
 
 ## Library
 
@@ -95,6 +91,18 @@ captum>=0.4.1
 
 Please see [
 Tutorial-Getting-Started-with-MetaQuantus.ipynb](anonymous) under `tutorials/` folder to run code similar to the example given above. Note that [PyTorch](https://pytorch.org/) framework and the XAI evalaution library [Quantus](https://github.com/understandable-machine-intelligence-lab/Quantus) is needed to run `MetaQuantus`. 
+
+## MetaQuantus methodology
+
+Meta-evaluation of quality estimators is performed in 3 steps: (1) Perturbing, (2) Scoring and (3) Integrating. 
+  1. **Perturbing.** A minor or disruptive perturbation is induced depending on the failure mode: NR or AR.
+  2. **Scoring.** To assess each performance dimension, the estimator’s IAC and IEC scores are calculated. 
+  3. **Integrating.** We combine the IAC and IEC scores to produce an MC score that summarises the estimator’s performance.
+
+</p>
+<p align="center">
+  <img width="1000" src="fig4.png">
+</p>
 
 ## Reproduce the experiments
 
