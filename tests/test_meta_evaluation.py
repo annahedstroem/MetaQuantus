@@ -31,8 +31,8 @@ MINI_BATCH = 10
             lazy_fixture("load_mnist_experimental_settings"),
             ["Saliency", "Gradient"],
             lazy_fixture("load_test_suite"),
-            "Complexity",
-            "Complexity",
+            "Randomisation",
+            "Random Logit",
             {"min": 0, "max": 1},
         ),
 
