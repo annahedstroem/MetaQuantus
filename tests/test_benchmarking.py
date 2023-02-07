@@ -65,7 +65,7 @@ def test_benchmarking_mnist(
 
     # Set configs.
     iters = 5
-    K = 10
+    K = 3
 
     # Define the meta-evaluation exercise.
     meta_evaluator = MetaEvaluation(

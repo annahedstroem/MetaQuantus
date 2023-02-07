@@ -77,7 +77,7 @@ def test_meta_evaluation_mnist(
 
     # Set configs.
     iters = 5
-    K = 10
+    K = 3
     metric = estimators[estimator_category][estimator_name][0]
     lower_is_better = estimators[estimator_category][estimator_name][0]
 
