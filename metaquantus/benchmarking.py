@@ -113,7 +113,7 @@ class MetaEvaluationBenchmarking:
 
                         # Update attributes of master, make sure to save every run of master.
                         self.master.fname = f"{dataset_name}_{model_name}_{estimator_category}_{estimator_name}_{self.name}"
-                        self.master.write_to_file = True
+                        self.master.write_to_file = self.write_to_file
                         self.master.uid = uid
                         self.master.path = self.path + f"{dataset_name}/"
 
