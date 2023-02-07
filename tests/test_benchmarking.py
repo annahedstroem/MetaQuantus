@@ -87,6 +87,7 @@ def test_benchmarking_mnist(
         softmax=False,
         device=device,
         path="tests/assets/results/",
+        save=False,
     )()
     estimator_names = list(benchmark.results[dataset_name][model_name][estimator_category].keys())
 
