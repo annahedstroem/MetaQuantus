@@ -1,6 +1,6 @@
 import pytest
 import copy
-
+import os
 from typing import Union
 from pytest_lazyfixture import lazy_fixture
 import numpy as np
@@ -86,7 +86,7 @@ def test_benchmarking_mnist(
         channel_first=True,
         softmax=False,
         device=device,
-        path="tests/assets/results/",
+        path=os.getcwd()+"tests/assets/results/",
         save=False,
     )()
     estimator_names = list(benchmark.results[dataset_name][model_name][estimator_category].keys())

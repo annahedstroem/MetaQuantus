@@ -91,7 +91,6 @@ def test_meta_evaluation_mnist(
     )
 
     # Run the meta-evaluation.
-    #model = model.eval().cpu()
     meta_evaluator(
         estimator=metric,
         model=model,
@@ -127,11 +126,11 @@ def test_meta_evaluation_mnist(
             {"min": 0, "max": 1},
         ),
         (
-            lazy_fixture("load_fmnist_experimental_settings"),
+            lazy_fixture("load_mnist_experimental_settings"),
             ["Saliency", "Gradient"],
             lazy_fixture("load_test_suite"),
-            "Complexity",
-            "Complexity",
+            "Randomisation",
+            "Random Logit",
             {"min": 0, "max": 1},
         ),
     ],
@@ -190,7 +189,6 @@ def test_meta_evaluation_fmnist(
     )
 
     # Run the meta-evaluation.
-    #model = model.eval().cpu()
     meta_evaluator(
         estimator=metric,
         model=model,
@@ -228,11 +226,11 @@ def test_meta_evaluation_fmnist(
             {"min": 0, "max": 1},
         ),
         (
-            lazy_fixture("load_cmnist_experimental_settings"),
+            lazy_fixture("load_mnist_experimental_settings"),
             ["Saliency", "Gradient"],
             lazy_fixture("load_test_suite"),
-            "Complexity",
-            "Complexity",
+            "Randomisation",
+            "Random Logit",
             {"min": 0, "max": 1},
         ),
 
@@ -292,7 +290,6 @@ def test_meta_evaluation_cmnist(
     )
 
     # Run the meta-evaluation.
-    #model = model.eval().cpu()
     meta_evaluator(
         estimator=metric,
         model=model,
