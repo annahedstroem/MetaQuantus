@@ -87,16 +87,16 @@ def test_benchmarking_mnist(
         softmax=False,
         device=device,
     )()
-    estimator_names = list(benchmark.results["cMNIST"][model_name][estimator_category].keys())
+    estimator_names = list(benchmark.results[dataset_name][model_name][estimator_category].keys())
 
     for estimator_name in estimator_names:
 
         scores_1 = np.array(
-            list(benchmark.results["cMNIST"][model_name][estimator_category][estimator_name][
+            list(benchmark.results[dataset_name][model_name][estimator_category][estimator_name][
             "results_meta_consistency_scores"
         ]["Model"]["consistency_results"].values()))
         scores_2 = np.array(
-            list(benchmark.results["cMNIST"][model_name][estimator_category][estimator_name][
+            list(benchmark.results[dataset_name][model_name][estimator_category][estimator_name][
             "results_meta_consistency_scores"
         ]["Input"]["consistency_results"].values()))
 
