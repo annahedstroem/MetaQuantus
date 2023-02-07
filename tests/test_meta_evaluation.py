@@ -12,7 +12,7 @@ import metaquantus
 from metaquantus import setup_xai_settings, setup_estimators
 from metaquantus import MetaEvaluation
 
-MINI_BATCH = 10
+MINI_BATCH = 5
 
 
 @pytest.mark.meta_evaluation
@@ -35,7 +35,6 @@ MINI_BATCH = 10
             "Random Logit",
             {"min": 0, "max": 1},
         ),
-
     ],
 )
 def test_meta_evaluation_mnist(
@@ -135,7 +134,6 @@ def test_meta_evaluation_mnist(
             "Complexity",
             {"min": 0, "max": 1},
         ),
-
     ],
 )
 def test_meta_evaluation_fmnist(

@@ -12,7 +12,7 @@ import metaquantus
 from metaquantus import setup_xai_settings, setup_estimators
 from metaquantus import MetaEvaluation, MetaEvaluationBenchmarking
 
-MINI_BATCH = 10
+MINI_BATCH = 5
 
 @pytest.mark.benchmarking
 @pytest.mark.parametrize(
