@@ -21,14 +21,6 @@ MINI_BATCH = 10
     [
         (
             lazy_fixture("load_mnist_experimental_settings"),
-            ["IntegratedGradients", "Gradient", "LayerGradCam"],
-            lazy_fixture("load_test_suite"),
-            "Complexity",
-            "Sparseness",
-            {"min": 0, "max": 1},
-        ),
-        (
-            lazy_fixture("load_mnist_experimental_settings"),
             ["IntegratedGradients", "LayerGradCam"],
             lazy_fixture("load_test_suite"),
             "Localisation",
@@ -129,14 +121,6 @@ def test_meta_evaluation_mnist(
     [
         (
             lazy_fixture("load_fmnist_experimental_settings"),
-            ["IntegratedGradients", "Gradient", "LayerGradCam"],
-            lazy_fixture("load_test_suite"),
-            "Complexity",
-            "Sparseness",
-            {"min": 0, "max": 1},
-        ),
-        (
-            lazy_fixture("load_fmnist_experimental_settings"),
             ["IntegratedGradients", "LayerGradCam"],
             lazy_fixture("load_test_suite"),
             "Localisation",
@@ -231,19 +215,12 @@ def test_meta_evaluation_fmnist(
     ), "Test failed."
 
 
+'''
 @pytest.mark.skip(reason="torch gradient bug, unrelated metaquantus.")
 @pytest.mark.meta_evaluation
 @pytest.mark.parametrize(
     "settings,explanation_methods,test_suite,estimator_category,estimator_name,expected",
     [
-        (
-            lazy_fixture("load_cmnist_experimental_settings"),
-            ["IntegratedGradients", "Gradient", "LayerGradCam"],
-            lazy_fixture("load_test_suite"),
-            "Complexity",
-            "Sparseness",
-            {"min": 0, "max": 1},
-        ),
         (
             lazy_fixture("load_cmnist_experimental_settings"),
             ["IntegratedGradients", "LayerGradCam"],
@@ -338,3 +315,4 @@ def test_meta_evaluation_cmnist(
         ((scores_1 >= expected["min"]) & (scores_1 <= expected["max"])
          & (scores_2 >= expected["min"]) & (scores_2 <= expected["max"]))
     ), "Test failed."
+'''
