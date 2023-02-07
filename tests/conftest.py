@@ -7,10 +7,13 @@ import metaquantus
 from metaquantus import setup_dataset_models
 from metaquantus import ModelPerturbationTest, InputPerturbationTest
 
+import os
+
 @pytest.fixture(scope="session", autouse=True)
 def load_cmnist_experimental_settings():
     """Load the experimental settings for cMNIST dataset."""
 
+    print(os.getcwd())
     dataset_name = "cMNIST"
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
