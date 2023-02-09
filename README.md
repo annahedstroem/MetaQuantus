@@ -16,7 +16,7 @@ This repository contains the code and experimental results for the paper [The Me
 <!--[![Python package](https://github.com/understandable-machine-intelligence-lab/Quantus/actions/workflows/python-package.yml/badge.svg)](https://github.com/understandable-machine-intelligence-lab/Quantus/actions/workflows/python-package.yml)-->
 <!--[![PyPI version](https://badge.fury.io/py/metaquantus.svg)](https://badge.fury.io/py/metaquantus)-->
 
-_MetaQuantus is currently under active development so carefully note the release version to ensure reproducibility of your work._
+_MetaQuantus is currently under active development. Carefully note the release version to ensure reproducibility of your work._
 
 ## Table of Contents
 1. [Motivation](#motivation)
