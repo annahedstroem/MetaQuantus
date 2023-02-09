@@ -37,11 +37,11 @@ As illustrated in the Figure below, the two metrics, Faithfulness Correlation (F
   <img width="600" src="fig1-cmnist.png">
 </p>
 
-With MetaQuantus, we address the problem of meta-evaluation by providing a simple yet comprehensive evaluation framework that evaluates metrics against two failure modes: resilience to noise (NR) and reactivity to adversaries (AR). In a similar way that software systems undergo vulnerability and penetration tests before deployment, this open-sourced tool is designed to stress test the evalaution methods, e.g., as provided by <a href="https://github.com/understandable-machine-intelligence-lab/Quantus">Quantus</a>. MetaQuantus is meant to serve as a development tool for XAI researchers and Machine Learning (ML) practitioners to verify and benchmark newly constructed metrics (i.e., ``quality estimators'').
+With MetaQuantus, we address the problem of meta-evaluation by providing a simple yet comprehensive evaluation framework that evaluates metrics against two failure modes: resilience to noise (NR) and reactivity to adversaries (AR). In a similar way that software systems undergo vulnerability and penetration tests before deployment, this open-sourced tool is designed to stress test the evalaution methods, e.g., as provided by <a href="https://github.com/understandable-machine-intelligence-lab/Quantus">Quantus</a>.
 
 ## Library
 
-MetaQuantus is an open-source, general-purpose tool that helps developers in XAI and ML evaluate new or existing metrics. It offers an easy-to-use API that simplifies metric selection such that the explanation method selection in XAI can be performed more reliably, with minimal code. MetaQuantus includes:
+MetaQuantus is an open-source, general-purpose tool that serves as a development tool for XAI researchers and Machine Learning (ML) practitioners to verify and benchmark newly constructed metrics (i.e., ``quality estimators''). It offers an easy-to-use API that simplifies metric selection such that the explanation method selection in XAI can be performed more reliably, with minimal code. MetaQuantus includes:
 
 - A series of pre-built tests such as `ModelPerturbationTest` and `InputPertubrationTest` that can be applied to various metrics
 - Supporting source code such as for plotting and analysis
