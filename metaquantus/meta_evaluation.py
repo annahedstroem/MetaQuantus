@@ -399,7 +399,18 @@ class MetaEvaluation:
                 torch.cuda.empty_cache()
 
     def run_intra_analysis(self, reverse_scoring: bool = True) -> Dict:
-        """Make IAC inference after perturbing inputs to the evaluation problem and then storing scores."""
+        """
+        Make IAC inference after perturbing inputs to the evaluation problem and then storing scores.
+
+        Parameters
+        ----------
+        reverse_scoring: bool
+            Indicates if reverse scoring should be applied.
+
+        Returns
+        -------
+        dict
+        """
 
         self.results_intra_scores = {k: {} for k in self.test_suite}
 
@@ -441,11 +452,12 @@ class MetaEvaluation:
 
         Parameters
         ----------
-        lower_is_better
+        lower_is_better: bool
+            Indicates if lower values are considered better or not, to inverse the comparison symbol.
 
         Returns
         -------
-
+        dict
         """
 
         self.results_inter_scores = {}
@@ -705,7 +717,7 @@ class MetaEvaluation:
         zero_method: string
             A string describing the method of how to treat zero differences.
         reverse_scoring: bool
-            A boolean describing if reverse scoring should be applied.
+            Indicates if reverse scoring should be applied.
 
         Returns
         -------
