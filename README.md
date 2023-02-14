@@ -12,9 +12,9 @@ This repository contains the code and experimental results for the paper [The Me
 [![Getting started!](https://colab.research.google.com/assets/colab-badge.svg)](anonymous)
 ![Python version](https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9-blue.svg)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![PyPI version](https://badge.fury.io/py/metaquantus.svg)](https://badge.fury.io/py/metaquantus)
 <!--[![Launch Tutorials](https://mybinder.org/badge_logo.svg)](anonymous)-->
-<!--[![Python package](https://github.com/understandable-machine-intelligence-lab/Quantus/actions/workflows/python-package.yml/badge.svg)](https://github.com/understandable-machine-intelligence-lab/Quantus/actions/workflows/python-package.yml)-->
-<!--[![PyPI version](https://badge.fury.io/py/metaquantus.svg)](https://badge.fury.io/py/metaquantus)-->
+<!--[![Python package](https://github.com/annahedstroem/MetaQuantus/actions/workflows/python-package.yml/badge.svg)](https://github.com/annahedstroem/MetaQuantus/actions/workflows/python-package.yml)-->
 
 _MetaQuantus is currently under active development. Carefully note the release version to ensure reproducibility of your work._
 
@@ -89,7 +89,7 @@ captum>=0.4.1
 ## Getting started
 
 Please see [
-Tutorial-Getting-Started-with-MetaQuantus.ipynb](anonymous) under `tutorials/` folder to run code similar to the example given above. Note that [PyTorch](https://pytorch.org/) framework and the XAI evalaution library [Quantus](https://github.com/understandable-machine-intelligence-lab/Quantus) is needed to run `MetaQuantus`. 
+Tutorial-Getting-Started-with-MetaQuantus.ipynb](https://github.com/annahedstroem/MetaQuantus/blob/main/tutorials/Tutorial-Getting-Started-with-MetaQuantus.ipynb) under `tutorials/` folder to run code similar to the example given above. Note that [PyTorch](https://pytorch.org/) framework and the XAI evalaution library [Quantus](https://github.com/understandable-machine-intelligence-lab/Quantus) is needed to run `MetaQuantus`. 
 
 ## MetaQuantus methodology
 
@@ -108,9 +108,9 @@ Meta-evaluation of quality estimators is performed in 3 steps: (1) Perturbing, (
 To reproduce the results of this paper, you will need to follow these steps:
 
 1. **Dataset Generation**: Run the notebook [
-Tutorial-Data-Generation-Experiments.ipynb](anonymous) to generate the necessary data for the experiments. This notebook will guide you through the process of downloading and preprocessing the data in order to save it to approriate test sets.
+Tutorial-Data-Generation-Experiments.ipynb](https://github.com/annahedstroem/MetaQuantus/blob/main/tutorials/Tutorial-Data-Generation-Experiments.ipynb) to generate the necessary data for the experiments. This notebook will guide you through the process of downloading and preprocessing the data in order to save it to approriate test sets.
 
-2. **Results Analysis**: Once the dataset generation step is complete, run the [Tutorial-Reproduce-Experiments.ipynb](anonymous) to produce and analyse the results. Inside the notebook, for each experiment, we will describe which python scripts to run in order to obtain the results. All these python files are located in the `scripts/` folder. Please note that the results may slightly vary depending on the random seed and other hyperparameters, but the overall trends and conclusions should remain the same.
+2. **Results Analysis**: Once the dataset generation step is complete, run the [Tutorial-Reproduce-Experiments.ipynb](https://github.com/annahedstroem/MetaQuantus/blob/main/tutorials/Tutorial-Reproduce-Experiments.ipynb) to produce and analyse the results. Inside the notebook, for each experiment, we will describe which python scripts to run in order to obtain the results. All these python files are located in the `scripts/` folder. Please note that the results may slightly vary depending on the random seed and other hyperparameters, but the overall trends and conclusions should remain the same.
 
 For both steps, make sure to adjust local paths so that the approriate files can be retrieved including having all the necessary packages installed. Ensure to have GPUs enabled throughout the computing as this will speed up the experimentation considerably. 
 
