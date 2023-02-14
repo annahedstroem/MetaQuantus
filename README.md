@@ -50,7 +50,13 @@ MetaQuantus is an open-source, general-purpose tool that serves as a development
 
 ## Installation
 
-The simplest way to install MetaQuantus is to download a local copy (and then, access the folder):
+If you already have [PyTorch](https://pytorch.org/) installed on your machine, the most light-weight version of MetaQuantus can be obtained from [PyPI](https://pypi.org/project/metaquantus/):
+
+```setup
+pip install metaquantus
+```
+
+Alternatively, you can download a local copy (and then, access the folder):
 
 ```setup
 git clone https://github.com/anonymous/MetaQuantus.git
@@ -68,14 +74,7 @@ Alternatively, you can simply install MetaQuantus with [requirements.txt](https:
 pip install -r requirements.txt
 ```
 
-<!--Alternatively, another light-weight version of MetaQuantus can be obtained from [PyPI](https://pypi.org/project/metaquantus/) as follows:
-
-```setup
-pip install metaquantus
-```
--->
-
-Note that the installation requires that [PyTorch](https://pytorch.org/) is already installed on your machine.
+Note that these installation options require that [PyTorch](https://pytorch.org/) is already installed on your machine.
 
 ### Package requirements
 

@@ -23,13 +23,14 @@ else:
 setup(
     name="metaquantus",
     version="0.0.1",
-    description="MetaQuantus is a toolkit to estimate performance of evaluator of explanation quality.",
+    description="MetaQuantus is a XAI performance tool for identifying reliable metrics.",
     long_description=open("README.md", "r").read(),
     long_description_content_type="text/markdown",
     install_requires=[
         "captum>=0.4.1",
         "black==22.10.0",
         "torch>=1.10.1",
+        "torchvision>=0.14.1",
         "pandas==1.5.2",
         "quantus>=0.3.2",
     ],
