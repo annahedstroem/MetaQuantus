@@ -91,7 +91,7 @@ captum>=0.4.1
 Please see [
 Tutorial-Getting-Started-with-MetaQuantus.ipynb](https://github.com/annahedstroem/MetaQuantus/blob/main/tutorials/Tutorial-Getting-Started-with-MetaQuantus.ipynb) under `tutorials/` folder to run code similar to the example given above. Note that [PyTorch](https://pytorch.org/) framework and the XAI evalaution library [Quantus](https://github.com/understandable-machine-intelligence-lab/Quantus) is needed to run `MetaQuantus`. 
 
-## MetaQuantus methodology
+<!--## MetaQuantus methodology
 
 Meta-evaluation of quality estimators is performed in 3 steps: (1) Perturbing, (2) Scoring and (3) Integrating. 
   1. **Perturbing.** A minor or disruptive perturbation is induced depending on the failure mode: NR or AR.
@@ -101,7 +101,7 @@ Meta-evaluation of quality estimators is performed in 3 steps: (1) Perturbing, (
 </p>
 <p align="center">
   <img width="1000" src="fig4.png">
-</p>
+</p>-->
 
 ## Reproduce the experiments
 
