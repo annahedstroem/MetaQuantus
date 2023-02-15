@@ -3,7 +3,7 @@
   <img width="450" src="logo.png">
 </p>
 <!--<h1 align="center"><b>MetaQuantus</b></h1>-->
-<h3 align="center"><b>A XAI performance tool for identifying reliable metrics</b></h3>
+<h3 align="center"><b>An XAI performance tool for the identification of reliable metrics</b></h3>
 <p align="center">
   PyTorch
   
