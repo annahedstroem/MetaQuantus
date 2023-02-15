@@ -7,7 +7,7 @@
 <p align="center">
   PyTorch
   
-This repository contains the code and experimental results for the paper [The Meta-Evaluation Problem in Explainable AI: Identifying Reliable Estimators with MetaQuantus](anonymous). 
+This repository contains the code and experimental results for the paper [The Meta-Evaluation Problem in Explainable AI: Identifying Reliable Estimators with MetaQuantus](https://arxiv.org/abs/2302.07265). 
 
 [![Getting started!](https://colab.research.google.com/assets/colab-badge.svg)](anonymous)
 ![Python version](https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9-blue.svg)
@@ -59,7 +59,7 @@ pip install metaquantus
 Alternatively, you can download a local copy (and then, access the folder):
 
 ```setup
-git clone https://github.com/anonymous/MetaQuantus.git
+git clone https://github.com/annahedstroem/MetaQuantus.git
 cd MetaQuantus
 ```
 
