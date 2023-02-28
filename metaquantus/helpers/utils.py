@@ -177,7 +177,6 @@ def load_obj(path: str, fname: Optional[str] = "", use_json: bool = False) -> An
     return obj
 
 
-
 def get_wrapped_model(
     model,
     channel_first: bool,
@@ -365,7 +364,6 @@ def infer_attribution_axes(a_batch: np.ndarray, x_batch: np.ndarray) -> Sequence
     )
 
 
-
 class ModelInterface(ABC):
     """Base ModelInterface for torch and tensorflow models."""
 
@@ -462,7 +460,6 @@ class ModelInterface(ABC):
         set it to 'independent'. For bottom-up order, set it to 'bottom_up'.
         """
         raise NotImplementedError
-
 
     @abstractmethod
     def get_hidden_representations(
@@ -702,7 +699,6 @@ class PyTorchModel(ModelInterface):
                             "or 'additive' (string) when you sample the model."
                         )
         return model_copy
-
 
     def get_hidden_representations(
         self,
