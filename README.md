@@ -7,7 +7,7 @@
 <p align="center">
   PyTorch
   
-This repository contains the code and experimental results for the paper [The Meta-Evaluation Problem in Explainable AI: Identifying Reliable Estimators with MetaQuantus](https://arxiv.org/abs/2302.07265). 
+This repository contains the code and experimental results for the paper **[The Meta-Evaluation Problem in Explainable AI: Identifying Reliable Estimators with MetaQuantus](https://arxiv.org/abs/2302.07265)** by Hedström et al., 2023.
 
 [![Getting started!](https://colab.research.google.com/assets/colab-badge.svg)](anonymous)
 ![Python version](https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9-blue.svg)
@@ -17,6 +17,21 @@ This repository contains the code and experimental results for the paper [The Me
 <!--[![Launch Tutorials](https://mybinder.org/badge_logo.svg)](anonymous)-->
 
 _MetaQuantus is currently under active development. Carefully note the release version to ensure reproducibility of your work._
+
+## Citation
+
+If you find this toolkit or its companion paper interesting or useful in your research, use the following Bibtex annotation to cite us:
+
+```bibtex
+@article{hedstrom2023metaquantus,
+ author = {Hedström, Anna and Bommer, Philine and Wickstrøm, Kristoffer K. and Samek, Wojciech and Lapuschkin, Sebastian and Höhne, Marina M. -C.},
+  title = {The Meta-Evaluation Problem in Explainable AI: Identifying Reliable Estimators with MetaQuantus},
+  doi = {10.48550/ARXIV.2302.07265},
+  url = {https://arxiv.org/abs/2302.07265},
+  publisher = {arXiv},
+}
+```
+
 
 ## Table of Contents
 1. [Motivation](#motivation)
