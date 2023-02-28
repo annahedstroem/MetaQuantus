@@ -6,5 +6,5 @@ assets/
 build/
 dist/
 *.egg-info/
-.coverage
+.coverage*
 coverage.xml
