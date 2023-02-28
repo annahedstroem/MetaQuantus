@@ -1,3 +1,4 @@
+"""This module contains the script for obtaining the results associated with faithfulness ranking experiment."""
 
 # This file is part of MetaQuantus.
 # MetaQuantus is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
@@ -113,13 +114,15 @@ if __name__ == "__main__":
         )
         return random_explanations
 
+    # Get the data.
     x_batch = dataset_settings[dataset_name]["x_batch"]
     y_batch = dataset_settings[dataset_name]["y_batch"]
     s_batch = dataset_settings[dataset_name]["s_batch"]
 
+    # Intialise the df.
     df = pd.DataFrame()
 
-
+    # Take a random XAI setting.
     xai_setting = random.choices(xai_setting_all, k=3)
     xai_methods = setup_xai_settings(
         xai_settings=xai_setting,
@@ -127,23 +130,6 @@ if __name__ == "__main__":
         img_size=dataset_kwargs["img_size"],
         nr_channels=dataset_kwargs["nr_channels"],
     )
-
-    try:
-        estimator_names = [e for e in estimators[category]]
-        winner_is_same = (
-            df.loc[
-                (df["Estimator"] == estimator_names[0]) & (df["Rank"] == 1.0),
-                "Method",
-            ].values[0]
-            == df.loc[
-                (df["Estimator"] == estimator_names[1]) & (df["Rank"] == 1.0),
-                "Method",
-            ].values[0]
-        )
-
-    except:
-        if not df.empty:
-            print("...Winner method is the same.\n")
 
     uiid = uuid.uuid4()
     results = {}
@@ -234,7 +220,7 @@ if __name__ == "__main__":
 
         df = pd.DataFrame(
             columns=["Estimator", "Method", "Faithfulness Score", "Rank"]
-        )  # , "Score_std"])
+        )
 
         row = 0
         for mx, method in enumerate(results.keys()):
