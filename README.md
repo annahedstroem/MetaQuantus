@@ -1,6 +1,6 @@
 <br/><br/>
 <p align="center">
-  <img width="450" src="logo.png">
+  <img width="450" src="https://raw.githubusercontent.com/annahedstroem/MetaQuantus/main/logo.png">
 </p>
 <!--<h1 align="center"><b>MetaQuantus</b></h1>-->
 <h3 align="center"><b>An XAI performance tool for the identification of reliable metrics</b></h3>
@@ -13,8 +13,8 @@ This repository contains the code and experimental results for the paper [The Me
 ![Python version](https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9-blue.svg)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![PyPI version](https://badge.fury.io/py/metaquantus.svg)](https://badge.fury.io/py/metaquantus)
+[![Python package](https://github.com/annahedstroem/MetaQuantus/actions/workflows/python-publish.yml/badge.svg)](https://github.com/annahedstroem/MetaQuantus/actions/workflows/python-publish.yml/badge.svg)
 <!--[![Launch Tutorials](https://mybinder.org/badge_logo.svg)](anonymous)-->
-<!--[![Python package](https://github.com/annahedstroem/MetaQuantus/actions/workflows/python-package.yml/badge.svg)](https://github.com/annahedstroem/MetaQuantus/actions/workflows/python-package.yml)-->
 
 _MetaQuantus is currently under active development. Carefully note the release version to ensure reproducibility of your work._
 
@@ -34,7 +34,7 @@ As illustrated in the Figure below, the two metrics, Faithfulness Correlation (F
 
 </p>
 <p align="center">
-  <img width="600" src="fig1-cmnist.png">
+  <img width="600" src="https://raw.githubusercontent.com/annahedstroem/MetaQuantus/main/fig1-cmnist.png">
 </p>
 
 With [MetaQuantus](https://github.com/annahedstroem/MetaQuantus), we address the problem of meta-evaluation by providing a simple yet comprehensive framework that evaluates metrics against two failure modes: resilience to noise (NR) and reactivity to adversaries (AR). In a similar way that software systems undergo vulnerability and penetration tests before deployment, this open-sourced tool is designed to stress test evaluation methods (e.g., as provided by <a href="https://github.com/understandable-machine-intelligence-lab/Quantus">Quantus</a>).
@@ -100,7 +100,7 @@ Meta-evaluation of quality estimators is performed in 3 steps: (1) Perturbing, (
 
 </p>
 <p align="center">
-  <img width="1000" src="fig4.png">
+  <img width="1000" src="https://raw.githubusercontent.com/annahedstroem/MetaQuantus/main/fig4.png">
 </p>-->
 
 ## Reproduce the paper experiments
