@@ -105,19 +105,18 @@ Meta-evaluation of quality estimators is performed in 3 steps: (1) Perturbing, (
 
 ## Reproduce the paper experiments
 
-To reproduce the results of this paper, you will need to follow these two steps:
+To reproduce the results of this paper, you will need to follow these three steps:
 
-1. **Dataset Generation**: Run the notebook [
+1. **Generate the dataset.** Run the notebook [
 Tutorial-Data-Generation-Experiments.ipynb](https://github.com/annahedstroem/MetaQuantus/blob/main/tutorials/Tutorial-Data-Generation-Experiments.ipynb) to generate the necessary data for the experiments. This notebook will guide you through the process of downloading and preprocessing the data in order to save it to approriate test sets. Please store the models in a folder called `assets/models/` and the tests sets under `assets/test_sets/`.
+2. **Run the experiments.** To obtain the results for the respective experiments, you have to run the respective Python scripts which are detailed below. All these Python files are located in the `scripts/` folder. Feel free to change the hyperparameters if you want to run similar experiments on other explanation methods, datasets or models.
+3. **Analyse the results.** Once the dataset generation step is complete and your results are obtained and approriately stored of your chosen experiments, run the [Tutorial-Reproduce-Paper-Experiments.ipynb](https://github.com/annahedstroem/MetaQuantus/blob/main/tutorials/Tutorial-Reproduce-Experiments.ipynb) to analyse the results. In te notebook itself, we have listed which specific Python scripts needs to be run to obtain the results for this analysis step.
 
-2. **Results Analysis**: Once the dataset generation step is complete, run the [Tutorial-Reproduce-Paper-Experiments.ipynb](https://github.com/annahedstroem/MetaQuantus/blob/main/tutorials/Tutorial-Reproduce-Experiments.ipynb) to produce and analyse the results. Inside the notebook, for each experiment, we have described which python scripts that are needs to be run beforehand, in order to obtain the results for this second step. All these python files are located in the `scripts/` folder. Please note that the results may vary slightly depending on the random seed and other hyperparameters of the experiments, but the overall trends and conclusions should remain the same.
-
-For both steps, make sure to adjust local paths so that the approriate files can be retrieved including having all the necessary packages installed. Ensure to have GPUs enabled throughout the computing as this will speed up the experimentation considerably. 
+**Note.** For all steps, make sure to adjust local paths so that the approriate files can be retrieved including having all the necessary packages installed. Ensure to have GPUs enabled throughout the computing as this will speed up the experimentation considerably. Please also note that the results may vary slightly depending on the random seed and other hyperparameters of the experiments, but the overall trends and conclusions should remain the same.
 
 <details>
 <summary><b><big>More details on how to run the scripts for step 2.</big></b></summary>
 
-In the second step, you have to run the python scripts for the respective experiment as listed below (it is also referenced in the notebook). Feel free to change the hyperparameters if you want to run similar experiments on other explanation methods, datasets or models. 
 
 **Test**: Go to the root folder and run a simple test that meta-evaluation work.
 ```bash

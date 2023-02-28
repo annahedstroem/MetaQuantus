@@ -1,5 +1,5 @@
 captum>=0.4.1
 torch>=1.10.1
 torchvision>=0.14.1
-pandas>=1.3.5
+pandas
 quantus>=0.3.2
