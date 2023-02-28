@@ -1,3 +1,9 @@
+
+# This file is part of MetaQuantus.
+# MetaQuantus is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+# MetaQuantus is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+# You should have received a copy of the GNU Lesser General Public License along with MetaQuantus. If not, see <https://www.gnu.org/licenses/>.
+
 import os
 import warnings
 import argparse
@@ -7,15 +13,15 @@ import pandas as pd
 import uuid
 from datetime import datetime
 
-import metaquantus
 from metaquantus import MetaEvaluation
-from metaquantus import dump_obj
-from metaquantus import (
+from metaquantus.configs import (
     setup_estimators,
     setup_xai_methods,
     setup_dataset_models,
-    setup_analyser_suite,
+    setup_test_suite,
 )
+from ..helpers import dump_obj
+
 
 PATH_ASSETS = "../assets/"
 PATH_RESULTS = "../results/"
@@ -75,7 +81,7 @@ if __name__ == "__main__":
     dataset_kwargs = dataset_settings[dataset_name]["estimator_kwargs"]
 
     # Get analyser suite.
-    analyser_suite = setup_analyser_suite(dataset_name=dataset_name)
+    analyser_suite = setup_test_suite(dataset_name=dataset_name)
 
     # Delete IPT, only run MPT.
     del analyser_suite["Input Resilience Test"]
