@@ -37,11 +37,11 @@ As illustrated in the Figure below, the two metrics, Faithfulness Correlation (F
   <img width="600" src="fig1-cmnist.png">
 </p>
 
-With MetaQuantus, we address the problem of meta-evaluation by providing a simple yet comprehensive framework that evaluates metrics against two failure modes: resilience to noise (NR) and reactivity to adversaries (AR). In a similar way that software systems undergo vulnerability and penetration tests before deployment, this open-sourced tool is designed to stress test evaluation methods (e.g., as provided by <a href="https://github.com/understandable-machine-intelligence-lab/Quantus">Quantus</a>).
+With [MetaQuantus](https://github.com/annahedstroem/MetaQuantus), we address the problem of meta-evaluation by providing a simple yet comprehensive framework that evaluates metrics against two failure modes: resilience to noise (NR) and reactivity to adversaries (AR). In a similar way that software systems undergo vulnerability and penetration tests before deployment, this open-sourced tool is designed to stress test evaluation methods (e.g., as provided by <a href="https://github.com/understandable-machine-intelligence-lab/Quantus">Quantus</a>).
 
 ## Library
 
-MetaQuantus is an open-source, development tool for XAI researchers and Machine Learning (ML) practitioners to verify and benchmark newly constructed metrics (i.e., ``quality estimators''). It offers an easy-to-use API that simplifies metric selection such that the explanation method selection in XAI can be performed more reliably, with minimal code. MetaQuantus includes:
+[MetaQuantus](https://github.com/annahedstroem/MetaQuantus) is an open-source, development tool for XAI researchers and Machine Learning (ML) practitioners to verify and benchmark newly constructed metrics (i.e., ``quality estimators''). It offers an easy-to-use API that simplifies metric selection such that the explanation method selection in XAI can be performed more reliably, with minimal code. MetaQuantus includes:
 
 - A series of pre-built tests such as `ModelPerturbationTest` and `InputPertubrationTest` that can be applied to various metrics
 - Supporting source code such as for plotting and analysis
@@ -89,7 +89,7 @@ captum>=0.4.1
 ## Getting started
 
 Please see [
-Tutorial-Getting-Started-with-MetaQuantus.ipynb](https://github.com/annahedstroem/MetaQuantus/blob/main/tutorials/Tutorial-Getting-Started-with-MetaQuantus.ipynb) under `tutorials/` folder to run code similar to the example given above. Note that [PyTorch](https://pytorch.org/) framework and the XAI evalaution library [Quantus](https://github.com/understandable-machine-intelligence-lab/Quantus) is needed to run `MetaQuantus`. 
+Tutorial-Getting-Started-with-MetaQuantus.ipynb](https://github.com/annahedstroem/MetaQuantus/blob/main/tutorials/Tutorial-Getting-Started-with-MetaQuantus.ipynb) under `tutorials/` folder to get started. Note that [PyTorch](https://pytorch.org/) framework and the XAI evalaution library [Quantus](https://github.com/understandable-machine-intelligence-lab/Quantus) is needed to run [MetaQuantus](https://github.com/annahedstroem/MetaQuantus). 
 
 <!--## MetaQuantus methodology
 
@@ -108,15 +108,14 @@ Meta-evaluation of quality estimators is performed in 3 steps: (1) Perturbing, (
 To reproduce the results of this paper, you will need to follow these three steps:
 
 1. **Generate the dataset.** Run the notebook [
-Tutorial-Data-Generation-Experiments.ipynb](https://github.com/annahedstroem/MetaQuantus/blob/main/tutorials/Tutorial-Data-Generation-Experiments.ipynb) to generate the necessary data for the experiments. This notebook will guide you through the process of downloading and preprocessing the data in order to save it to approriate test sets. Please store the models in a folder called `assets/models/` and the tests sets under `assets/test_sets/`.
-2. **Run the experiments.** To obtain the results for the respective experiments, you have to run the respective Python scripts which are detailed below. All these Python files are located in the `scripts/` folder. Feel free to change the hyperparameters if you want to run similar experiments on other explanation methods, datasets or models.
-3. **Analyse the results.** Once the dataset generation step is complete and your results are obtained and approriately stored of your chosen experiments, run the [Tutorial-Reproduce-Paper-Experiments.ipynb](https://github.com/annahedstroem/MetaQuantus/blob/main/tutorials/Tutorial-Reproduce-Experiments.ipynb) to analyse the results. In te notebook itself, we have listed which specific Python scripts needs to be run to obtain the results for this analysis step.
+Tutorial-Data-Generation-Experiments.ipynb](https://github.com/annahedstroem/MetaQuantus/blob/main/tutorials/Tutorial-Data-Generation-Experiments.ipynb) to generate the necessary data for the experiments. This notebook will guide you through the process of downloading and preprocessing the data in order to save it to appropriate test sets. Please store the models in a folder called `assets/models/` and the tests sets under `assets/test_sets/`.
+2. **Run the experiments.** To obtain the results for the respective experiments, you have to run the respective Python scripts which are detailed below. All these Python files are located in the `scripts/` folder. If you want to run the experiments on other explanation methods, datasets or models, feel free to change the hyperparameters.
+3. **Analyse the results.** Once the results are obtained for your chosen experiments, run the [Tutorial-Reproduce-Paper-Experiments.ipynb](https://github.com/annahedstroem/MetaQuantus/blob/main/tutorials/Tutorial-Reproduce-Experiments.ipynb) to analyse the results. (In the notebook itself, we have also listed which specific Python scripts that need to be run in order to obtain the results for this analysis step.)
 
-**Note.** For all steps, make sure to adjust local paths so that the approriate files can be retrieved including having all the necessary packages installed. Ensure to have GPUs enabled throughout the computing as this will speed up the experimentation considerably. Please also note that the results may vary slightly depending on the random seed and other hyperparameters of the experiments, but the overall trends and conclusions should remain the same.
+**Note.** For all steps, make sure to adjust any local paths so that the approriate files can be retrieved. Make sure to have all the necessary packages installed as well as ensure to have GPUs enabled throughout the computing as this will speed up the experimentation considerably. Please also note that the results may vary slightly depending on the random seed and other hyperparameters of the experiments, but the overall trends and conclusions should remain the same.
 
 <details>
-<summary><b><big>More details on how to run the scripts for step 2.</big></b></summary>
-
+<summary><b><big>More details step 2.</big></b></summary>
 
 **Test**: Go to the root folder and run a simple test that meta-evaluation work.
 ```bash
