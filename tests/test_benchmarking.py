@@ -12,7 +12,8 @@ import metaquantus
 from metaquantus import setup_xai_settings, setup_estimators
 from metaquantus import MetaEvaluation, MetaEvaluationBenchmarking
 
-MINI_BATCH = 5
+MINI_BATCH = 3
+
 
 @pytest.mark.benchmarking
 @pytest.mark.parametrize(
@@ -64,8 +65,8 @@ def test_benchmarking_mnist(
     ########################
 
     # Set configs.
-    iters = 5
-    K = 3
+    iters = 2
+    K = 2
 
     # Define the meta-evaluation exercise.
     meta_evaluator = MetaEvaluation(

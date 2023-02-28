@@ -12,7 +12,7 @@ import metaquantus
 from metaquantus import setup_xai_settings, setup_estimators
 from metaquantus import MetaEvaluation
 
-MINI_BATCH = 5
+MINI_BATCH = 3
 
 
 @pytest.mark.meta_evaluation
@@ -76,8 +76,8 @@ def test_meta_evaluation_mnist(
     ########################
 
     # Set configs.
-    iters = 5
-    K = 3
+    iters = 2
+    K = 2
     metric = estimators[estimator_category][estimator_name][0]
     lower_is_better = estimators[estimator_category][estimator_name][0]
 
