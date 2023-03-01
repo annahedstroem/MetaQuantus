@@ -95,7 +95,7 @@ Note that these installation options require that [PyTorch](https://pytorch.org/
 
 The package requirements are as follows:
 ```
-python>=3.7.0
+python>=3.7.1
 pytorch>=1.10.1
 quantus>=0.3.2
 captum>=0.4.1
