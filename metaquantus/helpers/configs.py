@@ -38,6 +38,17 @@ def setup_xai_methods(
     }
 
 
+def setup_xai_methods_transformers(
+    gc_layer: str,
+    img_size: int = 28,
+    nr_channels: int = 1,
+) -> Dict:
+    return {
+        "Saliency": {},
+        "GradientShap": {},
+    }
+
+
 def setup_xai_settings(
     gc_layer: str,
     xai_settings: List[str],
@@ -215,6 +226,77 @@ def setup_estimators(
     }
 
 
+def setup_dataset_models_transformers(
+    dataset_name: str,
+    path_assets: str,
+    device: torch.device,
+):
+
+    SETTINGS = {}
+
+    if dataset_name == "ImageNet":
+
+        # Paths.
+        # path_imagenet_model = path_assets + "models/imagenet_resnet18_model"
+        path_imagenet_assets = (
+            path_assets + "test_sets/imagenet_test_set_6.npy"
+        )  # imagenet_test_set.npy"
+
+        # Example for how to reload assets and models to notebook.
+        model_imagenet_resnet18 = torchvision.models.resnet18(pretrained=True)
+        # model_imagenet_vgg16 = torchvision.models.vgg16(pretrained=True)
+        model_imagenet_vit_b_16 = torchvision.models.vit_b_16(pretrained=True)
+        model_imagenet_swin_t = torchvision.models.swin_t(pretrained=True)
+        # model_imagenet_resnet50 = torchvision.models.resnet50(pretrained=True)
+
+        assets_imagenet = np.load(path_imagenet_assets, allow_pickle=True).item()
+        x_batch_imagenet = assets_imagenet["x_batch"][:150]
+        y_batch_imagenet = assets_imagenet["y_batch"][:150]
+        s_batch_imagenet = assets_imagenet["s_batch"][:150]
+
+        s_batch_imagenet = s_batch_imagenet.reshape(len(x_batch_imagenet), 1, 224, 224)
+
+        # print(len(s_batch_imagenet))
+
+        # Add to settings.
+        SETTINGS["ImageNet"] = {
+            "x_batch": x_batch_imagenet,
+            "y_batch": y_batch_imagenet,
+            "s_batch": s_batch_imagenet,
+            "models": {
+                "ResNet18": model_imagenet_resnet18,
+                # "ResNet50": model_imagenet_resnet50,
+                # "VGG16": model_imagenet_vgg16,
+                "ViT": model_imagenet_vit_b_16,
+                "SWIN": model_imagenet_swin_t,
+            },
+            "gc_layers": {
+                "ResNet18": "list(model.named_modules())[61][1]",
+                # "ResNet50": "NA",
+                # "VGG16": "NA",
+                "ViT": "NA",
+                "SWIN": "NA",
+            },
+            "estimator_kwargs": {
+                "num_classes": 1000,
+                "img_size": 224,
+                "features": 224 * 4,
+                "percentage": 0.1,
+                "nr_channels": 3,
+                "patch_size": 224 * 2,
+                "perturb_baseline": "uniform",
+            },
+        }
+        model_name = "ResNet18"
+
+    else:
+        raise ValueError(
+            "Provide a supported dataset {'MNIST', 'fMNIST', 'cMNIST' and 'ImageNet'}."
+        )
+
+    return SETTINGS, model_name
+
+
 def setup_dataset_models(
     dataset_name: str,
     path_assets: str,
@@ -349,7 +431,6 @@ def setup_dataset_models(
         model_name = "ResNet9"
 
     elif dataset_name == "ImageNet":
-        pass
 
         # Paths.
         # path_imagenet_model = path_assets + "models/imagenet_resnet18_model"
@@ -359,8 +440,6 @@ def setup_dataset_models(
 
         # Example for how to reload assets and models to notebook.
         model_imagenet_resnet18 = torchvision.models.resnet18(pretrained=True)
-        # model_imagenet_vgg16 = torchvision.models.vgg16(pretrained=True)
-        # model_imagenet_alexnet = torchvision.models.alexnet(pretrained=True)
 
         assets_imagenet = np.load(path_imagenet_assets, allow_pickle=True).item()
         x_batch_imagenet = assets_imagenet["x_batch"][:150]
@@ -369,7 +448,7 @@ def setup_dataset_models(
 
         s_batch_imagenet = s_batch_imagenet.reshape(len(x_batch_imagenet), 1, 224, 224)
 
-        print(len(s_batch_imagenet))
+        # print(len(s_batch_imagenet))
 
         # Add to settings.
         SETTINGS["ImageNet"] = {
@@ -378,11 +457,9 @@ def setup_dataset_models(
             "s_batch": s_batch_imagenet,
             "models": {
                 "ResNet18": model_imagenet_resnet18,
-                #        "VGG16": model_imagenet_vgg16,
             },
             "gc_layers": {
                 "ResNet18": "list(model.named_modules())[61][1]",
-                #        "VGG16": 'list(model_imagenet_vgg16.named_modules())[28][1]',
             },
             "estimator_kwargs": {
                 "num_classes": 1000,
@@ -391,6 +468,7 @@ def setup_dataset_models(
                 "percentage": 0.1,
                 "nr_channels": 3,
                 "patch_size": 224 * 2,
+                "perturb_baseline": "uniform",
             },
         }
         model_name = "ResNet18"
@@ -670,3 +748,80 @@ def setup_randomisation_estimators(
             ),
         },
     }
+
+
+def setup_localisation_estimators(
+    features: int,
+    num_classes: int,
+    img_size: int,
+    percentage: int,
+    patch_size: int,
+    perturb_baseline: str = "uniform",
+) -> Dict:
+    return {
+        "Localisation": {
+            "Pointing-Game": (
+                quantus.PointingGame(
+                    abs=False,
+                    normalise=True,
+                    normalise_func=normalise_func.normalise_by_average_second_moment_estimate,
+                    return_aggregate=False,
+                    aggregate_func=np.mean,
+                    disable_warnings=True,
+                ),
+                False,
+            ),
+            "Top-K Intersection": (
+                quantus.TopKIntersection(
+                    k=features,
+                    abs=False,
+                    normalise=True,
+                    normalise_func=normalise_func.normalise_by_average_second_moment_estimate,
+                    return_aggregate=False,
+                    aggregate_func=np.mean,
+                    disable_warnings=True,
+                ),
+                False,
+            ),
+            "Relevance Mass Accuracy": (
+                quantus.RelevanceMassAccuracy(
+                    abs=False,
+                    normalise=True,
+                    normalise_func=normalise_func.normalise_by_average_second_moment_estimate,
+                    return_aggregate=False,
+                    aggregate_func=np.mean,
+                    disable_warnings=True,
+                ),
+                False,
+            ),
+            "Relevance Rank Accuracy": (
+                quantus.RelevanceRankAccuracy(
+                    abs=False,
+                    normalise=True,
+                    normalise_func=normalise_func.normalise_by_average_second_moment_estimate,
+                    return_aggregate=False,
+                    aggregate_func=np.mean,
+                    disable_warnings=True,
+                ),
+                False,
+            ),
+        },
+    }
+
+
+def setup_estimators_transformers(
+    features: int,
+    patch_size: int,
+    num_classes: int,
+    img_size: int,
+    percentage: int,
+    perturb_baseline: str = "uniform",
+) -> Dict:
+    return setup_localisation_estimators(
+        features=features,
+        patch_size=patch_size,
+        num_classes=num_classes,
+        img_size=img_size,
+        percentage=percentage,
+        perturb_baseline=perturb_baseline,
+    )

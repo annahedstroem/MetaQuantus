@@ -40,6 +40,7 @@ class MetaEvaluation:
         write_to_file: bool = True,
         uid: Optional[str] = None,
         sanity_check: Optional[str] = None,
+        print_results: bool = False,
     ):
         """
         This class implements the Meta-evaluation Framework.
@@ -66,8 +67,10 @@ class MetaEvaluation:
             Indicates if writing to file.
         uid: str
             A unique identifier.
-        sanity_check: boolean
-            Indicates whether to sanity exercise is performed.
+        sanity_check: str, None
+            A string of which adversarial estimator to create for the sanity exercise: 'Estimator_Same' or 'Estimator_Different'.
+        print_results: boolean
+            Indicates whether to print the results to stdout.
 
         Returns
         -------
@@ -84,6 +87,7 @@ class MetaEvaluation:
         self.intra_measure = intra_measure
         self.uid = uid
         self.sanity_check = sanity_check
+        self.print_results = print_results
 
         # Init empty data holders for results.
         self.results_eval_scores = {k: {} for k in self.test_suite}
@@ -183,12 +187,13 @@ class MetaEvaluation:
         self.run_intra_analysis(reverse_scoring=reverse_scoring)
         self.run_inter_analysis(lower_is_better=lower_is_better)
 
-        # Check that both test parts exist in the test suite.
+        # Check that both test parts exist in the test suite, then run meta-consistency analysis.
         if any("Resilience" in test for test in list(self.test_suite)) and any(
             "Adversary" in test for test in list(self.test_suite)
         ):
             self.run_meta_consistency_analysis()
-            self.print_meta_consistency_scores()
+            if self.print_results:
+                self.print_meta_consistency_scores()
 
         if self.write_to_file:
             dump_obj(

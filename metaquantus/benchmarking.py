@@ -96,6 +96,7 @@ class MetaEvaluationBenchmarking:
             for (model_name, model), (_, gc_layer) in zip(
                 settings_data["models"].items(), settings_data["gc_layers"].items()
             ):
+
                 self.results[dataset_name][model_name] = {}
                 print(f"  {model_name}")
 
