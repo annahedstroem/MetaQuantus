@@ -27,7 +27,7 @@ setup(
     long_description=open("README.md", "r").read(),
     long_description_content_type="text/markdown",
     install_requires=[
-        "quantus>=0.3.2",
+        "quantus>=0.3.4",
         "captum>=0.4.1",
         "torch>=1.10.1",
         "torchvision>=0.11.2",
