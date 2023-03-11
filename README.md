@@ -177,10 +177,10 @@ python3 scripts/run_benchmarking_transformers.py --dataset=ImageNet --K=5 --iter
 
 **Note.** For all steps, please make sure to adjust any local paths so that the approriate files can be retrieved. Make sure to have all the necessary packages installed as well as ensure to have GPUs enabled throughout the computing as this will speed up the experimentation considerably. Also, note that the results may vary slightly depending on the random seed and other hyperparameters of the experiments. Nonetheless, the overall trends and conclusions should remain the same as in the paper.
 
-**Limitations.** Currently, the experiments are limited to the following experimental combinations:
-* XAI methods: any method provided in `quantus.AVAILABLE_XAI_METHODS_CAPTUM`
-* XAI metrics: any metric provided in `quantus.AVAILABLE_METRICS`
-* Models: any `PyTorch` model
-* Dataset: `MNIST`, `fMNSIT`, `cMNIST` and `ImageNet`
+Currently, the experiments are limited to the following experimental combinations:
+* XAI methods: any method provided by querying `quantus.AVAILABLE_XAI_METHODS_CAPTUM`
+* XAI metrics: any metric provided by querying `quantus.AVAILABLE_METRICS`
+* Models: any `PyTorch` model (i.e., `torch.nn.module`)
+* Datasets: `MNIST`, `fMNSIT`, `cMNIST` and `ImageNet`
 
 Please feel free to raise an [Issue](https://github.com/annahedstroem/MetaQuantus/issues) if you'd like to extend these set-ups.
