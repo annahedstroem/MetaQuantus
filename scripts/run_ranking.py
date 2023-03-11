@@ -18,7 +18,7 @@ import numpy as np
 import pandas as pd
 import scipy
 
-from metaquantus.configs import (
+from metaquantus.helpers.configs import (
     setup_estimators,
     setup_xai_settings,
     setup_dataset_models,

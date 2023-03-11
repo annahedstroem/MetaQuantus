@@ -15,7 +15,7 @@ import quantus
 
 import quantus
 from metaquantus import MetaEvaluation
-from metaquantus.configs import (
+from metaquantus.helpers.configs import (
     setup_estimators,
     setup_xai_methods,
     setup_dataset_models,

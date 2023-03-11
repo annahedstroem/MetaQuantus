@@ -11,7 +11,7 @@ import argparse
 import torch
 
 from metaquantus import MetaEvaluation, MetaEvaluationBenchmarking
-from metaquantus.configs import (
+from metaquantus.helpers.configs import (
     setup_estimators,
     setup_dataset_models,
     setup_test_suite,

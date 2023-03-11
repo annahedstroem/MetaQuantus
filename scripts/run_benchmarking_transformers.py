@@ -1,4 +1,4 @@
-"""This module contains the script for obtaining the results associated with the benchmarking experiment."""
+"""This module contains the script for obtaining the results associated with the transformer benchmarking experiment."""
 
 # This file is part of MetaQuantus.
 # MetaQuantus is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
@@ -12,14 +12,14 @@ import torch
 
 from metaquantus import MetaEvaluation, MetaEvaluationBenchmarking
 from metaquantus.helpers.configs import (
-    setup_estimators,
-    setup_xai_methods,
-    setup_dataset_models,
+    setup_estimators_transformers,
+    setup_xai_methods_transformers,
+    setup_dataset_models_transformers,
     setup_test_suite,
 )
 
 PATH_ASSETS = "../assets/"
-PATH_RESULTS = "../results/"
+PATH_RESULTS = "results/"
 
 if __name__ == "__main__":
 
@@ -33,16 +33,19 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--dataset")
-    parser.add_argument("--fname")
     parser.add_argument("--K")
     parser.add_argument("--iters")
+    parser.add_argument("--start_idx")
+    parser.add_argument("--end_idx")
     args = parser.parse_args()
 
     dataset_name = str(args.dataset)
     K = int(args.K)
     iters = int(args.iters)
-    fname = str(args.fname)
-    print(dataset_name, K, iters, fname)
+    start_idx = int(args.start_idx)
+    end_idx = int(args.end_idx)
+    fname = f"{start_idx}-{start_idx}"
+    print(dataset_name, K, iters, fname, start_idx, end_idx)
 
     #########
     # GPUs. #
@@ -66,7 +69,7 @@ if __name__ == "__main__":
     ##############################
 
     # Get input, outputs settings.
-    SETTINGS, model_name = setup_dataset_models(
+    SETTINGS, model_name = setup_dataset_models_transformers(
         dataset_name=dataset_name, path_assets=PATH_ASSETS, device=device
     )
     dataset_settings = {dataset_name: SETTINGS[dataset_name]}
@@ -76,7 +79,7 @@ if __name__ == "__main__":
     analyser_suite = setup_test_suite(dataset_name=dataset_name)
 
     # Get estimators.
-    estimators = setup_estimators(
+    estimators = setup_estimators_transformers(
         features=dataset_kwargs["features"],
         num_classes=dataset_kwargs["num_classes"],
         img_size=dataset_kwargs["img_size"],
@@ -84,16 +87,9 @@ if __name__ == "__main__":
         patch_size=dataset_kwargs["patch_size"],
         perturb_baseline=dataset_kwargs["perturb_baseline"],
     )
-    estimators = {
-        "Localisation": estimators["Localisation"],
-        "Complexity": estimators["Complexity"],
-        "Randomisation": estimators["Randomisation"],
-        "Robustness": estimators["Robustness"],
-        "Faithfulness": estimators["Faithfulness"],
-    }
 
     # Get explanation methods.
-    xai_methods = setup_xai_methods(
+    xai_methods = setup_xai_methods_transformers(
         gc_layer=dataset_settings[dataset_name]["gc_layers"][model_name],
         img_size=dataset_kwargs["img_size"],
         nr_channels=dataset_kwargs["nr_channels"],
@@ -102,6 +98,11 @@ if __name__ == "__main__":
     ###########################
     # Benchmarking settings. #
     ###########################
+
+    # Reduce the number of samples.
+    dataset_settings[dataset_name]["x_batch"] = dataset_settings[dataset_name]["x_batch"][start_idx:end_idx]
+    dataset_settings[dataset_name]["y_batch"] = dataset_settings[dataset_name]["y_batch"][start_idx:end_idx]
+    dataset_settings[dataset_name]["s_batch"] = dataset_settings[dataset_name]["s_batch"][start_idx:end_idx]
 
     # Define master!
     master = MetaEvaluation(
@@ -118,6 +119,7 @@ if __name__ == "__main__":
         estimators=estimators,
         experimental_settings=dataset_settings,
         path=PATH_RESULTS,
+        folder="benchmarks_new/",
         keep_results=True,
         channel_first=True,
         softmax=False,
