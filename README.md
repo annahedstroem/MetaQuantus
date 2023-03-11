@@ -112,10 +112,9 @@ Tutorial-Data-Generation-Experiments.ipynb](https://github.com/annahedstroem/Met
 2. **Run the experiments.** To obtain the results for the respective experiments, you have to run the respective Python scripts which are detailed below. All these Python files are located in the `scripts/` folder. If you want to run the experiments on other explanation methods, datasets or models, feel free to change the hyperparameters.
 3. **Analyse the results.** Once the results are obtained for your chosen experiments, run the [Tutorial-Reproduce-Paper-Experiments.ipynb](https://github.com/annahedstroem/MetaQuantus/blob/main/tutorials/Tutorial-Reproduce-Experiments.ipynb) to analyse the results. (In the notebook itself, we have also listed which specific Python scripts that need to be run in order to obtain the results for this analysis step.)
 
-**Note.** For all steps, make sure to adjust any local paths so that the approriate files can be retrieved. Make sure to have all the necessary packages installed as well as ensure to have GPUs enabled throughout the computing as this will speed up the experimentation considerably. Please also note that the results may vary slightly depending on the random seed and other hyperparameters of the experiments, but the overall trends and conclusions should remain the same.
 
 <details>
-<summary><b><big>More details step 2.</big></b></summary>
+<summary><b><normal>Additional details on step 2 (Run the Experiments)</normal></b></summary>
 
 **Test**: Go to the root folder and run a simple test that meta-evaluation work.
 ```bash
@@ -152,4 +151,20 @@ python3 scripts/run_l_dependency.py --dataset=fMNIST --K=5 --iters=3
 python3 scripts/run_l_dependency.py --dataset=cMNIST --K=5 --iters=3
 ```
 
+**Benchmarking Transformers**: Run sanity-checking exercise: L dependency.
+```bash
+python3 scripts/run_benchmarking_transformers.py --dataset=ImageNet --K=5 --iters=3 --start_idx=0 --end_idx=25
+python3 scripts/run_benchmarking_transformers.py --dataset=ImageNet --K=5 --iters=3 --start_idx=25 --end_idx=50
+python3 scripts/run_benchmarking_transformers.py --dataset=ImageNet --K=5 --iters=3 --start_idx=0 --end_idx=50
+```
 </details>
+
+**Note.** For all steps, please make sure to adjust any local paths so that the approriate files can be retrieved. Make sure to have all the necessary packages installed as well as ensure to have GPUs enabled throughout the computing as this will speed up the experimentation considerably. Also, note that the results may vary slightly depending on the random seed and other hyperparameters of the experiments. Nonetheless, the overall trends and conclusions should remain the same as in the paper.
+
+**Limitations.** Currently, the experiments are limited to the following experimental combinations:
+* XAI methods: any method provided in `quantus.AVAILABLE_XAI_METHODS_CAPTUM`
+* XAI metrics: any metric provided in `quantus.AVAILABLE_METRICS`
+* Models: any `PyTorch` model
+* Dataset: `MNIST`, `fMNSIT`, `cMNIST` and `ImageNet`
+
+Please feel free to raise an [Issue](https://github.com/annahedstroem/MetaQuantus/issues) if you'd like to extend these set-ups.
