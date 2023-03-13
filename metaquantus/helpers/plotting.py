@@ -21,6 +21,7 @@ def plot_multiple_estimator_area(
     save: bool,
     path: str,
     average_over: list = ["Model", "Input"],
+    **kwargs
 ) -> None:
     """
     Plot the outcome of the benchmarking exercise.
@@ -41,12 +42,16 @@ def plot_multiple_estimator_area(
         The path for saving the plot.
     average_over: list
         A list of spaces to average over.
+    kwargs: dict
+        A dict with plotting kwargs.
 
     Returns
     -------
     None
     """
-    fig, axs = plt.subplots(2, 5, sharex=True, figsize=(20, 8))
+    n_rows = kwargs.get("n_rows", 2)
+    n_cols = kwargs.get("n_cols", 5)
+    fig, axs = plt.subplots(n_rows=n_rows, n_cols=n_cols, sharex=True, figsize=(20, 8))
 
     for ex1, (estimator_category, metrics) in enumerate(estimators.items()):
         for ex2, estimator_name in enumerate(metrics):
@@ -149,6 +154,162 @@ def plot_multiple_estimator_area(
     plt.tight_layout()
     if save:
         plt.savefig(path + "plots/" + f"full_area_graph_{dataset_name}.png", dpi=500)
+    plt.show()
+
+
+def plot_multiple_models_estimator_area(
+        benchmarks: Dict,
+        estimators: Dict,
+        dataset_name: str,
+        colours: Dict,
+        save: bool,
+        path: str,
+        average_over: list = ["Model", "Input"],
+        **kwargs
+) -> None:
+    """
+    Plot the outcome of the benchmarking exercise for different models.
+
+    Parameters
+    ----------
+    benchmark: dict of dicts
+        The benchmarking data, keys are the model names.
+    estimators: dict
+        The estimators used in the experiment.
+    dataset_name: str
+        The name of the dataset.
+    colours: dict
+        Dictionary of colours, based on the metrics.
+    save: boolean
+        Indicates if plots should be saved.
+    path: str
+        The path for saving the plot.
+    average_over: list
+        A list of spaces to average over.
+    kwargs: dict
+        A dict with plotting kwargs.
+
+    Returns
+    -------
+    None
+    """
+    n_rows = kwargs.get("n_rows", 2)
+    n_cols = kwargs.get("n_cols", 5)
+    batches = kwargs.get("batches", 5)
+
+    fig, axs = plt.subplots(n_rows, n_cols, sharex=True, figsize=(20, 8))
+
+    models = list(benchmarks.keys())
+    metrics = list(estimators.values())[0]
+    estimator_category = list(estimators.keys())[0]
+
+    for mx1, model_name in enumerate(models):
+        for ex1, estimator_name in enumerate(metrics):
+            mc_scores = []
+            for px, perturbation_type in enumerate(["Input", "Model"]):
+                scores = {"IAC_NR": [], "IAC_AR": [], "IEC_NR": [], "IEC_AR": []}
+                for batch in range(batches):
+                    # Collect scores.
+                    scores["IAC_NR"].append(np.array(
+                        benchmarks[model_name][batch][estimator_category][estimator_name][
+                            "results_consistency_scores"
+                        ][perturbation_type]["intra_scores_res"]
+                    ))
+                    scores["IAC_AR"].append(np.array(
+                        benchmarks[model_name][batch][estimator_category][estimator_name][
+                            "results_consistency_scores"
+                        ][perturbation_type]["intra_scores_adv"]
+                    ))
+                    scores["IEC_NR"].append(np.array(
+                        benchmarks[model_name][batch][estimator_category][estimator_name][
+                            "results_consistency_scores"
+                        ][perturbation_type]["inter_scores_res"]
+                    ))
+                    scores["IEC_AR"].append(np.array(
+                        benchmarks[model_name][batch][estimator_category][estimator_name][
+                            "results_consistency_scores"
+                        ][perturbation_type]["inter_scores_adv"]
+                    ))
+
+                for k, v in scores.items():
+                    scores[k] = np.array(scores[k]).flatten()
+
+                # Set values for m* and the actual values by the estimator.
+                X_gt = [-1, 0, 1, 0]
+                Y_gt = [0, 1, 0, -1]
+                X_area = [-scores["IAC_AR"].mean(), 0, scores["IEC_AR"].mean(), 0]
+                Y_area = [0, scores["IAC_NR"].mean(), 0, -scores["IEC_NR"].mean()]
+
+                # Set the spaces to average the MC value over.
+                if perturbation_type in average_over:
+                    mc_score = np.mean(
+                        [
+                            scores["IAC_NR"].mean(),
+                            scores["IEC_NR"].mean(),
+                            scores["IAC_AR"].mean(),
+                            scores["IEC_AR"].mean(),
+                        ]
+                    )
+                    mc_scores.append(mc_score)
+
+                if perturbation_type == "Input":
+                    axs[mx1, ex1].fill(
+                        X_area,
+                        Y_area,
+                        color=colours[estimator_name],
+                        alpha=0.75,
+                        label=perturbation_type,
+                        edgecolor="black",
+                    )
+                else:
+                    axs[mx1, ex1].fill(
+                        X_area,
+                        Y_area,
+                        color=colours[estimator_name],
+                        alpha=0.5,
+                        label=perturbation_type,
+                        hatch="/",
+                        edgecolor="black",
+                    )
+
+                # Plot m*.
+                if px == 1:
+                    axs[mx1, ex1].fill(
+                        X_gt, Y_gt, color="black", alpha=0.075, label="m*"
+                    )
+
+                # Annotate the labels.
+                axs[mx1, ex1].annotate("${IAC}_{AR}$", (-1, 0), fontsize=12)
+                axs[mx1, ex1].annotate("${IAC}_{NR}$", (-0.2, 0.8), fontsize=12)
+                axs[mx1, ex1].annotate("${IEC}_{AR}$", (0.7, 0), fontsize=12)
+                axs[mx1, ex1].annotate("${IEC}_{NR}$", (-0.2, -0.8), fontsize=12)
+
+            # Labels.
+            axs[mx1, ex1].set_xticklabels(
+                ["", "1", "0.5", "0", "0.5", "1"], fontsize=14
+            )
+            axs[mx1, ex1].set_yticklabels(
+                ["", "1", "", "0.5", "", "0", "", "0.5", "", "1", ""], fontsize=14
+            )
+
+            if ex1 == 0:
+                axs[mx1, ex1].set_ylabel(model_name, fontsize=14)
+
+            if estimator_name == "Model Parameter Randomisation Test":
+                estimator_name = "Model Parameter Random."
+
+            # Title and grids.
+            axs[mx1, ex1].set_title(
+                f"{estimator_name} ({np.array(mc_scores).flatten().mean():.4f})",
+                fontsize=15,
+            )
+            axs[mx1, ex1].grid()
+            axs[mx1, ex1].legend(loc="upper left")
+            plt.grid()
+
+    plt.tight_layout()
+    if save:
+        plt.savefig(path + "plots/" + f"full_area_graph_{dataset_name}_multiple_models.png", dpi=500)
     plt.show()
 
 

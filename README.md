@@ -167,11 +167,13 @@ python3 scripts/run_l_dependency.py --dataset=fMNIST --K=5 --iters=3
 python3 scripts/run_l_dependency.py --dataset=cMNIST --K=5 --iters=3
 ```
 
-**Benchmarking Transformers**: Run sanity-checking exercise: L dependency.
+**Benchmarking Transformers**: Run transformer benchmarking experiment.
 ```bash
-python3 scripts/run_benchmarking_transformers.py --dataset=ImageNet --K=5 --iters=3 --start_idx=0 --end_idx=25
-python3 scripts/run_benchmarking_transformers.py --dataset=ImageNet --K=5 --iters=3 --start_idx=25 --end_idx=50
-python3 scripts/run_benchmarking_transformers.py --dataset=ImageNet --K=5 --iters=3 --start_idx=0 --end_idx=50
+python3 scripts/run_benchmarking_transformers.py --dataset=ImageNet --K=5 --iters=3 --start_idx=0 --end_idx=40
+python3 scripts/run_benchmarking_transformers.py --dataset=ImageNet --K=5 --iters=3 --start_idx=40 --end_idx=80
+python3 scripts/run_benchmarking_transformers.py --dataset=ImageNet --K=5 --iters=3 --start_idx=80 --end_idx=120
+python3 scripts/run_benchmarking_transformers.py --dataset=ImageNet --K=5 --iters=3 --start_idx=120 --end_idx=160
+python3 scripts/run_benchmarking_transformers.py --dataset=ImageNet --K=5 --iters=3 --start_idx=160 --end_idx=200
 ```
 </details>
 

@@ -623,11 +623,12 @@ class MetaEvaluation:
                 .mean(axis=0)
                 .std(),
             }
-            print(
-                f"\n{perturbation_type} Perturbation Test ---> MC score="
-                f"{self.results_meta_consistency_scores[perturbation_type]['MC_mean']:.4f} "
-                f"({self.results_meta_consistency_scores[perturbation_type]['MC_std']:.4f})"
-            )
+            if self.print_results:
+                print(
+                    f"\n{perturbation_type} Perturbation Test ---> MC score="
+                    f"{self.results_meta_consistency_scores[perturbation_type]['MC_mean']:.4f} "
+                    f"({self.results_meta_consistency_scores[perturbation_type]['MC_std']:.4f})"
+                )
 
         return self.results_meta_consistency_scores
 
