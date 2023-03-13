@@ -24,7 +24,7 @@ from metaquantus.helpers.configs import (
 from ..helpers import load_obj
 
 PATH_ASSETS = "../assets/"
-PATH_RESULTS = "../results/"
+PATH_RESULTS = "results/"
 
 if __name__ == "__main__":
 

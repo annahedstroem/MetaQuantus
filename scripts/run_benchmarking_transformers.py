@@ -44,7 +44,7 @@ if __name__ == "__main__":
     iters = int(args.iters)
     start_idx = int(args.start_idx)
     end_idx = int(args.end_idx)
-    fname = f"{start_idx}-{start_idx}"
+    fname = f"{start_idx}-{end_idx}"
     print(dataset_name, K, iters, fname, start_idx, end_idx)
 
     #########
@@ -123,5 +123,6 @@ if __name__ == "__main__":
         keep_results=True,
         channel_first=True,
         softmax=False,
+        save=True,
         device=device,
     )()

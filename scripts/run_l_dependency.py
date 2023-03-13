@@ -18,7 +18,7 @@ from metaquantus.helpers.configs import (
 )
 
 PATH_ASSETS = "../assets/"
-PATH_RESULTS = "../results/"
+PATH_RESULTS = "results/"
 
 
 def create_fname(xai_setting_name, estimators):
