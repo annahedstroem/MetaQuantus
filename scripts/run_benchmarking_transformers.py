@@ -12,8 +12,12 @@ import torch
 
 from metaquantus import MetaEvaluation, MetaEvaluationBenchmarking
 from metaquantus.helpers.configs import (
-    setup_estimators_transformers,
+    setup_complexity_estimators,
+    setup_localisation_estimators,
+    setup_faithfulness_estimators,
+    setup_randomisation_estimators,
     setup_xai_methods_transformers,
+    setup_xai_methods_transformers_2,
     setup_dataset_models_transformers,
     setup_test_suite,
 )
@@ -37,14 +41,16 @@ if __name__ == "__main__":
     parser.add_argument("--iters")
     parser.add_argument("--start_idx")
     parser.add_argument("--end_idx")
+    parser.add_argument("--category")
     args = parser.parse_args()
 
     dataset_name = str(args.dataset)
     K = int(args.K)
     iters = int(args.iters)
+    category = str(args.category)
     start_idx = int(args.start_idx)
     end_idx = int(args.end_idx)
-    fname = f"{start_idx}-{end_idx}"
+    fname = f"{category}_{start_idx}-{end_idx}"
     print(dataset_name, K, iters, fname, start_idx, end_idx)
 
     #########
@@ -79,7 +85,19 @@ if __name__ == "__main__":
     analyser_suite = setup_test_suite(dataset_name=dataset_name)
 
     # Get estimators.
-    estimators = setup_estimators_transformers(
+    if category.lower() == "localisation":
+        setup_estimator = setup_localisation_estimators
+    elif category .lower()== "complexity":
+        setup_estimator = setup_complexity_estimators
+        setup_xai_methods_transformers = setup_xai_methods_transformers_2
+    elif category .lower()== "randomisation":
+        setup_estimator = setup_randomisation_estimators
+    elif category .lower()== "faithfulness":
+        setup_estimator = setup_faithfulness_estimators
+    else:
+        raise ValueError("We only support estimators of localisation, robustness, faithfulnessand randomisation categories.")
+
+    estimators = setup_estimator(
         features=dataset_kwargs["features"],
         num_classes=dataset_kwargs["num_classes"],
         img_size=dataset_kwargs["img_size"],

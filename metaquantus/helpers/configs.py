@@ -48,6 +48,16 @@ def setup_xai_methods_transformers(
         "GradientShap": {},
     }
 
+def setup_xai_methods_transformers_2(
+    gc_layer: str,
+    img_size: int = 28,
+    nr_channels: int = 1,
+) -> Dict:
+    return {
+        "InputXGradient": {},
+        "Gradient": {},
+    }
+
 
 def setup_xai_settings(
     gc_layer: str,
@@ -807,21 +817,3 @@ def setup_localisation_estimators(
             ),
         },
     }
-
-
-def setup_estimators_transformers(
-    features: int,
-    patch_size: int,
-    num_classes: int,
-    img_size: int,
-    percentage: int,
-    perturb_baseline: str = "uniform",
-) -> Dict:
-    return setup_localisation_estimators(
-        features=features,
-        patch_size=patch_size,
-        num_classes=num_classes,
-        img_size=img_size,
-        percentage=percentage,
-        perturb_baseline=perturb_baseline,
-    )

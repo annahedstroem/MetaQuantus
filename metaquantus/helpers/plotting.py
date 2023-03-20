@@ -156,7 +156,6 @@ def plot_multiple_estimator_area(
         plt.savefig(path + "plots/" + f"full_area_graph_{dataset_name}.png", dpi=500)
     plt.show()
 
-
 def plot_multiple_models_estimator_area(
         benchmarks: Dict,
         estimators: Dict,
@@ -195,9 +194,10 @@ def plot_multiple_models_estimator_area(
     """
     n_rows = kwargs.get("n_rows", 2)
     n_cols = kwargs.get("n_cols", 5)
-    batches = kwargs.get("batches", 5)
+    batches = kwargs.get("batches", 4)
+    figsize = kwargs.get("figsize", (20, 8))
 
-    fig, axs = plt.subplots(n_rows, n_cols, sharex=True, figsize=(20, 8))
+    fig, axs = plt.subplots(n_rows, n_cols, sharex=True, figsize=figsize)
 
     models = list(benchmarks.keys())
     metrics = list(estimators.values())[0]
@@ -309,7 +309,7 @@ def plot_multiple_models_estimator_area(
 
     plt.tight_layout()
     if save:
-        plt.savefig(path + "plots/" + f"full_area_graph_{dataset_name}_multiple_models.png", dpi=500)
+        plt.savefig(path + "plots/" + f"full_area_graph_{estimator_category}_{dataset_name}_multiple_models.png", dpi=500)
     plt.show()
 
 
