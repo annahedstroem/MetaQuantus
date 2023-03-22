@@ -11,12 +11,7 @@ import argparse
 import torch
 
 from metaquantus import MetaEvaluation, MetaEvaluationBenchmarking
-from metaquantus.helpers.configs import (
-    setup_estimators,
-    setup_xai_methods,
-    setup_dataset_models,
-    setup_test_suite,
-)
+from metaquantus.helpers.configs import *
 
 PATH_ASSETS = "../assets/"
 PATH_RESULTS = "results/"
@@ -36,13 +31,17 @@ if __name__ == "__main__":
     parser.add_argument("--fname")
     parser.add_argument("--K")
     parser.add_argument("--iters")
+    parser.add_argument("--start_idx")
+    parser.add_argument("--end_idx")
     args = parser.parse_args()
 
     dataset_name = str(args.dataset)
     K = int(args.K)
     iters = int(args.iters)
     fname = str(args.fname)
-    print(dataset_name, K, iters, fname)
+    start_idx = int(args.start_idx)
+    end_idx = int(args.end_idx)
+    print(dataset_name, K, iters, start_idx, end_idx, fname)
 
     #########
     # GPUs. #
@@ -61,6 +60,11 @@ if __name__ == "__main__":
         print("Allocated:", round(torch.cuda.memory_allocated(0) / 1024 ** 3, 1), "GB")
         print("Cached:   ", round(torch.cuda.memory_cached(0) / 1024 ** 3, 1), "GB")
 
+    # Reduce the number of explanation methods and samples for ImageNet.
+    if dataset_name == "ImageNet":
+        setup_xai_methods = setup_xai_methods_imagenet
+        setup_dataset_models = setup_dataset_models_imagenet_benchmarking
+
     ##############################
     # Dataset-specific settings. #
     ##############################
@@ -71,6 +75,11 @@ if __name__ == "__main__":
     )
     dataset_settings = {dataset_name: SETTINGS[dataset_name]}
     dataset_kwargs = dataset_settings[dataset_name]["estimator_kwargs"]
+
+    # Reduce the number of samples.
+    dataset_settings[dataset_name]["x_batch"] = dataset_settings[dataset_name]["x_batch"][start_idx:end_idx]
+    dataset_settings[dataset_name]["y_batch"] = dataset_settings[dataset_name]["y_batch"][start_idx:end_idx]
+    dataset_settings[dataset_name]["s_batch"] = dataset_settings[dataset_name]["s_batch"][start_idx:end_idx]
 
     # Get analyser suite.
     analyser_suite = setup_test_suite(dataset_name=dataset_name)
@@ -84,7 +93,8 @@ if __name__ == "__main__":
         patch_size=dataset_kwargs["patch_size"],
         perturb_baseline=dataset_kwargs["perturb_baseline"],
     )
-    estimators = {
+
+    estimators_sub = {
         "Localisation": estimators["Localisation"],
         "Complexity": estimators["Complexity"],
         "Randomisation": estimators["Randomisation"],
@@ -112,14 +122,45 @@ if __name__ == "__main__":
         nr_perturbations=K,
     )
 
-    # Benchmark!
-    benchmark = MetaEvaluationBenchmarking(
-        master=master,
-        estimators=estimators,
-        experimental_settings=dataset_settings,
-        path=PATH_RESULTS,
-        keep_results=True,
-        channel_first=True,
-        softmax=False,
-        device=device,
-    )()
+
+    # If ImageNet, due to computational constraints, go over the categories, one by one.
+    if dataset_name == "ImageNet":
+
+        categories = list(reversed(["Complexity", "Localisation", "Randomisation", "Robustness", "Faithfulness"]))
+
+        for category in categories:
+            print(f"Meta-evaluates estimators in {category}...")
+
+            estimators_sub = {
+                category: estimators[category]
+            }
+
+            # Benchmark!
+            benchmark = MetaEvaluationBenchmarking(
+                master=master,
+                estimators=estimators_sub,
+                experimental_settings=dataset_settings,
+                path=PATH_RESULTS,
+                folder="benchmarks_new/",
+                keep_results=True,
+                channel_first=True,
+                softmax=False,
+                device=device,
+            )()
+
+    else:
+
+        # Benchmark!
+        benchmark = MetaEvaluationBenchmarking(
+            master=master,
+            estimators=estimators_sub,
+            experimental_settings=dataset_settings,
+            path=PATH_RESULTS,
+            folder="benchmarks_new/",
+            keep_results=True,
+            channel_first=True,
+            softmax=False,
+            device=device,
+        )()
+
+

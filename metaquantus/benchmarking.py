@@ -168,8 +168,6 @@ class MetaEvaluationBenchmarking:
                         gc.collect()
                         torch.cuda.empty_cache()
 
-                        self.master.print_meta_consistency_scores()
-
                     # print('Allocated:', round(torch.cuda.memory_allocated(0)/1024**3,1), 'GB')
                     # print('Cached:   ', round(torch.cuda.memory_cached(0)/1024**3,1), 'GB')
 

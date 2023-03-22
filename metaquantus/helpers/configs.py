@@ -19,6 +19,26 @@ from ..perturbation_tests.mpt import ModelPerturbationTest
 from ..perturbation_tests.ipt import InputPerturbationTest
 
 
+def setup_xai_methods_imagenet(
+        gc_layer: str,
+        img_size: int = 28,
+        nr_channels: int = 1,
+) -> Dict:
+    return {
+        #"Gradient": {},
+        "Saliency": {},
+        #"IntegratedGradients": {},
+        #"LayerGradCam": {
+        #    "gc_layer": gc_layer,
+        #    "interpolate": (img_size, img_size),
+        #    "interpolate_mode": "bilinear",
+        #},
+        #"Occlusion": {"window": (nr_channels, int(img_size / 4), int(img_size / 4))},
+        "GradientShap": {},
+    }
+
+
+
 def setup_xai_methods(
     gc_layer: str,
     img_size: int = 28,
@@ -307,6 +327,79 @@ def setup_dataset_models_transformers(
     return SETTINGS, model_name
 
 
+
+def setup_dataset_models_imagenet_benchmarking(
+    dataset_name: str,
+    path_assets: str,
+    device: torch.device,
+):
+
+    SETTINGS = {}
+
+    if dataset_name == "ImageNet":
+
+        # Paths.
+        # path_imagenet_model = path_assets + "models/imagenet_resnet18_model"
+        path_imagenet_assets = (
+            path_assets + "test_sets/imagenet_test_set_6.npy"
+        )  # imagenet_test_set.npy"
+
+        # Example for how to reload assets and models to notebook.
+        model_imagenet_resnet18 = torchvision.models.resnet18(pretrained=True)
+        # model_imagenet_vgg16 = torchvision.models.vgg16(pretrained=True)
+        #model_imagenet_vit_b_16 = torchvision.models.vit_b_16(pretrained=True)
+        #model_imagenet_swin_t = torchvision.models.swin_t(pretrained=True)
+        # model_imagenet_resnet50 = torchvision.models.resnet50(pretrained=True)
+
+        assets_imagenet = np.load(path_imagenet_assets, allow_pickle=True).item()
+        x_batch_imagenet = assets_imagenet["x_batch"]
+        y_batch_imagenet = assets_imagenet["y_batch"]
+        s_batch_imagenet = assets_imagenet["s_batch"]
+
+        s_batch_imagenet = s_batch_imagenet.reshape(len(x_batch_imagenet), 1, 224, 224)
+
+        # print(len(s_batch_imagenet))
+
+        # Add to settings.
+        SETTINGS["ImageNet"] = {
+            "x_batch": x_batch_imagenet,
+            "y_batch": y_batch_imagenet,
+            "s_batch": s_batch_imagenet,
+            "models": {
+                "ResNet18": model_imagenet_resnet18,
+                # "ResNet50": model_imagenet_resnet50,
+                # "VGG16": model_imagenet_vgg16,
+                #"ViT": model_imagenet_vit_b_16,
+                #"SWIN": model_imagenet_swin_t,
+            },
+            "gc_layers": {
+                #"ResNet18": "list(model.named_modules())[61][1]",
+                # "ResNet50": "NA",
+                # "VGG16": "NA",
+                "ViT": "NA",
+                #"SWIN": "NA",
+            },
+            "estimator_kwargs": {
+                "num_classes": 1000,
+                "img_size": 224,
+                "features": 224 * 4,
+                "percentage": 0.1,
+                "nr_channels": 3,
+                "patch_size": 224 * 2,
+                "perturb_baseline": "uniform",
+            },
+        }
+        model_name = "ViT"
+
+    else:
+        raise ValueError(
+            "Provide a supported dataset {'MNIST', 'fMNIST', 'cMNIST' and 'ImageNet'}."
+        )
+
+    return SETTINGS, model_name
+
+
+
 def setup_dataset_models(
     dataset_name: str,
     path_assets: str,
@@ -452,9 +545,9 @@ def setup_dataset_models(
         model_imagenet_resnet18 = torchvision.models.resnet18(pretrained=True)
 
         assets_imagenet = np.load(path_imagenet_assets, allow_pickle=True).item()
-        x_batch_imagenet = assets_imagenet["x_batch"][:150]
-        y_batch_imagenet = assets_imagenet["y_batch"][:150]
-        s_batch_imagenet = assets_imagenet["s_batch"][:150]
+        x_batch_imagenet = assets_imagenet["x_batch"]
+        y_batch_imagenet = assets_imagenet["y_batch"]
+        s_batch_imagenet = assets_imagenet["s_batch"]
 
         s_batch_imagenet = s_batch_imagenet.reshape(len(x_batch_imagenet), 1, 224, 224)
 
