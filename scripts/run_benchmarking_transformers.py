@@ -11,19 +11,7 @@ import argparse
 import torch
 
 from metaquantus import MetaEvaluation, MetaEvaluationBenchmarking
-from metaquantus.helpers.configs import (
-    setup_complexity_estimators,
-    setup_localisation_estimators,
-    setup_faithfulness_estimators,
-    setup_randomisation_estimators,
-    setup_xai_methods_transformers,
-    setup_xai_methods_transformers_2,
-    setup_dataset_models_transformers,
-    setup_test_suite,
-)
-
-PATH_ASSETS = "../assets/"
-PATH_RESULTS = "results/"
+from metaquantus.helpers.configs import *
 
 if __name__ == "__main__":
 
@@ -42,6 +30,8 @@ if __name__ == "__main__":
     parser.add_argument("--start_idx")
     parser.add_argument("--end_idx")
     parser.add_argument("--category")
+    parser.add_argument("--PATH_ASSETS")
+    parser.add_argument("--PATH_RESULTS")
     args = parser.parse_args()
 
     dataset_name = str(args.dataset)
@@ -50,8 +40,10 @@ if __name__ == "__main__":
     category = str(args.category)
     start_idx = int(args.start_idx)
     end_idx = int(args.end_idx)
+    PATH_ASSETS = str(args.PATH_ASSETS)
+    PATH_RESULTS = str(args.PATH_RESULTS)
     fname = f"{category}_{start_idx}-{end_idx}"
-    print(dataset_name, K, iters, fname, start_idx, end_idx)
+    print(dataset_name, K, iters, fname, start_idx, end_idx, PATH_ASSETS, PATH_RESULTS)
 
     #########
     # GPUs. #

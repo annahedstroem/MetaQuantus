@@ -11,14 +11,7 @@ import argparse
 import torch
 
 from metaquantus import MetaEvaluation, MetaEvaluationBenchmarking
-from metaquantus.helpers.configs import (
-    setup_estimators,
-    setup_dataset_models,
-    setup_test_suite,
-)
-
-PATH_ASSETS = "../assets/"
-PATH_RESULTS = "results/"
+from metaquantus.helpers.configs import *
 
 
 def create_fname(xai_setting_name, estimators):
@@ -50,13 +43,17 @@ if __name__ == "__main__":
     parser.add_argument("--K")
     parser.add_argument("--iters")
     parser.add_argument("--reversed_order")
+    parser.add_argument("--PATH_ASSETS")
+    parser.add_argument("--PATH_RESULTS")
     args = parser.parse_args()
 
     dataset_name = str(args.dataset)
     K = int(args.K)
     iters = int(args.iters)
     reversed_order = bool(args.reversed_order)
-    print(dataset_name, K, iters, reversed_order)
+    PATH_ASSETS = str(args.PATH_ASSETS)
+    PATH_RESULTS = str(args.PATH_RESULTS)
+    print(dataset_name, K, iters, reversed_order, PATH_ASSETS, PATH_RESULTS)
 
     #########
     # GPUs. #

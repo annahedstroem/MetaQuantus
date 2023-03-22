@@ -18,17 +18,8 @@ import numpy as np
 import pandas as pd
 import scipy
 
-from metaquantus.helpers.configs import (
-    setup_estimators,
-    setup_xai_settings,
-    setup_dataset_models,
-    setup_test_suite,
-)
+from metaquantus.helpers.configs import *
 from metaquantus.helpers.utils import dump_obj
-
-
-PATH_ASSETS = "../assets/"
-PATH_RESULTS = "results/"
 
 
 if __name__ == "__main__":
@@ -47,6 +38,8 @@ if __name__ == "__main__":
     parser.add_argument("--K")
     parser.add_argument("--iters")
     parser.add_argument("--category")
+    parser.add_argument("--PATH_ASSETS")
+    parser.add_argument("--PATH_RESULTS")
     args = parser.parse_args()
 
     dataset_name = str(args.dataset)
@@ -54,7 +47,9 @@ if __name__ == "__main__":
     iters = int(args.iters)
     fname = str(args.fname)
     category = str(args.category)
-    print(dataset_name, K, iters, fname, category)
+    PATH_ASSETS = str(args.PATH_ASSETS)
+    PATH_RESULTS = str(args.PATH_RESULTS)
+    print(dataset_name, K, iters, fname, category, PATH_ASSETS, PATH_RESULTS)
 
     #########
     # GPUs. #

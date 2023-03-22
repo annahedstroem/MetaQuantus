@@ -15,17 +15,9 @@ import uuid
 from datetime import datetime
 
 from metaquantus import MetaEvaluation
-from metaquantus.helpers.configs import (
-    setup_estimators,
-    setup_xai_methods,
-    setup_dataset_models,
-    setup_test_suite,
-)
-from ..helpers import dump_obj
+from metaquantus.helpers.configs import *
+from metaquantus.helpers.utils import load_obj
 
-
-PATH_ASSETS = "../assets/"
-PATH_RESULTS = "results/"
 
 if __name__ == "__main__":
 
@@ -42,11 +34,16 @@ if __name__ == "__main__":
         parser.add_argument("--dataset")
         parser.add_argument("--K")
         parser.add_argument("--iters")
+        parser.add_argument("--PATH_ASSETS")
+        parser.add_argument("--PATH_RESULTS")
         args = parser.parse_args()
 
         dataset_name = str(args.dataset)
         K = int(args.K)
         iters = int(args.iters)
+        PATH_ASSETS = str(args.PATH_ASSETS)
+        PATH_RESULTS = str(args.PATH_RESULTS)
+        print(dataset_name, K, iters, PATH_ASSETS, PATH_RESULTS)
 
     except:
         dataset_name = "MNIST"

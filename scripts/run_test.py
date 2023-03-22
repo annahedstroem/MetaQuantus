@@ -10,17 +10,11 @@ import warnings
 import argparse
 import torch
 
-from metaquantus.helpers.configs import (
-    setup_estimators,
-    setup_xai_methods,
-    setup_dataset_models,
-    setup_test_suite,
-)
-from metaquantus.helpers.utils import load_obj
 from metaquantus.meta_evaluation import MetaEvaluation
+from metaquantus.helpers.configs import *
+from metaquantus.helpers.utils import load_obj
 
-PATH_ASSETS = "assets/"
-PATH_RESULTS = "results/"
+
 
 if __name__ == "__main__":
 
@@ -36,12 +30,16 @@ if __name__ == "__main__":
     parser.add_argument("--dataset")
     parser.add_argument("--K")
     parser.add_argument("--iters")
+    parser.add_argument("--PATH_ASSETS")
+    parser.add_argument("--PATH_RESULTS")
     args = parser.parse_args()
 
     dataset_name = str(args.dataset)
     K = int(args.K)
     iters = int(args.iters)
-    print(dataset_name, K, iters)
+    PATH_ASSETS = str(args.PATH_ASSETS)
+    PATH_RESULTS = str(args.PATH_RESULTS)
+    print(dataset_name, K, iters, PATH_ASSETS, PATH_RESULTS)
 
     #########
     # GPUs. #

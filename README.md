@@ -142,47 +142,47 @@ python3 scripts/run_test.py --K=5 --iters=10 --dataset=MNIST
 python3 scripts/run_benchmarking.py --dataset=MNIST --fname=f --K=5 --iters=3
 python3 scripts/run_benchmarking.py --dataset=fMNIST --fname=f --K=5 --iters=3
 python3 scripts/run_benchmarking.py --dataset=cMNIST --fname=f --K=5 --iters=3
-python3 scripts/run_benchmarking.py --dataset=ImageNet --fname=f --K=5 --iters=3 --start_idx=0 --end_idx=50
-python3 scripts/run_benchmarking.py --dataset=ImageNet --fname=f --K=5 --iters=3 --start_idx=50 --end_idx=100
-python3 scripts/run_benchmarking.py --dataset=ImageNet --fname=f --K=5 --iters=3 --start_idx=100 --end_idx=150
+python3 scripts/run_benchmarking.py --dataset=ImageNet --fname=f --K=5 --iters=3 --start_idx=0 --end_idx=50 --PATH_ASSETS=../assets/ --PATH_RESULTS=results/
+python3 scripts/run_benchmarking.py --dataset=ImageNet --fname=f --K=5 --iters=3 --start_idx=50 --end_idx=100 --PATH_ASSETS=../assets/ --PATH_RESULTS=results/
+python3 scripts/run_benchmarking.py --dataset=ImageNet --fname=f --K=5 --iters=3 --start_idx=100 --end_idx=150 --PATH_ASSETS=../assets/ --PATH_RESULTS=results/
 ```
 
 **Application**: Run hyperparameter optimisation experiment.
 ```bash
-python3 scripts/run_hp.py --dataset=MNIST --K=3 --iters=2
-python3 scripts/run_hp.py --dataset=ImageNet --K=3 --iters=2
+python3 scripts/run_hp.py --dataset=MNIST --K=3 --iters=2 --PATH_ASSETS=../assets/ --PATH_RESULTS=results/
+python3 scripts/run_hp.py --dataset=ImageNet --K=3 --iters=2 --PATH_ASSETS=../assets/ --PATH_RESULTS=results/
 ```
 
 **Experiment**: Run the faithfulness ranking disagreement exercise.
 ```bash
-python3 scripts/run_ranking.py --dataset=cMNIST --fname=f --K=5 --iters=3 --category=Faithfulness
+python3 scripts/run_ranking.py --dataset=cMNIST --fname=f --K=5 --iters=3 --category=Faithfulness --PATH_ASSETS=../assets/ --PATH_RESULTS=results/
 ```
 
 **Sanity-Check**: Run sanity-checking exercise: adversarial estimators.
 ```bash
-python3 scripts/run_sanity_checks.py --dataset=ImageNet --K=3 --iters=2
+python3 scripts/run_sanity_checks.py --dataset=ImageNet --K=3 --iters=2 --PATH_ASSETS=../assets/ --PATH_RESULTS=results/
 ```
 
 **Sanity-Check**: Run sanity-checking exercise: L dependency.
 ```bash
-python3 scripts/run_l_dependency.py --dataset=MNIST --K=5 --iters=3
-python3 scripts/run_l_dependency.py --dataset=fMNIST --K=5 --iters=3
-python3 scripts/run_l_dependency.py --dataset=cMNIST --K=5 --iters=3
+python3 scripts/run_l_dependency.py --dataset=MNIST --K=5 --iters=3 --PATH_ASSETS=../assets/ --PATH_RESULTS=results/
+python3 scripts/run_l_dependency.py --dataset=fMNIST --K=5 --iters=3 --PATH_ASSETS=../assets/ --PATH_RESULTS=results/
+python3 scripts/run_l_dependency.py --dataset=cMNIST --K=5 --iters=3 --PATH_ASSETS=../assets/ --PATH_RESULTS=results/
 ```
 
 **Benchmarking Transformers**: Run transformer benchmarking experiment.
 ```bash
-python3 scripts/run_benchmarking_transformers.py --dataset=ImageNet --K=5 --iters=3 --start_idx=0 --end_idx=40 --category=localisation
-python3 scripts/run_benchmarking_transformers.py --dataset=ImageNet --K=5 --iters=3 --start_idx=40 --end_idx=80 --category=localisation
-python3 scripts/run_benchmarking_transformers.py --dataset=ImageNet --K=5 --iters=3 --start_idx=80 --end_idx=120 --category=localisation
-python3 scripts/run_benchmarking_transformers.py --dataset=ImageNet --K=5 --iters=3 --start_idx=120 --end_idx=160 --category=localisation
+python3 scripts/run_benchmarking_transformers.py --dataset=ImageNet --K=5 --iters=3 --start_idx=0 --end_idx=40 --category=localisation --PATH_ASSETS=../assets/ --PATH_RESULTS=results/
+python3 scripts/run_benchmarking_transformers.py --dataset=ImageNet --K=5 --iters=3 --start_idx=40 --end_idx=80 --category=localisation --PATH_ASSETS=../assets/ --PATH_RESULTS=results/
+python3 scripts/run_benchmarking_transformers.py --dataset=ImageNet --K=5 --iters=3 --start_idx=80 --end_idx=120 --category=localisation --PATH_ASSETS=../assets/ --PATH_RESULTS=results/
+python3 scripts/run_benchmarking_transformers.py --dataset=ImageNet --K=5 --iters=3 --start_idx=120 --end_idx=160 --category=localisation --PATH_ASSETS=../assets/ --PATH_RESULTS=results/
 ```
 
 ```bash
-python3 scripts/run_benchmarking_transformers.py --dataset=ImageNet --K=5 --iters=3 --start_idx=40 --end_idx=80 --category=complexity
-python3 scripts/run_benchmarking_transformers.py --dataset=ImageNet --K=5 --iters=3 --start_idx=0 --end_idx=40 --category=complexity 
-python3 scripts/run_benchmarking_transformers.py --dataset=ImageNet --K=5 --iters=3 --start_idx=80 --end_idx=120 --category=complexity 
-python3 scripts/run_benchmarking_transformers.py --dataset=ImageNet --K=5 --iters=3 --start_idx=120 --end_idx=160 --category=complexity
+python3 scripts/run_benchmarking_transformers.py --dataset=ImageNet --K=5 --iters=3 --start_idx=40 --end_idx=80 --category=complexity --PATH_ASSETS=../assets/ --PATH_RESULTS=results/
+python3 scripts/run_benchmarking_transformers.py --dataset=ImageNet --K=5 --iters=3 --start_idx=0 --end_idx=40 --category=complexity --PATH_ASSETS=../assets/ --PATH_RESULTS=results/
+python3 scripts/run_benchmarking_transformers.py --dataset=ImageNet --K=5 --iters=3 --start_idx=80 --end_idx=120 --category=complexity --PATH_ASSETS=../assets/ --PATH_RESULTS=results/
+python3 scripts/run_benchmarking_transformers.py --dataset=ImageNet --K=5 --iters=3 --start_idx=120 --end_idx=160 --category=complexity --PATH_ASSETS=../assets/ --PATH_RESULTS=results/
 ```
 </details>
 

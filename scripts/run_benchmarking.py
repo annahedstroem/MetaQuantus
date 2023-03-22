@@ -13,9 +13,6 @@ import torch
 from metaquantus import MetaEvaluation, MetaEvaluationBenchmarking
 from metaquantus.helpers.configs import *
 
-PATH_ASSETS = "../assets/"
-PATH_RESULTS = "results/"
-
 if __name__ == "__main__":
 
     ######################
@@ -33,6 +30,8 @@ if __name__ == "__main__":
     parser.add_argument("--iters")
     parser.add_argument("--start_idx")
     parser.add_argument("--end_idx")
+    parser.add_argument("--PATH_ASSETS")
+    parser.add_argument("--PATH_RESULTS")
     args = parser.parse_args()
 
     dataset_name = str(args.dataset)
@@ -41,7 +40,9 @@ if __name__ == "__main__":
     fname = str(args.fname)
     start_idx = int(args.start_idx)
     end_idx = int(args.end_idx)
-    print(dataset_name, K, iters, start_idx, end_idx, fname)
+    PATH_ASSETS = str(args.PATH_ASSETS)
+    PATH_RESULTS = str(args.PATH_RESULTS)
+    print(dataset_name, K, iters, start_idx, end_idx, fname, PATH_ASSETS, PATH_RESULTS)
 
     #########
     # GPUs. #
