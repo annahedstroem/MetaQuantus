@@ -29,6 +29,7 @@ setup(
     install_requires=[
         "quantus>=0.3.4",
         "captum>=0.4.1",
+        "timm>=0.6.12"
         "torch>=1.10.1",
         "torchvision>=0.11.2",
         "pandas>=1.3.5",

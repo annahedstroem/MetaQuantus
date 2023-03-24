@@ -27,6 +27,7 @@ def setup_xai_methods_imagenet(
     return {
         #"Gradient": {},
         "Saliency": {},
+        "InputXGradient": {},
         #"IntegratedGradients": {},
         #"LayerGradCam": {
         #    "gc_layer": gc_layer,
@@ -345,9 +346,9 @@ def setup_dataset_models_imagenet_benchmarking(
         )  # imagenet_test_set.npy"
 
         # Example for how to reload assets and models to notebook.
-        model_imagenet_resnet18 = torchvision.models.resnet18(pretrained=True)
+        #model_imagenet_resnet18 = torchvision.models.resnet18(pretrained=True)
         # model_imagenet_vgg16 = torchvision.models.vgg16(pretrained=True)
-        #model_imagenet_vit_b_16 = torchvision.models.vit_b_16(pretrained=True)
+        model_imagenet_vit_b_16 = torchvision.models.vit_b_16(pretrained=True)
         #model_imagenet_swin_t = torchvision.models.swin_t(pretrained=True)
         # model_imagenet_resnet50 = torchvision.models.resnet50(pretrained=True)
 
@@ -366,10 +367,10 @@ def setup_dataset_models_imagenet_benchmarking(
             "y_batch": y_batch_imagenet,
             "s_batch": s_batch_imagenet,
             "models": {
-                "ResNet18": model_imagenet_resnet18,
+                #"ResNet18": model_imagenet_resnet18,
                 # "ResNet50": model_imagenet_resnet50,
                 # "VGG16": model_imagenet_vgg16,
-                #"ViT": model_imagenet_vit_b_16,
+                "ViT": model_imagenet_vit_b_16,
                 #"SWIN": model_imagenet_swin_t,
             },
             "gc_layers": {

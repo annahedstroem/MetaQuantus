@@ -51,7 +51,7 @@ def plot_multiple_estimator_area(
     """
     n_rows = kwargs.get("n_rows", 2)
     n_cols = kwargs.get("n_cols", 5)
-    fig, axs = plt.subplots(n_rows=n_rows, n_cols=n_cols, sharex=True, figsize=(20, 8))
+    fig, axs = plt.subplots(n_rows, n_cols, sharex=True, figsize=(20, 8))
 
     for ex1, (estimator_category, metrics) in enumerate(estimators.items()):
         for ex2, estimator_name in enumerate(metrics):
@@ -155,6 +155,7 @@ def plot_multiple_estimator_area(
     if save:
         plt.savefig(path + "plots/" + f"full_area_graph_{dataset_name}.png", dpi=500)
     plt.show()
+
 
 def plot_multiple_models_estimator_area(
         benchmarks: Dict,
@@ -447,7 +448,7 @@ def plot_single_estimator_area(
 
 
 def plot_benchmarking_scatter_plots(
-    dfs: Dict[str, pd.DataFrame], colours: Dict, save: bool, path: str
+        dfs: Dict[str, pd.DataFrame], colours: Dict, save: bool, path: str
 ) -> None:
     """
     Plot the scatter plots for benchmarking.
@@ -488,20 +489,21 @@ def plot_benchmarking_scatter_plots(
         ),
     ]
     markers = {"Input": "^", "Model": "o"}
-    fig, ax = plt.subplots(1, len(dfs) * 2, figsize=(len(dfs) * 6, 4))
+    fig, ax = plt.subplots(1, len(dfs) * 2, figsize=(len(dfs) * 5, 4))
 
     round = 0
     for i, (dataset_name, df) in enumerate(dfs.items()):
 
-        i = i + round
+        index_1 = i + round
+        index_2 = i + round + 1
         # Plot scatter.
         for x, y, col, t in zip(
-            df["IAC_{NR}"].values,
-            df["IAC_{AR}"].values,
-            df["Estimator"].values,
-            df["Test"].values,
+                df["IAC_{NR}"].values,
+                df["IAC_{AR}"].values,
+                df["Estimator"].values,
+                df["Test"].values,
         ):
-            ax[i].scatter(
+            ax[index_1].scatter(
                 x=x,
                 y=y,
                 marker=markers[t],
@@ -512,12 +514,12 @@ def plot_benchmarking_scatter_plots(
                 edgecolor="black",
             )
         for x, y, col, t in zip(
-            df["IEC_{NR}"].values,
-            df["IEC_{AR}"].values,
-            df["Estimator"].values,
-            df["Test"].values,
+                df["IEC_{NR}"].values,
+                df["IEC_{AR}"].values,
+                df["Estimator"].values,
+                df["Test"].values,
         ):
-            ax[i + 1].scatter(
+            ax[index_2].scatter(
                 x=x,
                 y=y,
                 marker=markers[t],
@@ -529,66 +531,66 @@ def plot_benchmarking_scatter_plots(
             )
 
         # Details for the first scatter.
-        ax[i].legend(
+        ax[index_1].legend(
             handles=legend_elements,
             fontsize=15,
             frameon=True,
             edgecolor="black",
             loc="lower left",
         )
-        ax[i].set_ylabel("$\mathbf{IAC}_{AR}$", fontsize=20)
-        ax[i].set_xlabel("$\mathbf{IAC}_{NR}$", fontsize=20)
-        ax[i].set_ylim(-0.1, 1.1)
-        ax[i].set_xlim(-0.1, 1.1)
-        ax[i].set_xticks(
+        ax[index_1].set_ylabel("$\mathbf{IAC}_{AR}$", fontsize=20)
+        ax[index_1].set_xlabel("$\mathbf{IAC}_{NR}$", fontsize=20)
+        ax[index_1].set_ylim(-0.1, 1.1)
+        ax[index_1].set_xlim(-0.1, 1.1)
+        ax[index_1].set_xticks(
             ticks=np.linspace(0, 1, 10),
             labels=[0.0, "", "", "", "", "", "", "", "", 1.0],
             fontsize=15,
         )
-        ax[i].set_yticks(
+        ax[index_1].set_yticks(
             ticks=np.linspace(0, 1, 10),
             labels=[0.0, "", "", "", "", 0.5, "", "", "", 1.0],
             fontsize=15,
         )
-        ax[i].grid()
-        ax[i].set_title(f"{dataset_name}", fontsize=16)
+        ax[index_1].grid()
+        ax[index_1].set_title(f"{dataset_name}", fontsize=16)
 
         # Then, the sceond scatter.
-        ax[i + 1].legend(
+        ax[index_2].legend(
             handles=legend_elements,
             fontsize=15,
             frameon=True,
             edgecolor="black",
             loc="lower left",
         )
-        ax[i + 1].set_ylabel("$\mathbf{IEC}_{AR}$", fontsize=20)
-        ax[i + 1].set_xlabel("$\mathbf{IEC}_{NR}$", fontsize=20)
-        ax[i + 1].set_ylim(-0.1, 1.1)
-        ax[i + 1].set_xlim(-0.1, 1.1)
-        ax[i + 1].set_xticks(
+        ax[index_2].set_ylabel("$\mathbf{IEC}_{AR}$", fontsize=20)
+        ax[index_2].set_xlabel("$\mathbf{IEC}_{NR}$", fontsize=20)
+        ax[index_2].set_ylim(-0.1, 1.1)
+        ax[index_2].set_xlim(-0.1, 1.1)
+        ax[index_2].set_xticks(
             ticks=np.linspace(0, 1, 10),
             labels=[0.0, "", "", "", "", "", "", "", "", 1.0],
             fontsize=15,
         )
-        ax[i + 1].set_yticks(
+        ax[index_2].set_yticks(
             ticks=np.linspace(0, 1, 10),
             labels=[0.0, "", "", "", "", 0.5, "", "", "", 1.0],
             fontsize=15,
         )
-        ax[i + 1].grid()
-        ax[i + 1].set_title(f"{dataset_name}", fontsize=16)
+        ax[index_2].grid()
+        ax[index_2].set_title(f"{dataset_name}", fontsize=16)
 
-        round = i + 1
+        round += 1
 
     plt.tight_layout()
 
     if save:
         datasets = (
             str(list(dfs.keys()))
-            .replace("'", "")
-            .replace("[", "")
-            .replace("]", "")
-            .replace(", ", "_")
+                .replace("'", "")
+                .replace("[", "")
+                .replace("]", "")
+                .replace(", ", "_")
         )
         plt.savefig(
             path + "plots/" + f"benchmarking_scatter_plot_{datasets}.png", dpi=1000
@@ -730,47 +732,59 @@ def plot_benchmarking_scatter_bar_plots_combined(
     ax[1].grid()
 
     # Configs for barplot.
-    datasets = ["MNIST", "fMNIST", "cMNIST"]
-    nr_datasets = 3
+    datasets = ["ImageNet", "MNIST", "fMNIST", "cMNIST"]
+    nr_datasets = len(datasets)
     metrics_short = ["SP", "CO", "FC", "PF", "PG", "RMA", "RL", "MPR", "MS", "LLE"]
     colours_repeat = np.repeat(list(colours.values()), repeats=nr_datasets)
     legend_elements = [
         matplotlib.patches.Patch(facecolor="white", edgecolor="black", hatch="/"),
         matplotlib.patches.Patch(facecolor="white", edgecolor="black", hatch="*"),
+        matplotlib.patches.Patch(facecolor="white", edgecolor="black", hatch="x"),
         matplotlib.patches.Patch(facecolor="white", edgecolor="black"),
     ]
     x = [
         0,
         1,
         2,
-        4,
+        3,
         5,
         6,
+        7,
         8,
-        9,
         10,
+        11,
         12,
         13,
-        14,
+        15,
         16,
         17,
         18,
         20,
         21,
         22,
-        24,
+        23,
         25,
         26,
+        27,
         28,
-        29,
         30,
+        31,
         32,
         33,
-        34,
+        35,
         36,
         37,
         38,
+        40,
+        41,
+        42,
+        43,
+        45,
+        46,
+        47,
+        48
     ]
+    print(len(x))
     labels_ticks = list(range(1, np.max(x) + 1, nr_datasets + 1))
     labels_ticks[0] = 1.5
 
@@ -781,10 +795,12 @@ def plot_benchmarking_scatter_bar_plots_combined(
     ax[2].bar_label(barlist, fmt="%.2f", label_type="edge", fontsize=10)
 
     # Fix the harches.
-    for i in range(0, len(metrics_short) * nr_datasets, 3):
+    for i in range(0, len(metrics_short) * nr_datasets, nr_datasets):
         barlist[i].set_hatch("/")
-    for i in range(1, len(metrics_short) * nr_datasets, 3):
+    for i in range(1, len(metrics_short) * nr_datasets, nr_datasets):
         barlist[i].set_hatch("*")
+    for i in range(2, len(metrics_short) * nr_datasets, nr_datasets):
+        barlist[i].set_hatch("x")
     for i in range(len(metrics_short) * nr_datasets):
         barlist[i].set_color(colours_repeat[i])
     for i in range(len(metrics_short) * nr_datasets):
@@ -800,7 +816,7 @@ def plot_benchmarking_scatter_bar_plots_combined(
     )
     ax[2].set_ylim(np.min(means) - 0.1, np.max(means) + 0.1)
     ax[2].legend(
-        handles=legend_elements, labels=datasets, ncol=3, fontsize=15, loc="upper left"
+        handles=legend_elements, labels=datasets, ncol=nr_datasets, fontsize=15, loc="upper left"
     )
     ax[2].grid()
 
@@ -810,9 +826,6 @@ def plot_benchmarking_scatter_bar_plots_combined(
             path + "plots/" + f"benchmarking_scatter_bar_plots_combined.png", dpi=500
         )
     plt.show()
-
-
-from typing import Dict
 
 
 def make_benchmarking_df_as_str(benchmark: Dict, estimators: Dict):

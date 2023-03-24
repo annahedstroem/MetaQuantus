@@ -27,7 +27,7 @@ class MetaEvaluationBenchmarking:
         path: str = "/content/drive/MyDrive/Projects/MetaQuantus/results/",
         folder: str = "benchmarks/",
         write_to_file: bool = True,
-        save: bool = False,
+        save: bool = True,
         keep_results: bool = False,
         channel_first: Optional[bool] = True,
         softmax: Optional[bool] = False,

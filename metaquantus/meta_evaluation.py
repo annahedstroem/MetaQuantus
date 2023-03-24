@@ -701,6 +701,7 @@ class MetaEvaluation:
         alternative: str = "two-sided",
         zero_method: str = "zsplit",
         reverse_scoring: bool = True,
+        debug: bool = False,
     ) -> float:
         """
         Compare evaluation scores by computing the p-value to test if the scores are statistically different.
@@ -724,6 +725,8 @@ class MetaEvaluation:
             A string describing the method of how to treat zero differences.
         reverse_scoring: bool
             Indicates if reverse scoring should be applied.
+        debug: bool
+            Indicates if to use debug mode.
 
         Returns
         -------
@@ -738,7 +741,12 @@ class MetaEvaluation:
         q_hat = np.array(q_hat)[np.array(indices)]
 
         # Compute the p-value.
-        p_value = measure(q, q_hat, alternative=alternative, zero_method=zero_method)[1]
+        try:
+            p_value = measure(q, q_hat, alternative=alternative, zero_method=zero_method)[1]
+        except:
+            if debug:
+                print(f"Setting p_value to 0.0, q={q}, qhat={q_hat}.")
+            p_value = 0.0
 
         if reverse_scoring and "Adversary" in test_name:
             return 1 - p_value

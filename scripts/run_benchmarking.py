@@ -9,6 +9,8 @@ import os
 import warnings
 import argparse
 import torch
+import torchvision
+import timm
 
 from metaquantus import MetaEvaluation, MetaEvaluationBenchmarking
 from metaquantus.helpers.configs import *
@@ -25,24 +27,30 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--dataset")
-    parser.add_argument("--fname")
-    parser.add_argument("--K")
-    parser.add_argument("--iters")
-    parser.add_argument("--start_idx")
-    parser.add_argument("--end_idx")
-    parser.add_argument("--PATH_ASSETS")
-    parser.add_argument("--PATH_RESULTS")
+    parser.add_argument("--fname", default="")
+    parser.add_argument("--K", default=5)
+    parser.add_argument("--iters", default=3)
+    parser.add_argument("--batch_size", default=50)
+    parser.add_argument("--reverse_order", default=False)
+    parser.add_argument("--end_idx_fixed", default="")
+    parser.add_argument("--start_idx_fixed", default="")
+    parser.add_argument("--folder", default="benchmarks_imagenet/")
+    parser.add_argument("--PATH_ASSETS", default="../assets/")
+    parser.add_argument("--PATH_RESULTS", default="results/")
     args = parser.parse_args()
 
     dataset_name = str(args.dataset)
     K = int(args.K)
     iters = int(args.iters)
     fname = str(args.fname)
-    start_idx = int(args.start_idx)
-    end_idx = int(args.end_idx)
+    batch_size = int(args.batch_size)
+    reverse_order = str(args.reverse_order)
+    folder = str(args.folder)
+    end_idx_fixed = eval(args.end_idx_fixed)
+    start_idx_fixed = eval(args.start_idx_fixed)
     PATH_ASSETS = str(args.PATH_ASSETS)
     PATH_RESULTS = str(args.PATH_RESULTS)
-    print(dataset_name, K, iters, start_idx, end_idx, fname, PATH_ASSETS, PATH_RESULTS)
+    print(dataset_name, K, iters, batch_size, fname, reverse_order, folder, start_idx_fixed, end_idx_fixed, PATH_ASSETS, PATH_RESULTS)
 
     #########
     # GPUs. #
@@ -77,11 +85,6 @@ if __name__ == "__main__":
     dataset_settings = {dataset_name: SETTINGS[dataset_name]}
     dataset_kwargs = dataset_settings[dataset_name]["estimator_kwargs"]
 
-    # Reduce the number of samples.
-    dataset_settings[dataset_name]["x_batch"] = dataset_settings[dataset_name]["x_batch"][start_idx:end_idx]
-    dataset_settings[dataset_name]["y_batch"] = dataset_settings[dataset_name]["y_batch"][start_idx:end_idx]
-    dataset_settings[dataset_name]["s_batch"] = dataset_settings[dataset_name]["s_batch"][start_idx:end_idx]
-
     # Get analyser suite.
     analyser_suite = setup_test_suite(dataset_name=dataset_name)
 
@@ -96,8 +99,8 @@ if __name__ == "__main__":
     )
 
     estimators_sub = {
-        "Localisation": estimators["Localisation"],
         "Complexity": estimators["Complexity"],
+        "Localisation": estimators["Localisation"],
         "Randomisation": estimators["Randomisation"],
         "Robustness": estimators["Robustness"],
         "Faithfulness": estimators["Faithfulness"],
@@ -114,42 +117,17 @@ if __name__ == "__main__":
     # Benchmarking settings. #
     ###########################
 
-    # Define master!
-    master = MetaEvaluation(
-        test_suite=analyser_suite,
-        xai_methods=xai_methods,
-        iterations=iters,
-        fname=fname,
-        nr_perturbations=K,
-    )
+    if dataset_name != "ImageNet":
 
-
-    # If ImageNet, due to computational constraints, go over the categories, one by one.
-    if dataset_name == "ImageNet":
-
-        categories = list(reversed(["Complexity", "Localisation", "Randomisation", "Robustness", "Faithfulness"]))
-
-        for category in categories:
-            print(f"Meta-evaluates estimators in {category}...")
-
-            estimators_sub = {
-                category: estimators[category]
-            }
-
-            # Benchmark!
-            benchmark = MetaEvaluationBenchmarking(
-                master=master,
-                estimators=estimators_sub,
-                experimental_settings=dataset_settings,
-                path=PATH_RESULTS,
-                folder="benchmarks_new/",
-                keep_results=True,
-                channel_first=True,
-                softmax=False,
-                device=device,
-            )()
-
-    else:
+        # Define master!
+        master = MetaEvaluation(
+            test_suite=analyser_suite,
+            xai_methods=xai_methods,
+            iterations=iters,
+            fname=fname,
+            nr_perturbations=K,
+            write_to_file=False,
+        )
 
         # Benchmark!
         benchmark = MetaEvaluationBenchmarking(
@@ -157,11 +135,82 @@ if __name__ == "__main__":
             estimators=estimators_sub,
             experimental_settings=dataset_settings,
             path=PATH_RESULTS,
-            folder="benchmarks_new/",
+            folder=folder,
             keep_results=True,
             channel_first=True,
             softmax=False,
+            save=True,
             device=device,
         )()
+
+    else:
+
+        # Retrieve the model.
+        if fname == "ViT":
+            dataset_settings[dataset_name]["models"] = {
+                "ViT": torchvision.models.vit_b_16(pretrained=True),
+            }
+        elif fname == "ResNet18":
+            dataset_settings[dataset_name]["models"] = {
+                "ResNet18": torchvision.models.resnet18(pretrained=True),
+            }
+        elif fname == "Deit":
+            dataset_settings[dataset_name]["models"] = {
+                "Deit": timm.create_model(model_name='deit_tiny_distilled_patch16_224',
+                                      pretrained=True),
+            }
+
+        # Prepare batching.
+        nr_samples = len(dataset_settings[dataset_name]["x_batch"])
+        indices_by_batch = list(range(0, nr_samples, batch_size))
+        print(indices_by_batch, reverse_order)
+
+        if eval(reverse_order):
+            indices_by_batch = reversed(indices_by_batch)
+
+        for start_idx in indices_by_batch:
+
+            # Get indicies.
+            end_idx = min(int(start_idx + batch_size), nr_samples)
+            if (end_idx-start_idx) < batch_size:
+                continue
+
+            if end_idx_fixed:
+                end_idx = end_idx_fixed
+            if start_idx_fixed:
+                start_idx = start_idx_fixed
+            print(start_idx, end_idx)
+
+            # Define master!
+            master = MetaEvaluation(
+                test_suite=analyser_suite,
+                xai_methods=xai_methods,
+                iterations=iters,
+                fname=f"{fname}_{start_idx}:{end_idx}",
+                nr_perturbations=K,
+                write_to_file=False,
+            )
+
+            # Reduce the number of samples.
+            dataset_settings[dataset_name]["x_batch"] = dataset_settings[dataset_name]["x_batch"][start_idx:end_idx]
+            dataset_settings[dataset_name]["y_batch"] = dataset_settings[dataset_name]["y_batch"][start_idx:end_idx]
+            dataset_settings[dataset_name]["s_batch"] = dataset_settings[dataset_name]["s_batch"][start_idx:end_idx]
+
+            # Benchmark!
+            benchmark = MetaEvaluationBenchmarking(
+                master=master,
+                estimators=estimators_sub,
+                experimental_settings=dataset_settings,
+                path=PATH_RESULTS,
+                folder=folder,
+                keep_results=True,
+                channel_first=True,
+                softmax=False,
+                save=True,
+                device=device,
+            )()
+
+            if start_idx_fixed is not None:
+                break
 
 

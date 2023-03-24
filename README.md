@@ -142,9 +142,9 @@ python3 scripts/run_test.py --K=5 --iters=10 --dataset=MNIST
 python3 scripts/run_benchmarking.py --dataset=MNIST --fname=f --K=5 --iters=3
 python3 scripts/run_benchmarking.py --dataset=fMNIST --fname=f --K=5 --iters=3
 python3 scripts/run_benchmarking.py --dataset=cMNIST --fname=f --K=5 --iters=3
-python3 scripts/run_benchmarking.py --dataset=ImageNet --fname=f --K=5 --iters=3 --start_idx=0 --end_idx=50 --PATH_ASSETS=../assets/ --PATH_RESULTS=results/
-python3 scripts/run_benchmarking.py --dataset=ImageNet --fname=f --K=5 --iters=3 --start_idx=50 --end_idx=100 --PATH_ASSETS=../assets/ --PATH_RESULTS=results/
-python3 scripts/run_benchmarking.py --dataset=ImageNet --fname=f --K=5 --iters=3 --start_idx=100 --end_idx=150 --PATH_ASSETS=../assets/ --PATH_RESULTS=results/
+python3 scripts/run_benchmarking.py --dataset=ImageNet --fname=f --K=5 --iters=3 --batch_size=10 --PATH_ASSETS=../assets/ --PATH_RESULTS=results/ =benchmarks_imagenet/
+python3 scripts/run_benchmarking.py --dataset=ImageNet --fname=f --K=5 --iters=3 --batch_size=10 --PATH_ASSETS=../assets/ --PATH_RESULTS=results/ =benchmarks_imagenet/
+python3 scripts/run_benchmarking.py --dataset=ImageNet --fname=f --K=5 --iters=3 --batch_size=10 --PATH_ASSETS=../assets/ --PATH_RESULTS=results/ --folder=benchmarks_imagenet/
 ```
 
 **Application**: Run hyperparameter optimisation experiment.
