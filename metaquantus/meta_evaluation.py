@@ -742,7 +742,9 @@ class MetaEvaluation:
 
         # Compute the p-value.
         try:
-            p_value = measure(q, q_hat, alternative=alternative, zero_method=zero_method)[1]
+            p_value = measure(
+                q, q_hat, alternative=alternative, zero_method=zero_method
+            )[1]
         except:
             if debug:
                 print(f"Setting p_value to 0.0, q={q}, qhat={q_hat}.")

@@ -20,24 +20,15 @@ from ..perturbation_tests.ipt import InputPerturbationTest
 
 
 def setup_xai_methods_imagenet(
-        gc_layer: str,
-        img_size: int = 28,
-        nr_channels: int = 1,
+    gc_layer: str,
+    img_size: int = 28,
+    nr_channels: int = 1,
 ) -> Dict:
     return {
-        #"Gradient": {},
         "Saliency": {},
         "InputXGradient": {},
-        #"IntegratedGradients": {},
-        #"LayerGradCam": {
-        #    "gc_layer": gc_layer,
-        #    "interpolate": (img_size, img_size),
-        #    "interpolate_mode": "bilinear",
-        #},
-        #"Occlusion": {"window": (nr_channels, int(img_size / 4), int(img_size / 4))},
         "GradientShap": {},
     }
-
 
 
 def setup_xai_methods(
@@ -68,6 +59,7 @@ def setup_xai_methods_transformers(
         "Saliency": {},
         "GradientShap": {},
     }
+
 
 def setup_xai_methods_transformers_2(
     gc_layer: str,
@@ -328,7 +320,6 @@ def setup_dataset_models_transformers(
     return SETTINGS, model_name
 
 
-
 def setup_dataset_models_imagenet_benchmarking(
     dataset_name: str,
     path_assets: str,
@@ -346,10 +337,10 @@ def setup_dataset_models_imagenet_benchmarking(
         )  # imagenet_test_set.npy"
 
         # Example for how to reload assets and models to notebook.
-        #model_imagenet_resnet18 = torchvision.models.resnet18(pretrained=True)
+        # model_imagenet_resnet18 = torchvision.models.resnet18(pretrained=True)
         # model_imagenet_vgg16 = torchvision.models.vgg16(pretrained=True)
         model_imagenet_vit_b_16 = torchvision.models.vit_b_16(pretrained=True)
-        #model_imagenet_swin_t = torchvision.models.swin_t(pretrained=True)
+        # model_imagenet_swin_t = torchvision.models.swin_t(pretrained=True)
         # model_imagenet_resnet50 = torchvision.models.resnet50(pretrained=True)
 
         assets_imagenet = np.load(path_imagenet_assets, allow_pickle=True).item()
@@ -367,18 +358,18 @@ def setup_dataset_models_imagenet_benchmarking(
             "y_batch": y_batch_imagenet,
             "s_batch": s_batch_imagenet,
             "models": {
-                #"ResNet18": model_imagenet_resnet18,
+                # "ResNet18": model_imagenet_resnet18,
                 # "ResNet50": model_imagenet_resnet50,
                 # "VGG16": model_imagenet_vgg16,
                 "ViT": model_imagenet_vit_b_16,
-                #"SWIN": model_imagenet_swin_t,
+                # "SWIN": model_imagenet_swin_t,
             },
             "gc_layers": {
-                #"ResNet18": "list(model.named_modules())[61][1]",
+                # "ResNet18": "list(model.named_modules())[61][1]",
                 # "ResNet50": "NA",
                 # "VGG16": "NA",
                 "ViT": "NA",
-                #"SWIN": "NA",
+                # "SWIN": "NA",
             },
             "estimator_kwargs": {
                 "num_classes": 1000,
@@ -398,7 +389,6 @@ def setup_dataset_models_imagenet_benchmarking(
         )
 
     return SETTINGS, model_name
-
 
 
 def setup_dataset_models(

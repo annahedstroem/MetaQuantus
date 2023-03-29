@@ -14,22 +14,22 @@ import scipy
 
 
 def plot_multiple_estimator_area(
-    benchmark: Dict,
+    benchmarks: Dict,
     estimators: Dict,
     dataset_name: str,
     colours: Dict,
     save: bool,
     path: str,
     average_over: list = ["Model", "Input"],
-    **kwargs
+    **kwargs,
 ) -> None:
     """
     Plot the outcome of the benchmarking exercise.
 
     Parameters
     ----------
-    benchmark: dict
-        The benchmarking data.
+    benchmarks: dict
+        A dict with the benchmarking data.
     estimators: dict
         The estimators used in the experiment.
     dataset_name: str
@@ -59,28 +59,37 @@ def plot_multiple_estimator_area(
             for px, perturbation_type in enumerate(["Input", "Model"]):
 
                 # Collect scores.
-                scores = {
-                    "IAC_NR": np.array(
-                        benchmark[estimator_category][estimator_name][
+                scores = {"IAC_NR": [], "IAC_AR": [], "IEC_NR": [], "IEC_AR": []}
+
+                if not isinstance(list(benchmarks.keys())[0], int):
+                    data = benchmarks[estimator_category][estimator_name][
+                        "results_consistency_scores"
+                    ][perturbation_type]
+                    scores["IAC_NR"] = np.array(data["intra_scores_res"]).flatten()
+                    scores["IAC_AR"] = np.array(data["intra_scores_adv"]).flatten()
+                    scores["IEC_NR"] = np.array(data["inter_scores_res"]).flatten()
+                    scores["IEC_AR"] = np.array(data["inter_scores_adv"]).flatten()
+                else:
+                    scores = {"IAC_NR": [], "IAC_AR": [], "IEC_NR": [], "IEC_AR": []}
+                    for batch, benchmark in benchmarks.items():
+                        data = benchmark[estimator_category][estimator_name][
                             "results_consistency_scores"
-                        ][perturbation_type]["intra_scores_res"]
-                    ).flatten(),
-                    "IAC_AR": np.array(
-                        benchmark[estimator_category][estimator_name][
-                            "results_consistency_scores"
-                        ][perturbation_type]["intra_scores_adv"]
-                    ).flatten(),
-                    "IEC_NR": np.array(
-                        benchmark[estimator_category][estimator_name][
-                            "results_consistency_scores"
-                        ][perturbation_type]["inter_scores_res"]
-                    ).flatten(),
-                    "IEC_AR": np.array(
-                        benchmark[estimator_category][estimator_name][
-                            "results_consistency_scores"
-                        ][perturbation_type]["inter_scores_adv"]
-                    ).flatten(),
-                }
+                        ][perturbation_type]
+                        scores["IAC_NR"].append(
+                            np.array(data["intra_scores_res"]).flatten().tolist()
+                        )
+                        scores["IAC_AR"].append(
+                            np.array(data["intra_scores_adv"]).flatten().tolist()
+                        )
+                        scores["IEC_NR"].append(
+                            np.array(data["inter_scores_res"]).flatten().tolist()
+                        )
+                        scores["IEC_AR"].append(
+                            np.array(data["inter_scores_adv"]).flatten().tolist()
+                        )
+
+                    for k, v in scores.items():
+                        scores[k] = np.array(v).flatten()
 
                 # Set values for m* and the actual values by the estimator.
                 X_gt = [-1, 0, 1, 0]
@@ -158,14 +167,14 @@ def plot_multiple_estimator_area(
 
 
 def plot_multiple_models_estimator_area(
-        benchmarks: Dict,
-        estimators: Dict,
-        dataset_name: str,
-        colours: Dict,
-        save: bool,
-        path: str,
-        average_over: list = ["Model", "Input"],
-        **kwargs
+    benchmarks: Dict,
+    estimators: Dict,
+    dataset_name: str,
+    colours: Dict,
+    save: bool,
+    path: str,
+    average_over: list = ["Model", "Input"],
+    **kwargs,
 ) -> None:
     """
     Plot the outcome of the benchmarking exercise for different models.
@@ -211,26 +220,42 @@ def plot_multiple_models_estimator_area(
                 scores = {"IAC_NR": [], "IAC_AR": [], "IEC_NR": [], "IEC_AR": []}
                 for batch in range(batches):
                     # Collect scores.
-                    scores["IAC_NR"].append(np.array(
-                        benchmarks[model_name][batch][estimator_category][estimator_name][
-                            "results_consistency_scores"
-                        ][perturbation_type]["intra_scores_res"]
-                    ))
-                    scores["IAC_AR"].append(np.array(
-                        benchmarks[model_name][batch][estimator_category][estimator_name][
-                            "results_consistency_scores"
-                        ][perturbation_type]["intra_scores_adv"]
-                    ))
-                    scores["IEC_NR"].append(np.array(
-                        benchmarks[model_name][batch][estimator_category][estimator_name][
-                            "results_consistency_scores"
-                        ][perturbation_type]["inter_scores_res"]
-                    ))
-                    scores["IEC_AR"].append(np.array(
-                        benchmarks[model_name][batch][estimator_category][estimator_name][
-                            "results_consistency_scores"
-                        ][perturbation_type]["inter_scores_adv"]
-                    ))
+                    scores["IAC_NR"].append(
+                        np.array(
+                            benchmarks[model_name][batch][estimator_category][
+                                estimator_name
+                            ]["results_consistency_scores"][perturbation_type][
+                                "intra_scores_res"
+                            ]
+                        )
+                    )
+                    scores["IAC_AR"].append(
+                        np.array(
+                            benchmarks[model_name][batch][estimator_category][
+                                estimator_name
+                            ]["results_consistency_scores"][perturbation_type][
+                                "intra_scores_adv"
+                            ]
+                        )
+                    )
+                    scores["IEC_NR"].append(
+                        np.array(
+                            benchmarks[model_name][batch][estimator_category][
+                                estimator_name
+                            ]["results_consistency_scores"][perturbation_type][
+                                "inter_scores_res"
+                            ]
+                        )
+                    )
+                    scores["IEC_AR"].append(
+                        np.array(
+                            benchmarks[model_name][batch][estimator_category][
+                                estimator_name
+                            ]["results_consistency_scores"][perturbation_type][
+                                "inter_scores_adv"
+                            ]
+                        )
+                    )
 
                 for k, v in scores.items():
                     scores[k] = np.array(scores[k]).flatten()
@@ -310,7 +335,12 @@ def plot_multiple_models_estimator_area(
 
     plt.tight_layout()
     if save:
-        plt.savefig(path + "plots/" + f"full_area_graph_{estimator_category}_{dataset_name}_multiple_models.png", dpi=500)
+        plt.savefig(
+            path
+            + "plots/"
+            + f"full_area_graph_{estimator_category}_{dataset_name}_multiple_models.png",
+            dpi=500,
+        )
     plt.show()
 
 
@@ -448,7 +478,7 @@ def plot_single_estimator_area(
 
 
 def plot_benchmarking_scatter_plots(
-        dfs: Dict[str, pd.DataFrame], colours: Dict, save: bool, path: str
+    dfs: Dict[str, pd.DataFrame], colours: Dict, save: bool, path: str
 ) -> None:
     """
     Plot the scatter plots for benchmarking.
@@ -498,10 +528,10 @@ def plot_benchmarking_scatter_plots(
         index_2 = i + round + 1
         # Plot scatter.
         for x, y, col, t in zip(
-                df["IAC_{NR}"].values,
-                df["IAC_{AR}"].values,
-                df["Estimator"].values,
-                df["Test"].values,
+            df["IAC_{NR}"].values,
+            df["IAC_{AR}"].values,
+            df["Estimator"].values,
+            df["Test"].values,
         ):
             ax[index_1].scatter(
                 x=x,
@@ -514,10 +544,10 @@ def plot_benchmarking_scatter_plots(
                 edgecolor="black",
             )
         for x, y, col, t in zip(
-                df["IEC_{NR}"].values,
-                df["IEC_{AR}"].values,
-                df["Estimator"].values,
-                df["Test"].values,
+            df["IEC_{NR}"].values,
+            df["IEC_{AR}"].values,
+            df["Estimator"].values,
+            df["Test"].values,
         ):
             ax[index_2].scatter(
                 x=x,
@@ -587,10 +617,10 @@ def plot_benchmarking_scatter_plots(
     if save:
         datasets = (
             str(list(dfs.keys()))
-                .replace("'", "")
-                .replace("[", "")
-                .replace("]", "")
-                .replace(", ", "_")
+            .replace("'", "")
+            .replace("[", "")
+            .replace("]", "")
+            .replace(", ", "_")
         )
         plt.savefig(
             path + "plots/" + f"benchmarking_scatter_plot_{datasets}.png", dpi=1000
@@ -599,7 +629,13 @@ def plot_benchmarking_scatter_plots(
 
 
 def plot_benchmarking_scatter_bar_plots_combined(
-    df: pd.DataFrame, means: list, stds: list, colours: Dict, save: bool, path: str
+    df: pd.DataFrame,
+    datasets: list,
+    means: list,
+    stds: list,
+    colours: Dict,
+    save: bool,
+    path: str,
 ) -> None:
     """
     Plot the scatter plots (left) and average MC scores (right).
@@ -608,6 +644,8 @@ def plot_benchmarking_scatter_bar_plots_combined(
     ----------
     df: pd.DataFrame
         The benchmarking results used for the scatter plots.
+    datasets: list
+        A list of the different dataset names in the right order.
     means: list
         The means for the different datasets.
     stds: list
@@ -732,7 +770,6 @@ def plot_benchmarking_scatter_bar_plots_combined(
     ax[1].grid()
 
     # Configs for barplot.
-    datasets = ["ImageNet", "MNIST", "fMNIST", "cMNIST"]
     nr_datasets = len(datasets)
     metrics_short = ["SP", "CO", "FC", "PF", "PG", "RMA", "RL", "MPR", "MS", "LLE"]
     colours_repeat = np.repeat(list(colours.values()), repeats=nr_datasets)
@@ -782,9 +819,8 @@ def plot_benchmarking_scatter_bar_plots_combined(
         45,
         46,
         47,
-        48
+        48,
     ]
-    print(len(x))
     labels_ticks = list(range(1, np.max(x) + 1, nr_datasets + 1))
     labels_ticks[0] = 1.5
 
@@ -808,7 +844,7 @@ def plot_benchmarking_scatter_bar_plots_combined(
 
     # Set the labels and titles.
     ax[2].set_xticks(ticks=labels_ticks, labels=metrics_short, fontsize=20)
-    ax[2].set_ylabel("$\mathbf{MC}$", fontsize=20)
+    ax[2].set_ylabel("$\mathbf{\overline{MC}}$", fontsize=20)
     ax[2].set_yticks(
         ticks=np.linspace(0.5, 1.0, 10),
         labels=[0.5, "", 0.6, "", 0.7, "", 0.8, "", 0.9, ""],
@@ -816,7 +852,11 @@ def plot_benchmarking_scatter_bar_plots_combined(
     )
     ax[2].set_ylim(np.min(means) - 0.1, np.max(means) + 0.1)
     ax[2].legend(
-        handles=legend_elements, labels=datasets, ncol=nr_datasets, fontsize=15, loc="upper left"
+        handles=legend_elements,
+        labels=datasets,
+        ncol=nr_datasets,
+        fontsize=15,
+        loc="upper left",
     )
     ax[2].grid()
 
@@ -826,6 +866,68 @@ def plot_benchmarking_scatter_bar_plots_combined(
             path + "plots/" + f"benchmarking_scatter_bar_plots_combined.png", dpi=500
         )
     plt.show()
+from typing import Dict
+
+def plot_average_meta_evaluation_categories(
+    datasets: list, means: list, stds: list, metrics: list, colours: Dict, save: bool, path: str
+) -> None:
+    """
+    Plot average MC scores for the different categoriees.
+
+    Parameters
+    ----------
+    datasets: list
+        A list of the different dataset names in the right order.
+    means: list
+        The means for the different datasets.
+    stds: list
+        The stds for the different datasets.
+    metrics: list
+        The metrics of interest.
+    colours: dict
+        Dictionary of colours, based on the metrics.
+    save: boolean
+        Indicates if plots should be saved.
+    path: str
+        The path for saving the plot.
+
+    Returns
+    -------
+    None
+    """
+
+    for i, est in zip(range(0, len(means), datasets), metrics):
+        print(f"{est}: {np.mean(means[i:i + 4])}")
+
+    # Plot the average MC scores for each category!
+    fig, ax = plt.subplots(1, 1, figsize=(3, 3.5))
+
+    # Prep the data.
+    means_vals = [np.mean(means[i : i + 8]) for i in range(0, len(means), 8)]
+    stds_vals = [np.mean(stds[i : i + 8]) for i in range(0, len(stds), 8)]
+    x = np.arange(0, len(means_vals))
+
+    # Plot!
+    ax.bar(x, means_vals, color=colours, yerr=stds_vals, alpha=0.85, edgecolor="black")
+
+    # Ticks and labels.
+    ticks = ["CO", "FA", "LO", "RA", "RO"]  # list(estimators.keys())
+    ax.set_xticks(x, ticks, fontsize=16)
+    ax.set_ylabel("$\mathbf{\overline{MC}}$", fontsize=20)
+    ax.set_ylim(0.55, 0.68)
+    ax.set_yticks(
+        ticks=np.linspace(0.55, 0.68, 10),
+        labels=[0.55, "", "", "", 0.6, "", "", 0.65, "", ""],
+        fontsize=15,
+    )
+    ax.grid()
+
+    # Save.
+    plt.tight_layout()
+    if save:
+        plt.savefig(
+            path + "plots/" + f"benchmarking_categories_ALL_datasets.png", dpi=1000
+        )
 
 
 def make_benchmarking_df_as_str(benchmark: Dict, estimators: Dict):
@@ -922,6 +1024,119 @@ def make_benchmarking_df_as_str(benchmark: Dict, estimators: Dict):
     return df
 
 
+def make_benchmarking_df_imagenet_as_str(df_imagenet: pd.DataFrame, estimators: Dict):
+    """
+    Create the benchmarking df.
+
+    Parameters
+    ----------
+    benchmark: dict
+        The benchmarking data.
+    estimators: dict
+        The estimators used in the experiment
+
+    Returns
+    -------
+    df
+    """
+    df = pd.DataFrame(
+        columns=[
+            "Category",
+            "Estimator",
+            "Test",
+            "MC_bar",
+            "MC",
+            "IAC_{NR}",
+            "IAC_{AR}",
+            "IEC_{NR}",
+            "IEC_{AR}",
+        ]
+    )
+
+    mc_bars = (
+        df_imagenet.groupby(["Estimator"])["MC", "MC std"]
+        .mean()
+        .reset_index(level=["Estimator"])
+    )
+
+    scores = ["IAC_{NR}", "IAC_{AR}", "IEC_{NR}", "IEC_{AR}"]
+    row = 0
+    for ex1, (estimator_category, metrics) in enumerate(estimators.items()):
+        for ex2, estimator_name in enumerate(metrics):
+            for px, perturbation_type in enumerate(["Model", "Input"]):
+                row += ex1 + ex2 + px
+                df.loc[row, "Test"] = perturbation_type
+                if px == 1:
+                    df.loc[row, "Category"] = estimator_category
+                    df.loc[row, "Estimator"] = estimator_name
+                else:
+                    df.loc[row, "Category"] = estimator_category
+                    df.loc[row, "Estimator"] = estimator_name
+
+                mc_bar_mean = mc_bars.loc[
+                    (mc_bars["Estimator"] == estimator_name), "MC"
+                ].to_numpy()[0]
+                mc_bar_std = mc_bars.loc[
+                    (mc_bars["Estimator"] == estimator_name), "MC std"
+                ].to_numpy()[0]
+                if perturbation_type == "Model":
+                    df.loc[row, "MC_bar"] = (
+                        f"{mc_bar_mean:.3f}" + " $\pm$ " + f"{mc_bar_std * 2:.3f}"
+                    ) + " &"
+                else:
+                    df.loc[row, "MC_bar"] = ""
+                mc = df_imagenet.loc[
+                    (df_imagenet["Estimator"] == estimator_name)
+                    & (df_imagenet["Test"] == perturbation_type),
+                    "MC",
+                ].to_numpy()[0]
+                mc_std = df_imagenet.loc[
+                    (df_imagenet["Estimator"] == estimator_name)
+                    & (df_imagenet["Test"] == perturbation_type),
+                    "MC std",
+                ].to_numpy()[0]
+                if perturbation_type == "Input":
+                    df.loc[row, "MC"] = (
+                        "\CC{30}{"
+                        + (f"{mc:.3f}" + " $\pm$ " + f"{mc_std * 2:.3f}")
+                        + "} &"
+                    )
+                else:
+                    df.loc[row, "MC"] = (
+                        f"{mc:.3f}" + " $\pm$ " + f"{mc_std * 2:.3f}"
+                    ) + " &"
+
+                for s in scores:
+
+                    score_mean = df_imagenet.loc[
+                        (df_imagenet["Estimator"] == estimator_name)
+                        & (df_imagenet["Test"] == perturbation_type),
+                        s,
+                    ].to_numpy()[0]
+                    score_std = df_imagenet.loc[
+                        (df_imagenet["Estimator"] == estimator_name)
+                        & (df_imagenet["Test"] == perturbation_type),
+                        s + " std",
+                    ].to_numpy()[0]
+                    if perturbation_type == "Input":
+                        df.loc[row, s] = (
+                            "\CC{30}{"
+                            + f"{score_mean:.3f}"
+                            + " $\pm$ "
+                            + f"{score_std * 2:.3f}"
+                            + "} &"
+                        )
+                    else:
+                        df.loc[row, s] = (
+                            f"{score_mean:.3f}"
+                            + " $\pm$ "
+                            + f"{score_std * 2:.3f}"
+                            + " &"
+                        )
+
+    return df
+
+
 def make_benchmarking_df(benchmark: Dict, estimators: Dict, std_times: int = 2):
     """
     Create the benchmarking df.
@@ -990,9 +1205,7 @@ def make_benchmarking_df(benchmark: Dict, estimators: Dict, std_times: int = 2):
 
 
 def aggregate_benchmarking_datasets(
-    benchmark_mnist: Dict,
-    benchmark_fmnist: Dict,
-    benchmark_cmnist: Dict,
+    benchmarks: Dict,
     estimators: Dict,
     perturbation_types: List[str],
 ):
@@ -1001,12 +1214,8 @@ def aggregate_benchmarking_datasets(
 
     Parameters
     ----------
-    benchmark_mnist: dict
-        A dictionary of the benchmarking data.
-    benchmark_fmnist: dict
-        A dictionary of the benchmarking data.
-    benchmark_cmnist: dict
-        A dictionary of the benchmarking data.
+    benchmarks: dict
+        A dictionary of the benchmarking data for diffrent datasets.
     estimators: dict
         The estimators used in the experiment.
     perturbation_types: list
@@ -1017,66 +1226,48 @@ def aggregate_benchmarking_datasets(
     tuple
     """
     # Collect the data.
-    mnist_means = []
-    mnist_stds = []
-    fmnist_means = []
-    fmnist_stds = []
-    cmnist_means = []
-    cmnist_stds = []
+    means = {}
+    stds = {}
 
-    for ex1, (estimator_category, metrics) in enumerate(estimators.items()):
-        for ex2, estimator_name in enumerate(metrics):
-            mnist_means_per = []
-            mnist_stds_per = []
-            fmnist_means_per = []
-            fmnist_stds_per = []
-            cmnist_means_per = []
-            cmnist_stds_per = []
+    for dataset_name, benchmark in benchmarks.items():
+        means[dataset_name] = []
+        stds[dataset_name] = []
+        for ex1, (estimator_category, metrics) in enumerate(estimators.items()):
+            for ex2, estimator_name in enumerate(metrics):
+                stds_ = []
+                means_ = []
+                for px, perturbation_type in enumerate(perturbation_types):
 
-            for px, perturbation_type in enumerate(perturbation_types):
+                    if not isinstance(list(benchmark.keys())[0], int):
+                        data = benchmark[estimator_category][estimator_name][
+                            "results_meta_consistency_scores"
+                        ][perturbation_type]
+                        means_.append(data["MC_mean"])
+                        stds_.append(data["MC_std"])
+                    else:
 
-                mnist_mean = benchmark_mnist[estimator_category][estimator_name][
-                    "results_meta_consistency_scores"
-                ][perturbation_type]["MC_mean"]
-                mnist_std = benchmark_mnist[estimator_category][estimator_name][
-                    "results_meta_consistency_scores"
-                ][perturbation_type]["MC_std"]
-                mnist_means_per.append(mnist_mean)
-                mnist_stds_per.append(mnist_std)
+                        for batch, b in benchmark.items():
+                            data = b[estimator_category][estimator_name][
+                                "results_meta_consistency_scores"
+                            ][perturbation_type]
+                            means_.append(data["MC_mean"])
+                            stds_.append(data["MC_std"])
 
-                fmnist_mean = benchmark_fmnist[estimator_category][estimator_name][
-                    "results_meta_consistency_scores"
-                ][perturbation_type]["MC_mean"]
-                fmnist_std = benchmark_fmnist[estimator_category][estimator_name][
-                    "results_meta_consistency_scores"
-                ][perturbation_type]["MC_std"]
-                fmnist_means_per.append(fmnist_mean)
-                fmnist_stds_per.append(fmnist_std)
+                means[dataset_name].append(np.mean(means_))
+                stds[dataset_name].append(np.mean(stds_))
 
-                cmnist_mean = benchmark_cmnist[estimator_category][estimator_name][
-                    "results_meta_consistency_scores"
-                ][perturbation_type]["MC_mean"]
-                cmnist_std = benchmark_cmnist[estimator_category][estimator_name][
-                    "results_meta_consistency_scores"
-                ][perturbation_type]["MC_std"]
-                cmnist_means_per.append(cmnist_mean)
-                cmnist_stds_per.append(cmnist_std)
+    means_resorted = [
+        list(means.values())[j][i]
+        for i in range(len(list(means.values())[0]))
+        for j in range(len(list(means.values())))
+    ]
+    stds_resorted = [
+        list(stds.values())[j][i]
+        for i in range(len(list(stds.values())[0]))
+        for j in range(len(list(stds.values())))
+    ]
 
-            mnist_means.append(np.mean(mnist_means_per))
-            mnist_stds.append(np.mean(mnist_stds_per))
-            fmnist_means.append(np.mean(fmnist_means_per))
-            fmnist_stds.append(np.mean(fmnist_stds_per))
-            cmnist_means.append(np.mean(cmnist_means_per))
-            cmnist_stds.append(np.mean(cmnist_stds_per))
-
-    means = np.array(
-        [[a, b, c] for a, b, c in zip(mnist_means, fmnist_means, cmnist_means)]
-    ).flatten()
-    stds = np.array(
-        [[a, b, c] for a, b, c in zip(mnist_stds, fmnist_stds, cmnist_stds)]
-    ).flatten()
-
-    return means, stds
+    return means_resorted, stds_resorted
 
 
 def compute_means_over_datasets(
@@ -1684,3 +1875,38 @@ def plot_hp_bar(
     if save:
         plt.savefig(path + "plots/" + f"hp_{dataset_name}.png", dpi=1000)
     plt.show()
+
+
+def concat_imagenet_benchmarks(benchmarks: dict, estimators: dict) -> pd.DataFrame:
+    """Concat different benchmark results from batch job on ImageNet data."""
+
+    dfs = []
+    for batch, benchmark in benchmarks.items():
+        df = make_benchmarking_df(benchmark=benchmark, estimators=estimators)
+        dfs.append(df)
+    df = pd.concat(dfs)
+
+    df_imagenet = df.groupby(["Category", "Estimator", "Test"]).mean()
+    df_imagenet["Category"] = (
+        np.array([np.tile(c, 4).tolist() for c in list(estimators.keys())])
+        .flatten()
+        .tolist()
+    )
+    df_imagenet["Estimator"] = (
+        np.array(
+            [
+                np.tile(c, 2).tolist()
+                for c in np.array(list(estimators.values())).flatten()
+            ]
+        )
+        .flatten()
+        .tolist()
+    )
+    df_imagenet["Test"] = np.tile(["Input", "Model"], 10).tolist()
+
+    # Reset index.
+    df_imagenet.index = df_imagenet.index.droplevel(-1)
+    df_imagenet.index = df_imagenet.index.droplevel(-1)
+    df_imagenet.index = np.arange(0, len(df_imagenet))
+
+    return df_imagenet
