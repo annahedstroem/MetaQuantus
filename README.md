@@ -2,7 +2,6 @@
 <p align="center">
   <img width="450" src="https://raw.githubusercontent.com/annahedstroem/MetaQuantus/main/logo.png">
 </p>
-<!--<h1 align="center"><b>MetaQuantus</b></h1>-->
 <h3 align="center"><b>An XAI performance tool for the identification of reliable metrics</b></h3>
 <p align="center">
   PyTorch
@@ -128,7 +127,6 @@ Tutorial-Data-Generation-Experiments.ipynb](https://github.com/annahedstroem/Met
 2. **Run the experiments.** To obtain the results for the respective experiments, you have to run the respective Python scripts which are detailed below. All these Python files are located in the `scripts/` folder. If you want to run the experiments on other explanation methods, datasets or models, feel free to change the hyperparameters.
 3. **Analyse the results.** Once the results are obtained for your chosen experiments, run the [Tutorial-Reproduce-Paper-Experiments.ipynb](https://github.com/annahedstroem/MetaQuantus/blob/main/tutorials/Tutorial-Reproduce-Experiments.ipynb) to analyse the results. (In the notebook itself, we have also listed which specific Python scripts that need to be run in order to obtain the results for this analysis step.)
 
-
 <details>
 <summary><b><normal>Additional details on step 2 (Run the Experiments)</normal></b></summary>
 
@@ -185,6 +183,14 @@ python3 scripts/run_benchmarking_transformers.py --dataset=ImageNet --K=5 --iter
 </details>
 
 **Note.** For all steps, please make sure to adjust any local paths so that the approriate files can be retrieved. Make sure to have all the necessary packages installed as well as ensure to have GPUs enabled throughout the computing as this will speed up the experimentation considerably. Also, note that the results may vary slightly depending on the random seed and other hyperparameters of the experiments. Nonetheless, the overall trends and conclusions should remain the same as in the paper.
+
+<!--https://raw.githubusercontent.com/annahedstroem/MetaQuantus/main/
+<p align="center">
+  <img width="650" src="results_analysis_cmnist.png">
+</p>
+<p><small>
+*Meta-evaluation benchmarking results with cMNIST, aggregated over 3 iterations with $K=5$. IPT results are in grey rows and MPT results are in white rows. $\overline{\text{MC}}$ denotes the averages of the MC scores over IPT and MPT. The top-performing $\text{MC}$- or $\overline{\text{MC}}$ method in each explanation category, which outperforms the bottom-performing method by at least 2 standard deviations, is underlined. Higher values are preferred for all scoring criteria.*
+</small></p>-->
 
 Currently, the experiments are limited to the following experimental combinations:
 * XAI methods: any method provided by querying `quantus.AVAILABLE_XAI_METHODS_CAPTUM`

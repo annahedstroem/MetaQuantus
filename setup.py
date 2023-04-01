@@ -22,7 +22,7 @@ else:
 # Define setup.
 setup(
     name="metaquantus",
-    version="0.0.2",
+    version="0.0.3",
     description="MetaQuantus is a XAI performance tool for identifying reliable metrics.",
     long_description=open("README.md", "r").read(),
     long_description_content_type="text/markdown",
