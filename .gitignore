@@ -1,8 +1,9 @@
 results/
 local/
+venv/
 assets/
 *__pycache__*
-.DS_store
+*.DS_store
 build/
 dist/
 *.egg-info/
