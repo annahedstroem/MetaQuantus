@@ -866,10 +866,19 @@ def plot_benchmarking_scatter_bar_plots_combined(
             path + "plots/" + f"benchmarking_scatter_bar_plots_combined.png", dpi=500
         )
     plt.show()
+
+
 from typing import Dict
 
+
 def plot_average_meta_evaluation_categories(
-    datasets: list, means: list, stds: list, metrics: list, colours: Dict, save: bool, path: str
+    datasets: list,
+    means: list,
+    stds: list,
+    metrics: list,
+    colours: Dict,
+    save: bool,
+    path: str,
 ) -> None:
     """
     Plot average MC scores for the different categoriees.

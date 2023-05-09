@@ -794,7 +794,7 @@ class MetaEvaluation:
                         U.append(1)
                     else:
                         U.append(0)
-        return float(np.mean(U))
+        return float(np.nanmean(U))
 
     @staticmethod
     def compute_iec_resilience(
@@ -832,7 +832,7 @@ class MetaEvaluation:
                     else:
                         U.append(0)
 
-        return float(np.mean(U))
+        return float(np.nanmean(U))
 
     """Getters."""
 

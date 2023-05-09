@@ -35,7 +35,7 @@ if __name__ == "__main__":
     parser.add_argument("--end_idx_fixed", default="")
     parser.add_argument("--start_idx_fixed", default="")
     parser.add_argument("--folder", default="benchmarks_imagenet/")
-    parser.add_argument("--PATH_ASSETS", default="../assets/")
+    parser.add_argument("--PATH_ASSETS", default="assets/")
     parser.add_argument("--PATH_RESULTS", default="results/")
     args = parser.parse_args()
 
