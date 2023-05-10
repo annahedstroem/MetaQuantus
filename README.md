@@ -9,7 +9,7 @@
 This repository contains the code and experimental results for the paper **[The Meta-Evaluation Problem in Explainable AI: Identifying Reliable Estimators with MetaQuantus](https://arxiv.org/abs/2302.07265)** by Hedström et al., 2023.
 
 [![Getting started!](https://colab.research.google.com/assets/colab-badge.svg)](anonymous)
-![Python version](https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9-blue.svg)
+![Python version](https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9%20%7C%203.10%20%7C%203.11-blue.svg)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![PyPI version](https://badge.fury.io/py/metaquantus.svg)](https://badge.fury.io/py/metaquantus)
 [![Python package](https://github.com/annahedstroem/MetaQuantus/actions/workflows/python-publish.yml/badge.svg)](https://github.com/annahedstroem/MetaQuantus/actions/workflows/python-publish.yml/badge.svg)
