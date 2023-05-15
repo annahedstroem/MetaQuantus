@@ -99,10 +99,6 @@ if __name__ == "__main__":
     )
 
     estimators_sub = {
-        "Complexity": estimators["Complexity"],
-        "Localisation": estimators["Localisation"],
-        "Randomisation": estimators["Randomisation"],
-        "Robustness": estimators["Robustness"],
         "Faithfulness": estimators["Faithfulness"],
     }
 
