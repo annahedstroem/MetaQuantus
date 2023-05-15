@@ -104,68 +104,6 @@ def setup_estimators(
     perturb_baseline: str = "uniform",
 ) -> Dict:
     return {
-        "Robustness": {
-            "Max-Sensitivity": (
-                quantus.MaxSensitivity(
-                    nr_samples=10,
-                    perturb_func=perturb_func.uniform_noise,
-                    norm_numerator=norm_func.fro_norm,
-                    norm_denominator=norm_func.fro_norm,
-                    lower_bound=0.01,
-                    abs=False,
-                    normalise=True,
-                    normalise_func=normalise_func.normalise_by_average_second_moment_estimate,
-                    return_aggregate=False,
-                    aggregate_func=np.mean,
-                    disable_warnings=True,
-                ),
-                True,
-            ),
-            "Local Lipschitz Estimate": (
-                quantus.LocalLipschitzEstimate(
-                    nr_samples=10,
-                    perturb_func=perturb_func.gaussian_noise,
-                    norm_numerator=similarity_func.distance_euclidean,
-                    norm_denominator=similarity_func.distance_euclidean,
-                    perturb_std=0.01,
-                    abs=False,
-                    normalise=True,
-                    normalise_func=normalise_func.normalise_by_average_second_moment_estimate,
-                    return_aggregate=False,
-                    aggregate_func=np.mean,
-                    disable_warnings=True,
-                ),
-                True,
-            ),
-        },
-        "Randomisation": {
-            "Random Logit": (
-                quantus.RandomLogit(
-                    similarity_func=similarity_func.correlation_spearman,
-                    num_classes=num_classes,
-                    abs=False,
-                    normalise=True,
-                    normalise_func=normalise_func.normalise_by_average_second_moment_estimate,
-                    return_aggregate=False,
-                    aggregate_func=np.mean,
-                    disable_warnings=True,
-                ),
-                True,
-            ),
-            "Model Parameter Randomisation Test": (
-                quantus.ModelParameterRandomisation(
-                    similarity_func=similarity_func.correlation_spearman,
-                    return_sample_correlation=True,
-                    abs=False,
-                    normalise=True,
-                    normalise_func=normalise_func.normalise_by_average_second_moment_estimate,
-                    return_aggregate=False,
-                    aggregate_func=np.mean,
-                    disable_warnings=True,
-                ),
-                True,
-            ),
-        },
         "Faithfulness": {
             "Faithfulness Correlation": (
                 quantus.FaithfulnessCorrelation(
@@ -182,8 +120,8 @@ def setup_estimators(
                 ),
                 False,
             ),
-            "Pixel-Flipping": (
-                quantus.PixelFlipping(
+            "Faithfulness Correlation AUC": (
+                quantus.FaithfulnessCorrelationAUC(
                     features_in_step=features,
                     perturb_baseline=perturb_baseline,
                     perturb_func=perturb_func.baseline_replacement_by_indices,
@@ -197,50 +135,17 @@ def setup_estimators(
                 ),
                 False,
             ),
-        },
-        "Complexity": {
-            "Sparseness": (
-                quantus.Sparseness(
+            "Faithfulness Correlation Modified": (
+                quantus.FaithfulnessCorrelationModified(
+                    features_in_step=features,
+                    perturb_baseline=perturb_baseline,
+                    perturb_func=perturb_func.baseline_replacement_by_indices,
                     abs=False,
                     normalise=True,
                     normalise_func=normalise_func.normalise_by_average_second_moment_estimate,
                     return_aggregate=False,
                     aggregate_func=np.mean,
-                    disable_warnings=True,
-                ),
-                False,
-            ),
-            "Complexity": (
-                quantus.Complexity(
-                    abs=False,
-                    normalise=True,
-                    normalise_func=normalise_func.normalise_by_average_second_moment_estimate,
-                    return_aggregate=False,
-                    aggregate_func=np.mean,
-                    disable_warnings=True,
-                ),
-                True,
-            ),
-        },
-        "Localisation": {
-            "Pointing-Game": (
-                quantus.PointingGame(
-                    abs=False,
-                    normalise=True,
-                    normalise_func=normalise_func.normalise_by_average_second_moment_estimate,
-                    return_aggregate=False,
-                    aggregate_func=np.mean,
-                    disable_warnings=True,
-                ),
-                False,
-            ),
-            "Relevance Mass Accuracy": (
-                quantus.RelevanceMassAccuracy(
-                    abs=False,
-                    normalise=True,
-                    normalise_func=normalise_func.normalise_by_average_second_moment_estimate,
-                    return_aggregate=False,
-                    aggregate_func=np.mean,
+                    return_auc_per_sample=True,
                     disable_warnings=True,
                 ),
                 False,
