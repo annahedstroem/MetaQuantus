@@ -121,7 +121,7 @@ def setup_estimators(
                 False,
             ),
             "Faithfulness Correlation AUC": (
-                quantus.FaithfulnessCorrelationAUC(
+                quantus.FaithfulnessAUC(
                     features_in_step=features,
                     perturb_baseline=perturb_baseline,
                     perturb_func=perturb_func.baseline_replacement_by_indices,
