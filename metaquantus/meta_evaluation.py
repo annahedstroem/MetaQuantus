@@ -131,8 +131,7 @@ class MetaEvaluation:
         softmax: Optional[bool] = False,
         device: Optional[str] = None,
         model_predict_kwargs: Optional[Dict[str, Any]] = {},
-        lower_is_better: bool = False,
-        reverse_scoring: bool = True,
+        lower_is_better: bool = False
     ):
         """
         Running meta-evalaution.
@@ -161,8 +160,6 @@ class MetaEvaluation:
             A dictionary with predict kwargs for the model.
         lower_is_better: boolean
             Indicates if lower values are better for the estimators, e.g., True for the Robustness category.
-        reverse_scoring: boolean
-            Indicates if reserve scoring should eb applied.
 
         Returns
         -------
@@ -184,7 +181,7 @@ class MetaEvaluation:
         )
 
         # Run inference.
-        self.run_intra_analysis(reverse_scoring=reverse_scoring)
+        self.run_intra_analysis()
         self.run_inter_analysis(lower_is_better=lower_is_better)
 
         # Check that both test parts exist in the test suite, then run meta-consistency analysis.
@@ -403,14 +400,9 @@ class MetaEvaluation:
                 gc.collect()
                 torch.cuda.empty_cache()
 
-    def run_intra_analysis(self, reverse_scoring: bool = True) -> Dict:
+    def run_intra_analysis(self) -> Dict:
         """
         Make IAC inference after perturbing inputs to the evaluation problem and then storing scores.
-
-        Parameters
-        ----------
-        reverse_scoring: bool
-            Indicates if reverse scoring should be applied.
 
         Returns
         -------
@@ -437,7 +429,6 @@ class MetaEvaluation:
                             indices=self.results_indices_perturbed[test_name][i][p],
                             test_name=test_name,
                             measure=self.intra_measure,
-                            reverse_scoring=reverse_scoring,
                         )
                         p_values.append(p_value)
 
@@ -700,8 +691,6 @@ class MetaEvaluation:
         measure: Callable = scipy.stats.wilcoxon,
         alternative: str = "two-sided",
         zero_method: str = "zsplit",
-        reverse_scoring: bool = True,
-        debug: bool = False,
     ) -> float:
         """
         Compare evaluation scores by computing the p-value to test if the scores are statistically different.
@@ -723,8 +712,6 @@ class MetaEvaluation:
             A string describing if it is two-sided or not.
         zero_method: string
             A string describing the method of how to treat zero differences.
-        reverse_scoring: bool
-            Indicates if reverse scoring should be applied.
         debug: bool
             Indicates if to use debug mode.
 
@@ -746,11 +733,10 @@ class MetaEvaluation:
                 q, q_hat, alternative=alternative, zero_method=zero_method
             )[1]
         except:
-            if debug:
-                print(f"Setting p_value to 0.0, q={q}, qhat={q_hat}.")
+            print(f"Setting p_value to 0.0 with q={q}, qhat={q_hat}.")
             p_value = 0.0
 
-        if reverse_scoring and "Adversary" in test_name:
+        if "Adversary" in test_name:
             return 1 - p_value
 
         return p_value

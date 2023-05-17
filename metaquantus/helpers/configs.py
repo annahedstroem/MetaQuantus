@@ -627,7 +627,7 @@ def setup_test_suite(dataset_name: str):
                 **{
                     "noise_type": "multiplicative",
                     "mean": 1.0,
-                    "std": 2.0,
+                    "std": 0.5,
                     "type": "Adversary",
                 }
             ),

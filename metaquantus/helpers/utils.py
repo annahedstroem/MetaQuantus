@@ -10,6 +10,7 @@ from typing import Union, Callable, Optional, Any, Dict, Sequence, List, Tuple
 from importlib import util
 import numpy as np
 import gc
+import os
 import torch
 import json
 import pickle
@@ -129,17 +130,14 @@ def dump_obj(path: str, fname: str, obj: Any, use_json: bool = False) -> None:
         raise TypeError("The file is not a np.ndarray or dict. Not serializable")
 
     # Get path.
-    full_name = str(path + fname).split("/")[:-1]
-    full_path = ""
-    for folder in full_name:
-        full_path += folder
-        full_path += "/"
+    full_path = os.path.join(path, fname)
+    dir_path = os.path.dirname(full_path)
 
-    # Create folders if they don't exist.
-    if not pathlib.Path(full_path).exists():
-        print(f"Created a new folder for results {full_path[:-1]} to save {fname}.")
+    # Create folder if it doesn't exist.
+    if not os.path.exists(dir_path):
         try:
-            pathlib.Path.mkdir(full_path[:-1], parents=True, exist_ok=True)
+            print(f"Created a new folder for results {dir_path} to save {fname}.")
+            os.makedirs(dir_path)
         except:
             print("It didn't work!")
 
