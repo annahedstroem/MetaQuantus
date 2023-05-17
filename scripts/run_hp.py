@@ -141,12 +141,12 @@ if __name__ == "__main__":
         for s in subset_sizes:
             for n in nr_runs:
 
-                estimators[estimator_category][estimator_name][0].subset_size = s
-                estimators[estimator_category][estimator_name][0].perturb_baseline = b
-                estimators[estimator_category][estimator_name][0].nr_runs = n
-                print(estimators[estimator_category][estimator_name][0].get_params)
+                estimators[estimator_category][estimator_name]["init"].subset_size = s
+                estimators[estimator_category][estimator_name]["init"].perturb_baseline = b
+                estimators[estimator_category][estimator_name]["init"].nr_runs = n
+                print(estimators[estimator_category][estimator_name]["init"].get_params)
                 master(
-                    estimator=estimators[estimator_category][estimator_name][0],
+                    estimator=estimators[estimator_category][estimator_name]["init"],
                     model=dataset_settings[dataset_name]["models"][model_name],
                     x_batch=dataset_settings[dataset_name]["x_batch"],
                     y_batch=dataset_settings[dataset_name]["y_batch"],
@@ -155,7 +155,7 @@ if __name__ == "__main__":
                     channel_first=True,
                     softmax=False,
                     device=device,
-                    lower_is_better=estimators[estimator_category][estimator_name][1],
+                    score_direction_lower_is_better=estimators[estimator_category][estimator_name]["score_direction_lower_is_better"],
                 )
 
                 for (

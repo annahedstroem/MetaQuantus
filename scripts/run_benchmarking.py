@@ -83,19 +83,19 @@ if __name__ == "__main__":
         dataset_name=dataset_name, path_assets=PATH_ASSETS, device=device
     )
     dataset_settings = {dataset_name: SETTINGS[dataset_name]}
-    dataset_kwargs = dataset_settings[dataset_name]["estimator_kwargs"]
+    estimator_kwargs = dataset_settings[dataset_name]["estimator_kwargs"]
 
     # Get analyser suite.
     analyser_suite = setup_test_suite(dataset_name=dataset_name)
 
     # Get estimators.
     estimators = setup_estimators(
-        features=dataset_kwargs["features"],
-        num_classes=dataset_kwargs["num_classes"],
-        img_size=dataset_kwargs["img_size"],
-        percentage=dataset_kwargs["percentage"],
-        patch_size=dataset_kwargs["patch_size"],
-        perturb_baseline=dataset_kwargs["perturb_baseline"],
+        features=estimator_kwargs["features"],
+        num_classes=estimator_kwargs["num_classes"],
+        img_size=estimator_kwargs["img_size"],
+        percentage=estimator_kwargs["percentage"],
+        patch_size=estimator_kwargs["patch_size"],
+        perturb_baseline=estimator_kwargs["perturb_baseline"],
     )
 
     estimators_sub = {
@@ -109,8 +109,8 @@ if __name__ == "__main__":
     # Get explanation methods.
     xai_methods = setup_xai_methods(
         gc_layer=dataset_settings[dataset_name]["gc_layers"][model_name],
-        img_size=dataset_kwargs["img_size"],
-        nr_channels=dataset_kwargs["nr_channels"],
+        img_size=estimator_kwargs["img_size"],
+        nr_channels=estimator_kwargs["nr_channels"],
     )
 
     ###########################

@@ -107,7 +107,7 @@ if __name__ == "__main__":
     )
 
     master(
-        estimator=estimators[estimator_category][estimator_name][0],
+        estimator=estimators[estimator_category][estimator_name]["init"],
         model=dataset_settings[dataset_name]["models"][model_name],
         x_batch=dataset_settings[dataset_name]["x_batch"],
         y_batch=dataset_settings[dataset_name]["y_batch"],
@@ -116,5 +116,5 @@ if __name__ == "__main__":
         channel_first=True,
         softmax=False,
         device=device,
-        lower_is_better=estimators[estimator_category][estimator_name][1],
+        score_direction_lower_is_better=estimators[estimator_category][estimator_name]["score_direction_lower_is_better"],
     )

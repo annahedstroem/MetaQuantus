@@ -15,8 +15,8 @@ import torch
 import torchvision
 
 from ..helpers.models import LeNet, ResNet9
-from ..perturbation_tests.mpt import ModelPerturbationTest
 from ..perturbation_tests.ipt import InputPerturbationTest
+from ..perturbation_tests.mpt import ModelPerturbationTest
 
 
 def setup_xai_methods_imagenet(
@@ -103,7 +103,7 @@ def setup_estimators(
     patch_size: int,
     perturb_baseline: str = "uniform",
 ) -> Dict:
-    return {
+    d = {
         "Robustness": {
             "Max-Sensitivity": (
                 quantus.MaxSensitivity(
@@ -248,6 +248,18 @@ def setup_estimators(
         },
     }
 
+    estimator_dict = {}
+    for category in d:
+        if category not in estimator_dict:
+            estimator_dict[category] = {}
+            for estimator_name, v in d[category].items():
+                estimator_dict[category][estimator_name] = {
+                    "init": v[0],
+                    "score_direction_lower_is_better": v[1],
+                }
+
+    return estimator_dict
+
 
 def setup_dataset_models_transformers(
     dataset_name: str,
@@ -308,6 +320,7 @@ def setup_dataset_models_transformers(
                 "nr_channels": 3,
                 "patch_size": 224 * 2,
                 "perturb_baseline": "uniform",
+                "std_adversary": 0.5,
             },
         }
         model_name = "ResNet18"
@@ -379,6 +392,7 @@ def setup_dataset_models_imagenet_benchmarking(
                 "nr_channels": 3,
                 "patch_size": 224 * 2,
                 "perturb_baseline": "uniform",
+                "std_adversary": 0.5,
             },
         }
         model_name = "ViT"
@@ -436,6 +450,7 @@ def setup_dataset_models(
                 "nr_channels": 1,
                 "patch_size": 28 * 2,
                 "perturb_baseline": "uniform",
+                "std_adversary": 2.0,
             },
         }
         model_name = "LeNet"
@@ -477,6 +492,7 @@ def setup_dataset_models(
                 "nr_channels": 1,
                 "patch_size": 28 * 2,
                 "perturb_baseline": "uniform",
+                "std_adversary": 2.0,
             },
         }
 
@@ -520,6 +536,7 @@ def setup_dataset_models(
                 "nr_channels": 3,
                 "patch_size": 32 * 2,
                 "perturb_baseline": "uniform",
+                "std_adversary": 2.0,
             },
         }
         model_name = "ResNet9"
@@ -563,6 +580,7 @@ def setup_dataset_models(
                 "nr_channels": 3,
                 "patch_size": 224 * 2,
                 "perturb_baseline": "uniform",
+                "std_adversary": 0.5,
             },
         }
         model_name = "ResNet18"
@@ -661,7 +679,7 @@ def setup_faithfulness_estimators_full(
     percentage: int,
     perturb_baseline: str = "uniform",
 ) -> Dict:
-    return {
+    d = {
         "Faithfulness": {
             "Faithfulness Correlation": (
                 quantus.FaithfulnessCorrelation(
@@ -724,6 +742,18 @@ def setup_faithfulness_estimators_full(
         },
     }
 
+    estimator_dict = {}
+    for category in d:
+        if category not in estimator_dict:
+            estimator_dict[category] = {}
+            for estimator_name, v in d[category].items():
+                estimator_dict[category][estimator_name] = {
+                    "init": v[0],
+                    "score_direction_lower_is_better": v[1],
+                }
+
+    return estimator_dict
+
 
 def setup_complexity_estimators(
     features: int,
@@ -733,7 +763,7 @@ def setup_complexity_estimators(
     percentage: int,
     perturb_baseline: str = "uniform",
 ) -> Dict:
-    return {
+    d = {
         "Complexity": {
             "Sparseness": (
                 quantus.Sparseness(
@@ -759,6 +789,17 @@ def setup_complexity_estimators(
             ),
         }
     }
+    estimator_dict = {}
+    for category in d:
+        if category not in estimator_dict:
+            estimator_dict[category] = {}
+            for estimator_name, v in d[category].items():
+                estimator_dict[category][estimator_name] = {
+                    "init": v[0],
+                    "score_direction_lower_is_better": v[1],
+                }
+
+    return estimator_dict
 
 
 def setup_faithfulness_estimators(
@@ -769,7 +810,7 @@ def setup_faithfulness_estimators(
     percentage: int,
     perturb_baseline: str = "uniform",
 ) -> Dict:
-    return {
+    d = {
         "Faithfulness": {
             "Faithfulness Correlation": (
                 quantus.FaithfulnessCorrelation(
@@ -802,6 +843,17 @@ def setup_faithfulness_estimators(
             ),
         }
     }
+    estimator_dict = {}
+    for category in d:
+        if category not in estimator_dict:
+            estimator_dict[category] = {}
+            for estimator_name, v in d[category].items():
+                estimator_dict[category][estimator_name] = {
+                    "init": v[0],
+                    "score_direction_lower_is_better": v[1],
+                }
+
+    return estimator_dict
 
 
 def setup_randomisation_estimators(
@@ -812,7 +864,7 @@ def setup_randomisation_estimators(
     percentage: int,
     perturb_baseline: str = "uniform",
 ) -> Dict:
-    return {
+    d = {
         "Randomisation": {
             "Random Logit": (
                 quantus.RandomLogit(
@@ -842,6 +894,17 @@ def setup_randomisation_estimators(
             ),
         },
     }
+    estimator_dict = {}
+    for category in d:
+        if category not in estimator_dict:
+            estimator_dict[category] = {}
+            for estimator_name, v in d[category].items():
+                estimator_dict[category][estimator_name] = {
+                    "init": v[0],
+                    "score_direction_lower_is_better": v[1],
+                }
+
+    return estimator_dict
 
 
 def setup_localisation_estimators(
@@ -852,7 +915,7 @@ def setup_localisation_estimators(
     patch_size: int,
     perturb_baseline: str = "uniform",
 ) -> Dict:
-    return {
+    d = {
         "Localisation": {
             "Pointing-Game": (
                 quantus.PointingGame(
@@ -901,3 +964,14 @@ def setup_localisation_estimators(
             ),
         },
     }
+    estimator_dict = {}
+    for category in d:
+        if category not in estimator_dict:
+            estimator_dict[category] = {}
+            for estimator_name, v in d[category].items():
+                estimator_dict[category][estimator_name] = {
+                    "init": v[0],
+                    "score_direction_lower_is_better": v[1],
+                }
+
+    return estimator_dict
