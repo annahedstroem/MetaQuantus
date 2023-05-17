@@ -342,7 +342,10 @@ class MetaEvaluation:
                         s_batch=s_batch,
                         channel_first=channel_first,
                         explain_func=self.explain_func,
-                        explain_func_kwargs=explain_func_kwargs,
+                        explain_func_kwargs={
+                            **explain_func_kwargs,
+                            **{"method": method},
+                        },
                         model_predict_kwargs=model_predict_kwargs,
                         softmax=softmax,
                         device=device,
