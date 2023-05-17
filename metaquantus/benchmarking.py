@@ -130,7 +130,7 @@ class MetaEvaluationBenchmarking:
                             channel_first=self.channel_first,
                             softmax=self.softmax,
                             device=self.device,
-                            lower_is_better=estimator[1],
+                            score_direction_lower_is_better=estimator[1],
                         )
 
                         # Keep results.

@@ -78,8 +78,8 @@ def test_meta_evaluation_mnist(
     # Set configs.
     iters = 3
     K = 5
-    metric = estimators[estimator_category][estimator_name][0]
-    lower_is_better = estimators[estimator_category][estimator_name][0]
+    metric = estimators[estimator_category][estimator_name]["init"]
+    score_direction_lower_is_better = estimators[estimator_category][estimator_name]["init"]
 
     # Define the meta-evaluation exercise.
     meta_evaluator = MetaEvaluation(
@@ -101,7 +101,7 @@ def test_meta_evaluation_mnist(
         channel_first=True,
         softmax=False,
         device=device,
-        lower_is_better=lower_is_better,
+        score_direction_lower_is_better=score_direction_lower_is_better,
     )
 
     scores_1 = np.array(list(meta_evaluator.results_meta_consistency_scores["Model"]["consistency_results"].values()))
@@ -176,8 +176,8 @@ def test_meta_evaluation_fmnist(
     # Set configs.
     iters = 3
     K = 5
-    metric = estimators[estimator_category][estimator_name][0]
-    lower_is_better = estimators[estimator_category][estimator_name][0]
+    metric = estimators[estimator_category][estimator_name]["init"]
+    score_direction_lower_is_better = estimators[estimator_category][estimator_name]["init"]
 
     # Define the meta-evaluation exercise.
     meta_evaluator = MetaEvaluation(
@@ -199,7 +199,7 @@ def test_meta_evaluation_fmnist(
         channel_first=True,
         softmax=False,
         device=device,
-        lower_is_better=lower_is_better,
+        score_direction_lower_is_better=score_direction_lower_is_better,
     )
 
     scores_1 = np.array(list(meta_evaluator.results_meta_consistency_scores["Model"]["consistency_results"].values()))
@@ -277,8 +277,8 @@ def test_meta_evaluation_cmnist(
     # Set configs.
     iters = 5
     K = 10
-    metric = estimators[estimator_category][estimator_name][0]
-    lower_is_better = estimators[estimator_category][estimator_name][0]
+    metric = estimators[estimator_category][estimator_name]["init"]
+    score_direction_lower_is_better = estimators[estimator_category][estimator_name]["init"]
 
     # Define the meta-evaluation exercise.
     meta_evaluator = MetaEvaluation(
@@ -300,7 +300,7 @@ def test_meta_evaluation_cmnist(
         channel_first=True,
         softmax=False,
         device=device,
-        lower_is_better=lower_is_better,
+        score_direction_lower_is_better=score_direction_lower_is_better,
     )
 
     scores_1 = np.array(list(meta_evaluator.results_meta_consistency_scores["Model"]["consistency_results"].values()))

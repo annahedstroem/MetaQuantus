@@ -131,7 +131,7 @@ class MetaEvaluation:
         softmax: Optional[bool] = False,
         device: Optional[str] = None,
         model_predict_kwargs: Optional[Dict[str, Any]] = {},
-        lower_is_better: bool = False
+        score_direction_lower_is_better: bool = False,
     ):
         """
         Running meta-evalaution.
@@ -158,7 +158,7 @@ class MetaEvaluation:
             The device used, to enable GPUs.
         model_predict_kwargs: dict
             A dictionary with predict kwargs for the model.
-        lower_is_better: boolean
+        score_direction_lower_is_better: boolean
             Indicates if lower values are better for the estimators, e.g., True for the Robustness category.
 
         Returns
@@ -182,7 +182,9 @@ class MetaEvaluation:
 
         # Run inference.
         self.run_intra_analysis()
-        self.run_inter_analysis(lower_is_better=lower_is_better)
+        self.run_inter_analysis(
+            score_direction_lower_is_better=score_direction_lower_is_better
+        )
 
         # Check that both test parts exist in the test suite, then run meta-consistency analysis.
         if any("Resilience" in test for test in list(self.test_suite)) and any(
@@ -342,7 +344,10 @@ class MetaEvaluation:
                         s_batch=s_batch,
                         channel_first=channel_first,
                         explain_func=self.explain_func,
-                        explain_func_kwargs=explain_func_kwargs,
+                        explain_func_kwargs={
+                            **explain_func_kwargs,
+                            **{"method": method},
+                        },
                         model_predict_kwargs=model_predict_kwargs,
                         softmax=softmax,
                         device=device,
@@ -442,13 +447,13 @@ class MetaEvaluation:
 
         return self.results_intra_scores
 
-    def run_inter_analysis(self, lower_is_better: bool):
+    def run_inter_analysis(self, score_direction_lower_is_better: bool):
         """
         Make IEC inference after perturbing inputs to the evaluation problem and then storing scores.
 
         Parameters
         ----------
-        lower_is_better: bool
+        score_direction_lower_is_better: bool
             Indicates if lower values are considered better or not, to inverse the comparison symbol.
 
         Returns
@@ -490,7 +495,7 @@ class MetaEvaluation:
                         Q_star=Q_star,
                         Q_hat=Q_hat,
                         indices=self.results_indices_perturbed[test_name][i][k],
-                        lower_is_better=lower_is_better,
+                        score_direction_lower_is_better=score_direction_lower_is_better,
                         test_name=test_name,
                     )
 
@@ -646,7 +651,7 @@ class MetaEvaluation:
         Q_star: np.array,
         Q_hat: np.array,
         indices: np.array,
-        lower_is_better: bool,
+        score_direction_lower_is_better: bool,
         test_name: str,
     ) -> float:
         """
@@ -660,7 +665,7 @@ class MetaEvaluation:
             The matrix of perturbed quality estimates, averaged over nr_perturbations.
         indices: np.array
             The list of indices to perform the analysis on.
-        lower_is_better: bool
+        score_direction_lower_is_better: bool
             Indicates if lower values are considered better or not, to inverse the comparison symbol.
         test_name: string
             A string describing if the values is computed for 'Adversary' or 'Resilience'.
@@ -673,7 +678,7 @@ class MetaEvaluation:
                 Q_star=Q_star,
                 Q_hat=Q_hat,
                 indices=indices,
-                lower_is_better=lower_is_better,
+                score_direction_lower_is_better=score_direction_lower_is_better,
             )
         elif "Resilience" in test_name:
             return self.compute_iec_resilience(
@@ -746,7 +751,7 @@ class MetaEvaluation:
         Q_star: np.array,
         Q_hat: np.array,
         indices: np.array,
-        lower_is_better: bool,
+        score_direction_lower_is_better: bool,
     ) -> float:
         """
         Return the mean of the agreement ranking matrix U \in [0, 1] to specify if the ranking condition is met.
@@ -759,7 +764,7 @@ class MetaEvaluation:
             The matrix of perturbed quality estimates, averaged over nr_perturbations.
         indices: np.array
             The list of indices to perform the analysis on.
-        lower_is_better: bool
+        score_direction_lower_is_better: bool
             Indicates if lower values are considered better or not, to inverse the comparison symbol.
 
         Returns
@@ -770,7 +775,7 @@ class MetaEvaluation:
         for row_star, row_hat in zip(Q_star, Q_hat):
             for q_star, q_hat in zip(row_star[indices], row_hat[indices]):
 
-                if lower_is_better:
+                if score_direction_lower_is_better:
                     if q_star < q_hat:
                         U.append(1)
                     else:

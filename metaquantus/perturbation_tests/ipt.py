@@ -162,7 +162,10 @@ class InputPerturbationTest(PerturbationTestBase):
                     a_batch=a_batch_preds,
                     s_batch=s_batch,
                     explain_func=explain_func,
-                    explain_func_kwargs=explain_func_kwargs,
+                    explain_func_kwargs={
+                        **explain_func_kwargs,
+                        **{"method": method},
+                    },
                     model_predict_kwargs=model_predict_kwargs,
                     channel_first=channel_first,
                     softmax=softmax,
