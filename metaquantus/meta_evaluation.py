@@ -316,17 +316,20 @@ class MetaEvaluation:
                     )
 
                 else:
-
+                    
+                    # Get the XAI method name in the kwargs.
+                    explain_func_kwargs = {
+                            **explain_func_kwargs,
+                            **{"method": method},
+                        }
+                        
                     # Generate explanations based on predictions.
                     a_batch_preds = generate_explanations(
                         model=model,
                         x_batch=x_batch,
                         y_batch=self.results_y_preds,
                         explain_func=self.explain_func,
-                        explain_func_kwargs={
-                            **explain_func_kwargs,
-                            **{"method": method},
-                        },
+                        explain_func_kwargs=explain_func_kwargs,
                         abs=estimator.abs,
                         normalise=estimator.normalise,
                         normalise_func=estimator.normalise_func,
@@ -342,10 +345,7 @@ class MetaEvaluation:
                         s_batch=s_batch,
                         channel_first=channel_first,
                         explain_func=self.explain_func,
-                        explain_func_kwargs={
-                            **explain_func_kwargs,
-                            **{"method": method},
-                        },
+                        explain_func_kwargs=explain_func_kwargs,
                         model_predict_kwargs=model_predict_kwargs,
                         softmax=softmax,
                         device=device,
