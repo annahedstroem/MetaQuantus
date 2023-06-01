@@ -389,7 +389,7 @@ def setup_dataset_models(
     elif dataset_name == "cMNIST":
 
         # Paths.
-        path_cmnist_model = path_assets + "models/cmnist_resnet18.ckpt"
+        path_cmnist_model = path_assets + "models/cmnist_resnet18"
         path_cmnist_assets = path_assets + "test_sets/cmnist_test_set.npy"
         s_type = "box"
 
