@@ -416,7 +416,7 @@ def setup_dataset_models(
             "y_batch": y_batch_cmnist,
             "s_batch": s_batch_cmnist,
             "models": {"ResNet18": model_cmnist},
-            "gc_layers": {"ResNet9": "list(model.named_modules())[1][1][-6]"},
+            "gc_layers": {"ResNet18": "list(model.named_modules())[61][1]"},
             "estimator_kwargs": {
                 "features": 32 * 2,
                 "num_classes": 10,
