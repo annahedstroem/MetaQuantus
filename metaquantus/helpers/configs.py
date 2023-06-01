@@ -5,16 +5,15 @@
 # MetaQuantus is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
 # You should have received a copy of the GNU Lesser General Public License along with MetaQuantus. If not, see <https://www.gnu.org/licenses/>.
 
-from typing import Dict, List
-import numpy as np
 import torch
-
 import quantus
-from quantus import *
-import torch
+import numpy as np
 import torchvision
 
-from ..helpers.models import LeNet, ResNet9
+from quantus import *
+from typing import Dict, List
+from ..helpers.models import LeNet
+from torchvision.models import resnet18
 from ..perturbation_tests.mpt import ModelPerturbationTest
 from ..perturbation_tests.ipt import InputPerturbationTest
 
@@ -390,12 +389,13 @@ def setup_dataset_models(
     elif dataset_name == "cMNIST":
 
         # Paths.
-        path_cmnist_model = path_assets + "models/cmnist_resnet9.ckpt"
+        path_cmnist_model = path_assets + "models/cmnist_resnet18.ckpt"
         path_cmnist_assets = path_assets + "test_sets/cmnist_test_set.npy"
         s_type = "box"
 
         # Example for how to reload assets and models to notebook.
-        model_cmnist = ResNet9(nr_channels=3, nr_classes=10)
+        model_cmnist = resnet18()
+        model_cmnist.fc = torch.nn.Linear(512, 10)
         if device.type == "cpu":
             model_cmnist.load_state_dict(
                 torch.load(path_cmnist_model, map_location=torch.device("cpu"))
@@ -415,7 +415,7 @@ def setup_dataset_models(
             "x_batch": x_batch_cmnist,
             "y_batch": y_batch_cmnist,
             "s_batch": s_batch_cmnist,
-            "models": {"ResNet9": model_cmnist},
+            "models": {"ResNet18": model_cmnist},
             "gc_layers": {"ResNet9": "list(model.named_modules())[1][1][-6]"},
             "estimator_kwargs": {
                 "features": 32 * 2,
@@ -427,7 +427,7 @@ def setup_dataset_models(
                 "perturb_baseline": "uniform",
             },
         }
-        model_name = "ResNet9"
+        model_name = "ResNet18"
 
     elif dataset_name == "ImageNet":
 
