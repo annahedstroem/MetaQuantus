@@ -25,11 +25,12 @@ If you find this toolkit or its companion paper interesting or useful in your re
 @article{hedstrom2023metaquantus,
  author = {Hedström, Anna and Bommer, Philine and Wickstrøm, Kristoffer K. and Samek, Wojciech and Lapuschkin, Sebastian and Höhne, Marina M. -C.},
   title = {The Meta-Evaluation Problem in Explainable AI: Identifying Reliable Estimators with MetaQuantus},
-  doi = {10.48550/ARXIV.2302.07265},
-  url = {https://arxiv.org/abs/2302.07265},
-  publisher = {arXiv},
-  year = {2023},
-}
+  journal={Transactions on Machine Learning Research},
+  issn={2835-8856},
+  year={2023},
+  url={https://openreview.net/forum?id=j3FK00HyfU},
+  note={}
+  }
 ```
 
 
