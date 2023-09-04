@@ -12,8 +12,8 @@ import torch
 import numpy as np
 
 from .base import PerturbationTestBase
-from ..helpers.utils import generate_explanations, get_wrapped_model
-
+from ..helpers.utils import generate_explanations
+from quantus import get_wrapped_model
 
 class InputPerturbationTest(PerturbationTestBase):
     def __init__(
