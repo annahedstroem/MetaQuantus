@@ -11,7 +11,7 @@ with open('requirements.txt') as f:
 # Define setup.
 setup(
     name="metaquantus",
-    version="0.0.4",
+    version="0.0.5",
     description="MetaQuantus is a XAI performance tool for identifying reliable metrics.",
     long_description=open("README.md", "r").read(),
     long_description_content_type="text/markdown",
