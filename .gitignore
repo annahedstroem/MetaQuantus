@@ -10,3 +10,4 @@ dist/
 .coverage*
 coverage.xml
 venvs/
+*.ipynb_checkpoints/

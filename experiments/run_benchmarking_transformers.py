@@ -23,27 +23,56 @@ if __name__ == "__main__":
     warnings.filterwarnings("ignore", category=FutureWarning)
     warnings.filterwarnings("ignore", category=UserWarning)
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--dataset")
-    parser.add_argument("--K")
-    parser.add_argument("--iters")
-    parser.add_argument("--start_idx")
-    parser.add_argument("--end_idx")
-    parser.add_argument("--category")
-    parser.add_argument("--PATH_ASSETS")
-    parser.add_argument("--PATH_RESULTS")
-    args = parser.parse_args()
+    def parse_arguments():
+        parser = argparse.ArgumentParser()
+        parser.add_argument("--dataset", default="MNIST")
+        parser.add_argument("--K", default=5)
+        parser.add_argument("--iters", default=3)
+        parser.add_argument("--start_idx")
+        parser.add_argument("--end_idx")
+        parser.add_argument("--category", default="Faithfulness")
+        parser.add_argument("--PATH_ASSETS", default="drive/MyDrive/Projects/assets/")
+        parser.add_argument(
+            "--PATH_RESULTS", default="drive/MyDrive/Projects/MetaQuantus/results/"
+        )
 
-    dataset_name = str(args.dataset)
-    K = int(args.K)
-    iters = int(args.iters)
-    category = str(args.category)
-    start_idx = int(args.start_idx)
-    end_idx = int(args.end_idx)
-    PATH_ASSETS = str(args.PATH_ASSETS)
-    PATH_RESULTS = str(args.PATH_RESULTS)
-    fname = f"{category}_{start_idx}-{end_idx}"
-    print(dataset_name, K, iters, fname, start_idx, end_idx, PATH_ASSETS, PATH_RESULTS)
+        args = parser.parse_args()
+
+        return (
+            str(args.dataset),
+            int(args.K),
+            int(args.iters),
+            str(args.category),
+            int(args.start_idx),
+            int(args.end_idx),
+            str(args.PATH_ASSETS),
+            str(args.PATH_RESULTS),
+            f"{category}_{start_idx}-{end_idx}",
+        )
+
+    # Get arguments.
+    (
+        dataset_name,
+        K,
+        iters,
+        category,
+        start_idx,
+        end_idx,
+        PATH_ASSETS,
+        PATH_RESULTS,
+        fname,
+    ) = parse_arguments()
+    print(
+        "Arguments:\n",
+        dataset_name,
+        K,
+        iters,
+        fname,
+        start_idx,
+        end_idx,
+        PATH_ASSETS,
+        PATH_RESULTS,
+    )
 
     #########
     # GPUs. #
@@ -51,16 +80,15 @@ if __name__ == "__main__":
 
     # Setting device on GPU if available, else CPU.
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print("Using device:", device)
-    print()
-    print(torch.version.cuda)
+    print("\nUsing device:", device)
+    print("\t{torch.version.cuda}")
 
     # Additional info when using cuda.
     if device.type == "cuda":
-        print(torch.cuda.get_device_name(0))
-        print("Memory Usage:")
-        print("Allocated:", round(torch.cuda.memory_allocated(0) / 1024 ** 3, 1), "GB")
-        print("Cached:   ", round(torch.cuda.memory_cached(0) / 1024 ** 3, 1), "GB")
+        print(f"\t{torch.cuda.get_device_name(0)}")
+        print("\tMemory Usage:")
+        print("\tAllocated:", round(torch.cuda.memory_allocated(0) / 1024 ** 3, 1), "GB")
+        print("\tCached:   ", round(torch.cuda.memory_cached(0) / 1024 ** 3, 1), "GB")
 
     ##############################
     # Dataset-specific settings. #
@@ -71,7 +99,7 @@ if __name__ == "__main__":
         dataset_name=dataset_name, path_assets=PATH_ASSETS, device=device
     )
     dataset_settings = {dataset_name: SETTINGS[dataset_name]}
-    dataset_kwargs = dataset_settings[dataset_name]["estimator_kwargs"]
+    estimator_kwargs = dataset_settings[dataset_name]["estimator_kwargs"]
 
     # Get analyser suite.
     analyser_suite = setup_test_suite(dataset_name=dataset_name)
@@ -79,30 +107,32 @@ if __name__ == "__main__":
     # Get estimators.
     if category.lower() == "localisation":
         setup_estimator = setup_localisation_estimators
-    elif category .lower()== "complexity":
+    elif category.lower() == "complexity":
         setup_estimator = setup_complexity_estimators
         setup_xai_methods_transformers = setup_xai_methods_transformers_2
-    elif category .lower()== "randomisation":
+    elif category.lower() == "randomisation":
         setup_estimator = setup_randomisation_estimators
-    elif category .lower()== "faithfulness":
+    elif category.lower() == "faithfulness":
         setup_estimator = setup_faithfulness_estimators
     else:
-        raise ValueError("We only support estimators of localisation, robustness, faithfulnessand randomisation categories.")
+        raise ValueError(
+            "We only support estimators of localisation, robustness, faithfulnessand randomisation categories."
+        )
 
     estimators = setup_estimator(
-        features=dataset_kwargs["features"],
-        num_classes=dataset_kwargs["num_classes"],
-        img_size=dataset_kwargs["img_size"],
-        percentage=dataset_kwargs["percentage"],
-        patch_size=dataset_kwargs["patch_size"],
-        perturb_baseline=dataset_kwargs["perturb_baseline"],
+        features=estimator_kwargs["features"],
+        num_classes=estimator_kwargs["num_classes"],
+        img_size=estimator_kwargs["img_size"],
+        percentage=estimator_kwargs["percentage"],
+        patch_size=estimator_kwargs["patch_size"],
+        perturb_baseline=estimator_kwargs["perturb_baseline"],
     )
 
     # Get explanation methods.
     xai_methods = setup_xai_methods_transformers(
         gc_layer=dataset_settings[dataset_name]["gc_layers"][model_name],
-        img_size=dataset_kwargs["img_size"],
-        nr_channels=dataset_kwargs["nr_channels"],
+        img_size=estimator_kwargs["img_size"],
+        nr_channels=estimator_kwargs["nr_channels"],
     )
 
     ###########################
@@ -110,9 +140,15 @@ if __name__ == "__main__":
     ###########################
 
     # Reduce the number of samples.
-    dataset_settings[dataset_name]["x_batch"] = dataset_settings[dataset_name]["x_batch"][start_idx:end_idx]
-    dataset_settings[dataset_name]["y_batch"] = dataset_settings[dataset_name]["y_batch"][start_idx:end_idx]
-    dataset_settings[dataset_name]["s_batch"] = dataset_settings[dataset_name]["s_batch"][start_idx:end_idx]
+    dataset_settings[dataset_name]["x_batch"] = dataset_settings[dataset_name][
+        "x_batch"
+    ][start_idx:end_idx]
+    dataset_settings[dataset_name]["y_batch"] = dataset_settings[dataset_name][
+        "y_batch"
+    ][start_idx:end_idx]
+    dataset_settings[dataset_name]["s_batch"] = dataset_settings[dataset_name][
+        "s_batch"
+    ][start_idx:end_idx]
 
     # Define master!
     master = MetaEvaluation(

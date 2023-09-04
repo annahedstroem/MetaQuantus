@@ -50,7 +50,19 @@ if __name__ == "__main__":
     start_idx_fixed = eval(args.start_idx_fixed)
     PATH_ASSETS = str(args.PATH_ASSETS)
     PATH_RESULTS = str(args.PATH_RESULTS)
-    print(dataset_name, K, iters, batch_size, fname, reverse_order, folder, start_idx_fixed, end_idx_fixed, PATH_ASSETS, PATH_RESULTS)
+    print(
+        dataset_name,
+        K,
+        iters,
+        batch_size,
+        fname,
+        reverse_order,
+        folder,
+        start_idx_fixed,
+        end_idx_fixed,
+        PATH_ASSETS,
+        PATH_RESULTS,
+    )
 
     #########
     # GPUs. #
@@ -58,16 +70,15 @@ if __name__ == "__main__":
 
     # Setting device on GPU if available, else CPU.
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print("Using device:", device)
-    print()
-    print(torch.version.cuda)
+    print("\nUsing device:", device)
+    print("\t{torch.version.cuda}")
 
     # Additional info when using cuda.
     if device.type == "cuda":
-        print(torch.cuda.get_device_name(0))
-        print("Memory Usage:")
-        print("Allocated:", round(torch.cuda.memory_allocated(0) / 1024 ** 3, 1), "GB")
-        print("Cached:   ", round(torch.cuda.memory_cached(0) / 1024 ** 3, 1), "GB")
+        print(f"\t{torch.cuda.get_device_name(0)}")
+        print("\tMemory Usage:")
+        print("\tAllocated:", round(torch.cuda.memory_allocated(0) / 1024 ** 3, 1), "GB")
+        print("\tCached:   ", round(torch.cuda.memory_cached(0) / 1024 ** 3, 1), "GB")
 
     # Reduce the number of explanation methods and samples for ImageNet.
     if dataset_name == "ImageNet":
@@ -83,19 +94,19 @@ if __name__ == "__main__":
         dataset_name=dataset_name, path_assets=PATH_ASSETS, device=device
     )
     dataset_settings = {dataset_name: SETTINGS[dataset_name]}
-    dataset_kwargs = dataset_settings[dataset_name]["estimator_kwargs"]
+    estimator_kwargs = dataset_settings[dataset_name]["estimator_kwargs"]
 
     # Get analyser suite.
     analyser_suite = setup_test_suite(dataset_name=dataset_name)
 
     # Get estimators.
     estimators = setup_estimators(
-        features=dataset_kwargs["features"],
-        num_classes=dataset_kwargs["num_classes"],
-        img_size=dataset_kwargs["img_size"],
-        percentage=dataset_kwargs["percentage"],
-        patch_size=dataset_kwargs["patch_size"],
-        perturb_baseline=dataset_kwargs["perturb_baseline"],
+        features=estimator_kwargs["features"],
+        num_classes=estimator_kwargs["num_classes"],
+        img_size=estimator_kwargs["img_size"],
+        percentage=estimator_kwargs["percentage"],
+        patch_size=estimator_kwargs["patch_size"],
+        perturb_baseline=estimator_kwargs["perturb_baseline"],
     )
 
     estimators_sub = {
@@ -109,8 +120,8 @@ if __name__ == "__main__":
     # Get explanation methods.
     xai_methods = setup_xai_methods(
         gc_layer=dataset_settings[dataset_name]["gc_layers"][model_name],
-        img_size=dataset_kwargs["img_size"],
-        nr_channels=dataset_kwargs["nr_channels"],
+        img_size=estimator_kwargs["img_size"],
+        nr_channels=estimator_kwargs["nr_channels"],
     )
 
     ###########################
@@ -156,8 +167,9 @@ if __name__ == "__main__":
             }
         elif fname == "Deit":
             dataset_settings[dataset_name]["models"] = {
-                "Deit": timm.create_model(model_name='deit_tiny_distilled_patch16_224',
-                                      pretrained=True),
+                "Deit": timm.create_model(
+                    model_name="deit_tiny_distilled_patch16_224", pretrained=True
+                ),
             }
 
         # Prepare batching.
@@ -172,7 +184,7 @@ if __name__ == "__main__":
 
             # Get indicies.
             end_idx = min(int(start_idx + batch_size), nr_samples)
-            if (end_idx-start_idx) < batch_size:
+            if (end_idx - start_idx) < batch_size:
                 continue
 
             if end_idx_fixed:
@@ -192,9 +204,15 @@ if __name__ == "__main__":
             )
 
             # Reduce the number of samples.
-            dataset_settings[dataset_name]["x_batch"] = dataset_settings[dataset_name]["x_batch"][start_idx:end_idx]
-            dataset_settings[dataset_name]["y_batch"] = dataset_settings[dataset_name]["y_batch"][start_idx:end_idx]
-            dataset_settings[dataset_name]["s_batch"] = dataset_settings[dataset_name]["s_batch"][start_idx:end_idx]
+            dataset_settings[dataset_name]["x_batch"] = dataset_settings[dataset_name][
+                "x_batch"
+            ][start_idx:end_idx]
+            dataset_settings[dataset_name]["y_batch"] = dataset_settings[dataset_name][
+                "y_batch"
+            ][start_idx:end_idx]
+            dataset_settings[dataset_name]["s_batch"] = dataset_settings[dataset_name][
+                "s_batch"
+            ][start_idx:end_idx]
 
             # Benchmark!
             benchmark = MetaEvaluationBenchmarking(
@@ -212,5 +230,3 @@ if __name__ == "__main__":
 
             if start_idx_fixed is not None:
                 break
-
-

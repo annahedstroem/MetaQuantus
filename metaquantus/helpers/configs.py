@@ -15,8 +15,8 @@ import torch
 import torchvision
 
 from ..helpers.models import LeNet, ResNet9
-from ..perturbation_tests.mpt import ModelPerturbationTest
 from ..perturbation_tests.ipt import InputPerturbationTest
+from ..perturbation_tests.mpt import ModelPerturbationTest
 
 
 def setup_xai_methods_imagenet(
@@ -103,7 +103,7 @@ def setup_estimators(
     patch_size: int,
     perturb_baseline: str = "uniform",
 ) -> Dict:
-    return {
+    d = {
         "Robustness": {
             "Max-Sensitivity": (
                 quantus.MaxSensitivity(
@@ -119,7 +119,7 @@ def setup_estimators(
                     aggregate_func=np.mean,
                     disable_warnings=True,
                 ),
-                True,
+                "lower",
             ),
             "Local Lipschitz Estimate": (
                 quantus.LocalLipschitzEstimate(
@@ -135,7 +135,7 @@ def setup_estimators(
                     aggregate_func=np.mean,
                     disable_warnings=True,
                 ),
-                True,
+                "lower",
             ),
         },
         "Randomisation": {
@@ -150,7 +150,7 @@ def setup_estimators(
                     aggregate_func=np.mean,
                     disable_warnings=True,
                 ),
-                True,
+                "lower",
             ),
             "Model Parameter Randomisation Test": (
                 quantus.ModelParameterRandomisation(
@@ -163,7 +163,7 @@ def setup_estimators(
                     aggregate_func=np.mean,
                     disable_warnings=True,
                 ),
-                True,
+                "lower",
             ),
         },
         "Faithfulness": {
@@ -180,7 +180,7 @@ def setup_estimators(
                     aggregate_func=np.mean,
                     disable_warnings=True,
                 ),
-                False,
+                "higher",
             ),
             "Pixel-Flipping": (
                 quantus.PixelFlipping(
@@ -195,7 +195,7 @@ def setup_estimators(
                     return_auc_per_sample=True,
                     disable_warnings=True,
                 ),
-                False,
+                "higher",
             ),
         },
         "Complexity": {
@@ -208,7 +208,7 @@ def setup_estimators(
                     aggregate_func=np.mean,
                     disable_warnings=True,
                 ),
-                False,
+                "higher",
             ),
             "Complexity": (
                 quantus.Complexity(
@@ -219,7 +219,7 @@ def setup_estimators(
                     aggregate_func=np.mean,
                     disable_warnings=True,
                 ),
-                True,
+                "lower",
             ),
         },
         "Localisation": {
@@ -232,7 +232,7 @@ def setup_estimators(
                     aggregate_func=np.mean,
                     disable_warnings=True,
                 ),
-                False,
+                "higher",
             ),
             "Relevance Mass Accuracy": (
                 quantus.RelevanceMassAccuracy(
@@ -243,10 +243,22 @@ def setup_estimators(
                     aggregate_func=np.mean,
                     disable_warnings=True,
                 ),
-                False,
+                "higher",
             ),
         },
     }
+
+    estimator_dict = {}
+    for category in d:
+        if category not in estimator_dict:
+            estimator_dict[category] = {}
+            for estimator_name, v in d[category].items():
+                estimator_dict[category][estimator_name] = {
+                    "init": v[0],
+                    "score_direction": v[1],
+                }
+
+    return estimator_dict
 
 
 def setup_dataset_models_transformers(
@@ -308,6 +320,7 @@ def setup_dataset_models_transformers(
                 "nr_channels": 3,
                 "patch_size": 224 * 2,
                 "perturb_baseline": "uniform",
+                "std_adversary": 0.5,
             },
         }
         model_name = "ResNet18"
@@ -379,6 +392,7 @@ def setup_dataset_models_imagenet_benchmarking(
                 "nr_channels": 3,
                 "patch_size": 224 * 2,
                 "perturb_baseline": "uniform",
+                "std_adversary": 0.5,
             },
         }
         model_name = "ViT"
@@ -436,6 +450,7 @@ def setup_dataset_models(
                 "nr_channels": 1,
                 "patch_size": 28 * 2,
                 "perturb_baseline": "uniform",
+                "std_adversary": 2.0,
             },
         }
         model_name = "LeNet"
@@ -477,6 +492,7 @@ def setup_dataset_models(
                 "nr_channels": 1,
                 "patch_size": 28 * 2,
                 "perturb_baseline": "uniform",
+                "std_adversary": 2.0,
             },
         }
 
@@ -520,6 +536,7 @@ def setup_dataset_models(
                 "nr_channels": 3,
                 "patch_size": 32 * 2,
                 "perturb_baseline": "uniform",
+                "std_adversary": 2.0,
             },
         }
         model_name = "ResNet9"
@@ -563,6 +580,7 @@ def setup_dataset_models(
                 "nr_channels": 3,
                 "patch_size": 224 * 2,
                 "perturb_baseline": "uniform",
+                "std_adversary": 0.5,
             },
         }
         model_name = "ResNet18"
@@ -661,7 +679,7 @@ def setup_faithfulness_estimators_full(
     percentage: int,
     perturb_baseline: str = "uniform",
 ) -> Dict:
-    return {
+    d = {
         "Faithfulness": {
             "Faithfulness Correlation": (
                 quantus.FaithfulnessCorrelation(
@@ -675,7 +693,7 @@ def setup_faithfulness_estimators_full(
                     return_aggregate=False,
                     disable_warnings=True,
                 ),
-                False,
+                "higher",
             ),
             "Pixel-Flipping": (
                 quantus.PixelFlipping(
@@ -689,7 +707,7 @@ def setup_faithfulness_estimators_full(
                     return_auc_per_sample=True,
                     disable_warnings=True,
                 ),
-                True,
+                "higher",
             ),
             "MonotonicityCorrelation": (
                 quantus.MonotonicityCorrelation(
@@ -704,7 +722,7 @@ def setup_faithfulness_estimators_full(
                     return_aggregate=False,
                     disable_warnings=True,
                 ),
-                False,
+                "higher",
             ),
             "Infidelity": (
                 quantus.Infidelity(
@@ -719,10 +737,22 @@ def setup_faithfulness_estimators_full(
                     return_auc_per_sample=True,
                     disable_warnings=True,
                 ),
-                False,
+                "higher",
             ),
         },
     }
+
+    estimator_dict = {}
+    for category in d:
+        if category not in estimator_dict:
+            estimator_dict[category] = {}
+            for estimator_name, v in d[category].items():
+                estimator_dict[category][estimator_name] = {
+                    "init": v[0],
+                    "score_direction": v[1],
+                }
+
+    return estimator_dict
 
 
 def setup_complexity_estimators(
@@ -733,7 +763,7 @@ def setup_complexity_estimators(
     percentage: int,
     perturb_baseline: str = "uniform",
 ) -> Dict:
-    return {
+    d = {
         "Complexity": {
             "Sparseness": (
                 quantus.Sparseness(
@@ -744,7 +774,7 @@ def setup_complexity_estimators(
                     aggregate_func=np.mean,
                     disable_warnings=True,
                 ),
-                False,
+                "higher",
             ),
             "Complexity": (
                 quantus.Complexity(
@@ -755,10 +785,21 @@ def setup_complexity_estimators(
                     aggregate_func=np.mean,
                     disable_warnings=True,
                 ),
-                True,
+                "lower",
             ),
         }
     }
+    estimator_dict = {}
+    for category in d:
+        if category not in estimator_dict:
+            estimator_dict[category] = {}
+            for estimator_name, v in d[category].items():
+                estimator_dict[category][estimator_name] = {
+                    "init": v[0],
+                    "score_direction": v[1],
+                }
+
+    return estimator_dict
 
 
 def setup_faithfulness_estimators(
@@ -769,7 +810,7 @@ def setup_faithfulness_estimators(
     percentage: int,
     perturb_baseline: str = "uniform",
 ) -> Dict:
-    return {
+    d = {
         "Faithfulness": {
             "Faithfulness Correlation": (
                 quantus.FaithfulnessCorrelation(
@@ -783,7 +824,7 @@ def setup_faithfulness_estimators(
                     return_aggregate=False,
                     disable_warnings=True,
                 ),
-                False,
+                "higher",
             ),
             "Monotonicity Correlation": (
                 quantus.MonotonicityCorrelation(
@@ -798,10 +839,21 @@ def setup_faithfulness_estimators(
                     return_aggregate=False,
                     disable_warnings=True,
                 ),
-                False,
+                "higher",
             ),
         }
     }
+    estimator_dict = {}
+    for category in d:
+        if category not in estimator_dict:
+            estimator_dict[category] = {}
+            for estimator_name, v in d[category].items():
+                estimator_dict[category][estimator_name] = {
+                    "init": v[0],
+                    "score_direction": v[1],
+                }
+
+    return estimator_dict
 
 
 def setup_randomisation_estimators(
@@ -812,7 +864,7 @@ def setup_randomisation_estimators(
     percentage: int,
     perturb_baseline: str = "uniform",
 ) -> Dict:
-    return {
+    d = {
         "Randomisation": {
             "Random Logit": (
                 quantus.RandomLogit(
@@ -825,7 +877,7 @@ def setup_randomisation_estimators(
                     aggregate_func=np.mean,
                     disable_warnings=True,
                 ),
-                True,
+                "lower",
             ),
             "Model Parameter Randomisation Test": (
                 quantus.ModelParameterRandomisation(
@@ -838,10 +890,21 @@ def setup_randomisation_estimators(
                     aggregate_func=np.mean,
                     disable_warnings=True,
                 ),
-                True,
+                "lower",
             ),
         },
     }
+    estimator_dict = {}
+    for category in d:
+        if category not in estimator_dict:
+            estimator_dict[category] = {}
+            for estimator_name, v in d[category].items():
+                estimator_dict[category][estimator_name] = {
+                    "init": v[0],
+                    "score_direction": v[1],
+                }
+
+    return estimator_dict
 
 
 def setup_localisation_estimators(
@@ -852,7 +915,7 @@ def setup_localisation_estimators(
     patch_size: int,
     perturb_baseline: str = "uniform",
 ) -> Dict:
-    return {
+    d = {
         "Localisation": {
             "Pointing-Game": (
                 quantus.PointingGame(
@@ -863,7 +926,7 @@ def setup_localisation_estimators(
                     aggregate_func=np.mean,
                     disable_warnings=True,
                 ),
-                False,
+                "higher",
             ),
             "Top-K Intersection": (
                 quantus.TopKIntersection(
@@ -875,7 +938,7 @@ def setup_localisation_estimators(
                     aggregate_func=np.mean,
                     disable_warnings=True,
                 ),
-                False,
+                "higher",
             ),
             "Relevance Mass Accuracy": (
                 quantus.RelevanceMassAccuracy(
@@ -886,7 +949,7 @@ def setup_localisation_estimators(
                     aggregate_func=np.mean,
                     disable_warnings=True,
                 ),
-                False,
+                "higher",
             ),
             "Relevance Rank Accuracy": (
                 quantus.RelevanceRankAccuracy(
@@ -897,7 +960,18 @@ def setup_localisation_estimators(
                     aggregate_func=np.mean,
                     disable_warnings=True,
                 ),
-                False,
+                "higher",
             ),
         },
     }
+    estimator_dict = {}
+    for category in d:
+        if category not in estimator_dict:
+            estimator_dict[category] = {}
+            for estimator_name, v in d[category].items():
+                estimator_dict[category][estimator_name] = {
+                    "init": v[0],
+                    "score_direction": v[1],
+                }
+
+    return estimator_dict

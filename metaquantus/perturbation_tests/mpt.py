@@ -11,7 +11,8 @@ import torch
 import numpy as np
 
 from .base import PerturbationTestBase
-from ..helpers.utils import generate_explanations, get_wrapped_model
+from ..helpers.utils import generate_explanations
+from quantus import get_wrapped_model
 
 
 class ModelPerturbationTest(PerturbationTestBase):
@@ -65,7 +66,7 @@ class ModelPerturbationTest(PerturbationTestBase):
 
         Parameters
         ----------
-        estimator: metric, perturbationmetric
+        estimator: metric
             The estimator to run the test on.
         nr_perturbations: int
             The number of perturbations.
@@ -150,9 +151,9 @@ class ModelPerturbationTest(PerturbationTestBase):
 
                 # Get the XAI method name in the kwargs.
                 explain_func_kwargs = {
-                        **explain_func_kwargs,
-                        **{"method": method},
-                    }
+                    **explain_func_kwargs,
+                    **{"method": method},
+                }
 
                 # Generate explanations based on predictions.
                 a_batch_preds = generate_explanations(
@@ -176,7 +177,10 @@ class ModelPerturbationTest(PerturbationTestBase):
                     a_batch=a_batch_preds,
                     s_batch=s_batch,
                     explain_func=explain_func,
-                    explain_func_kwargs=explain_func_kwargs,
+                    explain_func_kwargs={
+                        **explain_func_kwargs,
+                        **{"method": method},
+                    },
                     model_predict_kwargs=model_predict_kwargs,
                     channel_first=channel_first,
                     softmax=softmax,

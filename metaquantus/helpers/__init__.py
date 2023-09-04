@@ -4,6 +4,7 @@
 # You should have received a copy of the GNU Lesser General Public License along with MetaQuantus. If not, see <https://www.gnu.org/licenses/>.
 
 from .configs import *
+from .configs_utils import *
 from .models import *
 from .plotting import *
 from .sanity_checks import *

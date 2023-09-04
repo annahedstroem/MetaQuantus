@@ -56,16 +56,15 @@ if __name__ == "__main__":
 
     # Setting device on GPU if available, else CPU.
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print("Using device:", device)
-    print()
-    print(torch.version.cuda)
+    print("\nUsing device:", device)
+    print("\t{torch.version.cuda}")
 
     # Additional info when using cuda.
     if device.type == "cuda":
-        print(torch.cuda.get_device_name(0))
-        print("Memory Usage:")
-        print("Allocated:", round(torch.cuda.memory_allocated(0) / 1024 ** 3, 1), "GB")
-        print("Cached:   ", round(torch.cuda.memory_cached(0) / 1024 ** 3, 1), "GB")
+        print(f"\t{torch.cuda.get_device_name(0)}")
+        print("\tMemory Usage:")
+        print("\tAllocated:", round(torch.cuda.memory_allocated(0) / 1024 ** 3, 1), "GB")
+        print("\tCached:   ", round(torch.cuda.memory_cached(0) / 1024 ** 3, 1), "GB")
 
     ##############################
     # Dataset-specific settings. #
@@ -76,7 +75,7 @@ if __name__ == "__main__":
         dataset_name=dataset_name, path_assets=PATH_ASSETS, device=device
     )
     dataset_settings = {dataset_name: SETTINGS[dataset_name]}
-    dataset_kwargs = dataset_settings[dataset_name]["estimator_kwargs"]
+    estimator_kwargs = dataset_settings[dataset_name]["estimator_kwargs"]
 
     # Get analyser suite.
     analyser_suite = setup_test_suite(dataset_name=dataset_name)
@@ -88,19 +87,19 @@ if __name__ == "__main__":
 
     # Get estimators.
     estimators = setup_estimators(
-        features=dataset_kwargs["features"],
-        num_classes=dataset_kwargs["num_classes"],
-        img_size=dataset_kwargs["img_size"],
-        percentage=dataset_kwargs["percentage"],
-        patch_size=dataset_kwargs["patch_size"],
-        perturb_baseline=dataset_kwargs["perturb_baseline"],
+        features=estimator_kwargs["features"],
+        num_classes=estimator_kwargs["num_classes"],
+        img_size=estimator_kwargs["img_size"],
+        percentage=estimator_kwargs["percentage"],
+        patch_size=estimator_kwargs["patch_size"],
+        perturb_baseline=estimator_kwargs["perturb_baseline"],
     )
 
     # Get explanation methods.
     xai_methods = setup_xai_methods(
         gc_layer=dataset_settings[dataset_name]["gc_layers"][model_name],
-        img_size=dataset_kwargs["img_size"],
-        nr_channels=dataset_kwargs["nr_channels"],
+        img_size=estimator_kwargs["img_size"],
+        nr_channels=estimator_kwargs["nr_channels"],
     )
 
     ##############################
@@ -141,12 +140,14 @@ if __name__ == "__main__":
         for s in subset_sizes:
             for n in nr_runs:
 
-                estimators[estimator_category][estimator_name][0].subset_size = s
-                estimators[estimator_category][estimator_name][0].perturb_baseline = b
-                estimators[estimator_category][estimator_name][0].nr_runs = n
-                print(estimators[estimator_category][estimator_name][0].get_params)
+                estimators[estimator_category][estimator_name]["init"].subset_size = s
+                estimators[estimator_category][estimator_name][
+                    "init"
+                ].perturb_baseline = b
+                estimators[estimator_category][estimator_name]["init"].nr_runs = n
+                print(estimators[estimator_category][estimator_name]["init"].get_params)
                 master(
-                    estimator=estimators[estimator_category][estimator_name][0],
+                    estimator=estimators[estimator_category][estimator_name]["init"],
                     model=dataset_settings[dataset_name]["models"][model_name],
                     x_batch=dataset_settings[dataset_name]["x_batch"],
                     y_batch=dataset_settings[dataset_name]["y_batch"],
@@ -155,7 +156,9 @@ if __name__ == "__main__":
                     channel_first=True,
                     softmax=False,
                     device=device,
-                    lower_is_better=estimators[estimator_category][estimator_name][1],
+                    score_direction=estimators[estimator_category][
+                        estimator_name
+                    ]["score_direction"],
                 )
 
                 for (
