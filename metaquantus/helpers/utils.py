@@ -20,6 +20,7 @@ from contextlib import suppress
 from copy import deepcopy
 from abc import ABC, abstractmethod
 
+from quantus import expand_attribution_channel
 
 def generate_explanations(
     model,
