@@ -15,6 +15,7 @@ from .base import PerturbationTestBase
 from ..helpers.utils import generate_explanations
 from quantus import get_wrapped_model
 
+
 class InputPerturbationTest(PerturbationTestBase):
     def __init__(
         self,
@@ -142,9 +143,9 @@ class InputPerturbationTest(PerturbationTestBase):
 
                 # Get the XAI method name in the kwargs.
                 explain_func_kwargs = {
-                        **explain_func_kwargs,
-                        **{"method": method},
-                    }
+                    **explain_func_kwargs,
+                    **{"method": method},
+                }
 
                 # Generate explanations based on predictions.
                 a_batch_preds = generate_explanations(

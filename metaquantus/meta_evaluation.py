@@ -183,9 +183,7 @@ class MetaEvaluation:
 
         # Run inference.
         self.run_intra_analysis()
-        self.run_inter_analysis(
-            score_direction=score_direction
-        )
+        self.run_inter_analysis(score_direction=score_direction)
 
         # Check that both test parts exist in the test suite, then run meta-consistency analysis.
         if any("Resilience" in test for test in list(self.test_suite)) and any(
@@ -319,13 +317,13 @@ class MetaEvaluation:
                     )
 
                 else:
-                    
+
                     # Get the XAI method name in the kwargs.
                     explain_func_kwargs = {
-                            **explain_func_kwargs,
-                            **{"method": method},
-                        }
-                        
+                        **explain_func_kwargs,
+                        **{"method": method},
+                    }
+
                     # Generate explanations based on predictions.
                     a_batch_preds = generate_explanations(
                         model=model,

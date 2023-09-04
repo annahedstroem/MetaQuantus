@@ -20,9 +20,7 @@ class MetaEvaluationBenchmarking:
     def __init__(
         self,
         master: MetaEvaluation,
-        estimators: Dict[
-            str, Dict[str, Tuple[Metric, bool]]
-        ],
+        estimators: Dict[str, Dict[str, Tuple[Metric, bool]]],
         experimental_settings: Dict[str, Dict[str, Any]],
         path: str = "/content/drive/MyDrive/Projects/MetaQuantus/results/",
         folder: str = "benchmarks/",

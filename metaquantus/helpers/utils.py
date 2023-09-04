@@ -22,6 +22,7 @@ from abc import ABC, abstractmethod
 
 from quantus import expand_attribution_channel
 
+
 def generate_explanations(
     model,
     x_batch: np.ndarray,
@@ -138,9 +139,13 @@ def dump_obj(path: str, fname: str, obj: Any, use_json: bool = False) -> None:
     if not os.path.exists(dir_path):
         try:
             os.makedirs(dir_path)
-            print(f"Created a new folder for storing for results at path:\n{dir_path} \nto save filename:\n{fname}.")
+            print(
+                f"Created a new folder for storing for results at path:\n{dir_path} \nto save filename:\n{fname}."
+            )
         except:
-            print(f"Could not save results at path:\n{dir_path} \nto save filename:\n{fname}.")
+            print(
+                f"Could not save results at path:\n{dir_path} \nto save filename:\n{fname}."
+            )
 
     # print(f"Saving: {path+fname}....")
     if use_json:
