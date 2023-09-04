@@ -137,10 +137,10 @@ def dump_obj(path: str, fname: str, obj: Any, use_json: bool = False) -> None:
     # Create folder if it doesn't exist.
     if not os.path.exists(dir_path):
         try:
-            print(f"Created a new folder for results {dir_path} to save {fname}.")
             os.makedirs(dir_path)
+            print(f"Created a new folder for storing for results at path:\n{dir_path} \nto save filename:\n{fname}.")
         except:
-            print("It didn't work!")
+            print(f"Could not save results at path:\n{dir_path} \nto save filename:\n{fname}.")
 
     # print(f"Saving: {path+fname}....")
     if use_json:
