@@ -16,7 +16,7 @@ from tqdm.auto import tqdm
 
 from quantus.helpers import utils
 from quantus import explain
-from quantus.metrics.base import Metric, PerturbationMetric
+from quantus.metrics.base import Metric
 
 from .helpers.utils import (
     generate_explanations,
@@ -121,7 +121,7 @@ class MetaEvaluation:
 
     def __call__(
         self,
-        estimator: Union[Metric, PerturbationMetric],
+        estimator: Metric,
         model: torch.nn.Module,
         x_batch: np.array,
         y_batch: np.array,
@@ -131,14 +131,14 @@ class MetaEvaluation:
         softmax: Optional[bool] = False,
         device: Optional[str] = None,
         model_predict_kwargs: Optional[Dict[str, Any]] = {},
-        score_direction_lower_is_better: bool = False,
+        score_direction: Optional[str] = None,
     ):
         """
-        Running meta-evalaution.
+        Running meta-evaluation.
 
         Parameters
         ----------
-        estimator: metric, perturbationmetric
+        estimator: metric
             The estimator to run the test on.
         model: torch.nn
             The model used in evaluation.
@@ -158,14 +158,15 @@ class MetaEvaluation:
             The device used, to enable GPUs.
         model_predict_kwargs: dict
             A dictionary with predict kwargs for the model.
-        score_direction_lower_is_better: boolean
-            Indicates if lower values are better for the estimators, e.g., True for the Robustness category.
+        score_direction: str
+            Indicates if "lower" or "higher" quality scores (quantus.Metric) outputs are considered better.
+            Used to reverse the comparison symbol for inter-consistency analysis.
 
         Returns
         -------
         self
         """
-        print(f"UID={self.uid}")
+        print(f"\n\t\t\t\tExperiment UID={self.uid}")
 
         # Make perturbation.
         self.run_perturbation_analysis(
@@ -183,7 +184,7 @@ class MetaEvaluation:
         # Run inference.
         self.run_intra_analysis()
         self.run_inter_analysis(
-            score_direction_lower_is_better=score_direction_lower_is_better
+            score_direction=score_direction
         )
 
         # Check that both test parts exist in the test suite, then run meta-consistency analysis.
@@ -248,7 +249,7 @@ class MetaEvaluation:
 
     def run_perturbation_analysis(
         self,
-        estimator: Union[Metric, PerturbationMetric],
+        estimator: Metric,
         model: torch.nn.Module,
         x_batch: np.array,
         y_batch: np.array,
@@ -318,17 +319,20 @@ class MetaEvaluation:
                     )
 
                 else:
-
+                    
+                    # Get the XAI method name in the kwargs.
+                    explain_func_kwargs = {
+                            **explain_func_kwargs,
+                            **{"method": method},
+                        }
+                        
                     # Generate explanations based on predictions.
                     a_batch_preds = generate_explanations(
                         model=model,
                         x_batch=x_batch,
                         y_batch=self.results_y_preds,
                         explain_func=self.explain_func,
-                        explain_func_kwargs={
-                            **explain_func_kwargs,
-                            **{"method": method},
-                        },
+                        explain_func_kwargs=explain_func_kwargs,
                         abs=estimator.abs,
                         normalise=estimator.normalise,
                         normalise_func=estimator.normalise_func,
@@ -447,14 +451,15 @@ class MetaEvaluation:
 
         return self.results_intra_scores
 
-    def run_inter_analysis(self, score_direction_lower_is_better: bool):
+    def run_inter_analysis(self, score_direction: str):
         """
         Make IEC inference after perturbing inputs to the evaluation problem and then storing scores.
 
         Parameters
         ----------
-        score_direction_lower_is_better: bool
-            Indicates if lower values are considered better or not, to inverse the comparison symbol.
+        score_direction: str
+            Indicates if "lower" or "higher" quality scores (quantus.Metric) outputs are considered better.
+            Used to reverse the comparison symbol for inter-consistency analysis.
 
         Returns
         -------
@@ -495,7 +500,7 @@ class MetaEvaluation:
                         Q_star=Q_star,
                         Q_hat=Q_hat,
                         indices=self.results_indices_perturbed[test_name][i][k],
-                        score_direction_lower_is_better=score_direction_lower_is_better,
+                        score_direction=score_direction,
                         test_name=test_name,
                     )
 
@@ -651,7 +656,7 @@ class MetaEvaluation:
         Q_star: np.array,
         Q_hat: np.array,
         indices: np.array,
-        score_direction_lower_is_better: bool,
+        score_direction: str,
         test_name: str,
     ) -> float:
         """
@@ -665,8 +670,9 @@ class MetaEvaluation:
             The matrix of perturbed quality estimates, averaged over nr_perturbations.
         indices: np.array
             The list of indices to perform the analysis on.
-        score_direction_lower_is_better: bool
-            Indicates if lower values are considered better or not, to inverse the comparison symbol.
+        score_direction: str
+            Indicates if "lower" or "higher" quality scores (quantus.Metric) outputs are considered better.
+            Used to reverse the comparison symbol for inter-consistency analysis.
         test_name: string
             A string describing if the values is computed for 'Adversary' or 'Resilience'.
         Returns
@@ -678,7 +684,7 @@ class MetaEvaluation:
                 Q_star=Q_star,
                 Q_hat=Q_hat,
                 indices=indices,
-                score_direction_lower_is_better=score_direction_lower_is_better,
+                score_direction=score_direction,
             )
         elif "Resilience" in test_name:
             return self.compute_iec_resilience(
@@ -751,7 +757,7 @@ class MetaEvaluation:
         Q_star: np.array,
         Q_hat: np.array,
         indices: np.array,
-        score_direction_lower_is_better: bool,
+        score_direction: str,
     ) -> float:
         """
         Return the mean of the agreement ranking matrix U \in [0, 1] to specify if the ranking condition is met.
@@ -764,8 +770,9 @@ class MetaEvaluation:
             The matrix of perturbed quality estimates, averaged over nr_perturbations.
         indices: np.array
             The list of indices to perform the analysis on.
-        score_direction_lower_is_better: bool
-            Indicates if lower values are considered better or not, to inverse the comparison symbol.
+        score_direction: str
+            Indicates if "lower" or "higher" quality scores (quantus.Metric) outputs are considered better.
+            Used to reverse the comparison symbol for inter-consistency analysis.
 
         Returns
         -------
@@ -775,7 +782,7 @@ class MetaEvaluation:
         for row_star, row_hat in zip(Q_star, Q_hat):
             for q_star, q_hat in zip(row_star[indices], row_hat[indices]):
 
-                if score_direction_lower_is_better:
+                if score_direction:
                     if q_star < q_hat:
                         U.append(1)
                     else:

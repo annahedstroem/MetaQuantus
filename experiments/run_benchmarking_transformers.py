@@ -23,7 +23,6 @@ if __name__ == "__main__":
     warnings.filterwarnings("ignore", category=FutureWarning)
     warnings.filterwarnings("ignore", category=UserWarning)
 
-
     def parse_arguments():
         parser = argparse.ArgumentParser()
         parser.add_argument("--dataset", default="MNIST")
@@ -33,16 +32,47 @@ if __name__ == "__main__":
         parser.add_argument("--end_idx")
         parser.add_argument("--category", default="Faithfulness")
         parser.add_argument("--PATH_ASSETS", default="drive/MyDrive/Projects/assets/")
-        parser.add_argument("--PATH_RESULTS", default="drive/MyDrive/Projects/MetaQuantus/results/")
+        parser.add_argument(
+            "--PATH_RESULTS", default="drive/MyDrive/Projects/MetaQuantus/results/"
+        )
 
         args = parser.parse_args()
 
-        return str(args.dataset), int(args.K), int(args.iters), str(args.category), int(args.start_idx), int(
-            args.end_idx), str(args.PATH_ASSETS), str(args.PATH_RESULTS), f"{category}_{start_idx}-{end_idx}"
+        return (
+            str(args.dataset),
+            int(args.K),
+            int(args.iters),
+            str(args.category),
+            int(args.start_idx),
+            int(args.end_idx),
+            str(args.PATH_ASSETS),
+            str(args.PATH_RESULTS),
+            f"{category}_{start_idx}-{end_idx}",
+        )
 
     # Get arguments.
-    dataset_name, K, iters, category, start_idx, end_idx, PATH_ASSETS, PATH_RESULTS, fname = parse_arguments()
-    print("Arguments:\n", dataset_name, K, iters, fname, start_idx, end_idx, PATH_ASSETS, PATH_RESULTS)
+    (
+        dataset_name,
+        K,
+        iters,
+        category,
+        start_idx,
+        end_idx,
+        PATH_ASSETS,
+        PATH_RESULTS,
+        fname,
+    ) = parse_arguments()
+    print(
+        "Arguments:\n",
+        dataset_name,
+        K,
+        iters,
+        fname,
+        start_idx,
+        end_idx,
+        PATH_ASSETS,
+        PATH_RESULTS,
+    )
 
     #########
     # GPUs. #
@@ -50,16 +80,15 @@ if __name__ == "__main__":
 
     # Setting device on GPU if available, else CPU.
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print("Using device:", device)
-    print()
-    print(torch.version.cuda)
+    print("\nUsing device:", device)
+    print("\t{torch.version.cuda}")
 
     # Additional info when using cuda.
     if device.type == "cuda":
-        print(torch.cuda.get_device_name(0))
-        print("Memory Usage:")
-        print("Allocated:", round(torch.cuda.memory_allocated(0) / 1024 ** 3, 1), "GB")
-        print("Cached:   ", round(torch.cuda.memory_cached(0) / 1024 ** 3, 1), "GB")
+        print(f"\t{torch.cuda.get_device_name(0)}")
+        print("\tMemory Usage:")
+        print("\tAllocated:", round(torch.cuda.memory_allocated(0) / 1024 ** 3, 1), "GB")
+        print("\tCached:   ", round(torch.cuda.memory_cached(0) / 1024 ** 3, 1), "GB")
 
     ##############################
     # Dataset-specific settings. #
@@ -78,15 +107,17 @@ if __name__ == "__main__":
     # Get estimators.
     if category.lower() == "localisation":
         setup_estimator = setup_localisation_estimators
-    elif category.lower()== "complexity":
+    elif category.lower() == "complexity":
         setup_estimator = setup_complexity_estimators
         setup_xai_methods_transformers = setup_xai_methods_transformers_2
-    elif category.lower()== "randomisation":
+    elif category.lower() == "randomisation":
         setup_estimator = setup_randomisation_estimators
-    elif category.lower()== "faithfulness":
+    elif category.lower() == "faithfulness":
         setup_estimator = setup_faithfulness_estimators
     else:
-        raise ValueError("We only support estimators of localisation, robustness, faithfulnessand randomisation categories.")
+        raise ValueError(
+            "We only support estimators of localisation, robustness, faithfulnessand randomisation categories."
+        )
 
     estimators = setup_estimator(
         features=estimator_kwargs["features"],
@@ -109,9 +140,15 @@ if __name__ == "__main__":
     ###########################
 
     # Reduce the number of samples.
-    dataset_settings[dataset_name]["x_batch"] = dataset_settings[dataset_name]["x_batch"][start_idx:end_idx]
-    dataset_settings[dataset_name]["y_batch"] = dataset_settings[dataset_name]["y_batch"][start_idx:end_idx]
-    dataset_settings[dataset_name]["s_batch"] = dataset_settings[dataset_name]["s_batch"][start_idx:end_idx]
+    dataset_settings[dataset_name]["x_batch"] = dataset_settings[dataset_name][
+        "x_batch"
+    ][start_idx:end_idx]
+    dataset_settings[dataset_name]["y_batch"] = dataset_settings[dataset_name][
+        "y_batch"
+    ][start_idx:end_idx]
+    dataset_settings[dataset_name]["s_batch"] = dataset_settings[dataset_name][
+        "s_batch"
+    ][start_idx:end_idx]
 
     # Define master!
     master = MetaEvaluation(

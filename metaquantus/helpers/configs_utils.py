@@ -8,7 +8,7 @@ from typing import Callable, Optional
 class Estimator:
     name: str
     category: str
-    score_direction_lower_is_better: bool
+    score_direction: bool
     init: quantus.Metric
 
 
@@ -27,13 +27,13 @@ def create_estimator_dict(
     -------
     dict of str to dict of str to dict of str to any
         The dictionary of estimators with the following format:
-        {category: {"name_of_estimator": {"init": ..., "score_direction_lower_is_better": ...}}}
+        {category: {"name_of_estimator": {"init": ..., "score_direction": ...}}}
 
     Examples
     --------
     >>> estimator1 = Estimator(name="BRIDGE",
     ...                         category="Unified",
-    ...                         score_direction_lower_is_better=False,
+    ...                         score_direction="higher",
     ...                         init=quanuts.Bridge(nr_models=samples,
     ...                         perturbation_levels=perturbation_levels,
     ...                         similarity_func=similarity_func,
@@ -49,7 +49,7 @@ def create_estimator_dict(
     ...                         disable_warnings=disable_warnings))
     >>> estimator2 = Estimator(name="Model Parameter Randomisation Test",
     ...                         category="Randomisation",
-    ...                         score_direction_lower_is_better=True,
+    ...                         score_direction="lower",
     ...                         init=quanuts.ModelParameterRandomisation(nr_models=samples,
     ...                         perturbation_levels=perturbation_levels,
     ...                         similarity_func=similarity_func,
@@ -66,9 +66,9 @@ def create_estimator_dict(
     >>> estimators = [estimator1, estimator2]
     >>> create_estimator_dict(estimators)
     {'Unified': {'BRIDGE': {'init': <quanuts.Bridge object at 0x7f7d54cf60d0>,
-                            'score_direction_lower_is_better': False}},
+                            'score_direction': "higher"}},
      'Randomisation': {'Model Parameter Randomisation Test': {'init': <quanuts.ModelParameterRandomisation object at 0x7f7d54cf6af0>,
-                                                               'score_direction_lower_is_better': True}}}
+                                                               'score_direction': "lower"}}}
     """
     estimator_dict = {}
     for estimator in estimators:
@@ -76,6 +76,6 @@ def create_estimator_dict(
             estimator_dict[estimator.category] = {}
         estimator_dict[estimator.category][estimator.name] = {
             "init": estimator.init,
-            "score_direction_lower_is_better": estimator.score_direction_lower_is_better,
+            "score_direction": estimator.score_direction,
         }
     return estimator_dict

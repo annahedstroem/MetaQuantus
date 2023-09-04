@@ -58,7 +58,7 @@ class InputPerturbationTest(PerturbationTestBase):
 
         Parameters
         ----------
-        estimator: metric, perturbationmetric
+        estimator: metric
             The estimator to run the test on.
         nr_perturbations: int
             The number of perturbations.
@@ -140,13 +140,19 @@ class InputPerturbationTest(PerturbationTestBase):
 
             for x, (method, explain_func_kwargs) in enumerate(xai_methods.items()):
 
+                # Get the XAI method name in the kwargs.
+                explain_func_kwargs = {
+                        **explain_func_kwargs,
+                        **{"method": method},
+                    }
+
                 # Generate explanations based on predictions.
                 a_batch_preds = generate_explanations(
                     model=model,
                     x_batch=x_batch,
                     y_batch=y_batch,
                     explain_func=explain_func,
-                    explain_func_kwargs={**explain_func_kwargs, **{"method": method}},
+                    explain_func_kwargs=explain_func_kwargs,
                     abs=estimator.abs,
                     normalise=estimator.normalise,
                     normalise_func=estimator.normalise_func,

@@ -6,7 +6,7 @@
 <p align="center">
   PyTorch
   
-This repository contains the code and experimental results for the paper **[The Meta-Evaluation Problem in Explainable AI: Identifying Reliable Estimators with MetaQuantus](https://arxiv.org/abs/2302.07265)** by Hedström et al., 2023.
+This repository contains the code and experimental results for the paper **[The Meta-Evaluation Problem in Explainable AI: Identifying Reliable Estimators with MetaQuantus](https://openreview.net/forum?id=j3FK00HyfU)** by Hedström et al., 2023.
 
 [![Getting started!](https://colab.research.google.com/assets/colab-badge.svg)](anonymous)
 ![Python version](https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9%20%7C%203.10%20%7C%203.11-blue.svg)
@@ -25,11 +25,12 @@ If you find this toolkit or its companion paper interesting or useful in your re
 @article{hedstrom2023metaquantus,
  author = {Hedström, Anna and Bommer, Philine and Wickstrøm, Kristoffer K. and Samek, Wojciech and Lapuschkin, Sebastian and Höhne, Marina M. -C.},
   title = {The Meta-Evaluation Problem in Explainable AI: Identifying Reliable Estimators with MetaQuantus},
-  doi = {10.48550/ARXIV.2302.07265},
-  url = {https://arxiv.org/abs/2302.07265},
-  publisher = {arXiv},
-  year = {2023},
-}
+  journal={Transactions on Machine Learning Research},
+  issn={2835-8856},
+  year={2023},
+  url={https://openreview.net/forum?id=j3FK00HyfU},
+  note={}
+  }
 ```
 
 
@@ -124,61 +125,61 @@ To reproduce the results of this paper, you will need to follow these three step
 
 1. **Generate the dataset.** Run the notebook [
 Tutorial-Data-Generation-Experiments.ipynb](https://github.com/annahedstroem/MetaQuantus/blob/main/tutorials/Tutorial-Data-Generation-Experiments.ipynb) to generate the necessary data for the experiments. This notebook will guide you through the process of downloading and preprocessing the data in order to save it to appropriate test sets. Please store the models in a folder called `assets/models/` and the tests sets under `assets/test_sets/`.
-2. **Run the experiments.** To obtain the results for the respective experiments, you have to run the respective Python scripts which are detailed below. All these Python files are located in the `scripts/` folder. If you want to run the experiments on other explanation methods, datasets or models, feel free to change the hyperparameters.
-3. **Analyse the results.** Once the results are obtained for your chosen experiments, run the [Tutorial-Reproduce-Paper-Experiments.ipynb](https://github.com/annahedstroem/MetaQuantus/blob/main/tutorials/Tutorial-Reproduce-Experiments.ipynb) to analyse the results. (In the notebook itself, we have also listed which specific Python scripts that need to be run in order to obtain the results for this analysis step.)
+2. **Run the experiments.** To obtain the results for the respective experiments, you have to run the respective Python experiments which are detailed below. All these Python files are located in the `experiments/` folder. If you want to run the experiments on other explanation methods, datasets or models, feel free to change the hyperparameters.
+3. **Analyse the results.** Once the results are obtained for your chosen experiments, run the [Tutorial-Reproduce-Paper-Experiments.ipynb](https://github.com/annahedstroem/MetaQuantus/blob/main/tutorials/Tutorial-Reproduce-Experiments.ipynb) to analyse the results. (In the notebook itself, we have also listed which specific Python experiments that need to be run in order to obtain the results for this analysis step.)
 
 <details>
 <summary><b><normal>Additional details on step 2 (Run the Experiments)</normal></b></summary>
 
 **Test**: Go to the root folder and run a simple test that meta-evaluation work.
 ```bash
-python3 scripts/run_test.py --K=5 --iters=10 --dataset=MNIST
+python3 experiments/run_test.py --K=5 --iters=10 --dataset=MNIST
 ```
 
 **Application**: Run the benchmarking experiments (also used for category convergence analysis).
 ```bash
-python3 scripts/run_benchmarking.py --dataset=MNIST --fname=f --K=5 --iters=3
-python3 scripts/run_benchmarking.py --dataset=fMNIST --fname=f --K=5 --iters=3
-python3 scripts/run_benchmarking.py --dataset=cMNIST --fname=f --K=5 --iters=3
-python3 scripts/run_benchmarking.py --dataset=ImageNet --fname=ResNet18 --K=5 --iters=3 --batch_size=50 --start_idx_fixed=100 --end_idx_fixed=150 --reverse_order=False --folder=benchmarks_imagenet/ --PATH_ASSETS=../assets/ --PATH_RESULTS=results/
+python3 experiments/run_benchmarking.py --dataset=MNIST --fname=f --K=5 --iters=3
+python3 experiments/run_benchmarking.py --dataset=fMNIST --fname=f --K=5 --iters=3
+python3 experiments/run_benchmarking.py --dataset=cMNIST --fname=f --K=5 --iters=3
+python3 experiments/run_benchmarking.py --dataset=ImageNet --fname=ResNet18 --K=5 --iters=3 --batch_size=50 --start_idx_fixed=100 --end_idx_fixed=150 --reverse_order=False --folder=benchmarks_imagenet/ --PATH_ASSETS=../assets/ --PATH_RESULTS=results/
 ```
 
 **Application**: Run hyperparameter optimisation experiment.
 ```bash
-python3 scripts/run_hp.py --dataset=MNIST --K=3 --iters=2 --PATH_ASSETS=../assets/ --PATH_RESULTS=results/
-python3 scripts/run_hp.py --dataset=ImageNet --K=3 --iters=2 --PATH_ASSETS=../assets/ --PATH_RESULTS=results/
+python3 experiments/run_hp.py --dataset=MNIST --K=3 --iters=2 --PATH_ASSETS=../assets/ --PATH_RESULTS=results/
+python3 experiments/run_hp.py --dataset=ImageNet --K=3 --iters=2 --PATH_ASSETS=../assets/ --PATH_RESULTS=results/
 ```
 
 **Experiment**: Run the faithfulness ranking disagreement exercise.
 ```bash
-python3 scripts/run_ranking.py --dataset=cMNIST --fname=f --K=5 --iters=3 --category=Faithfulness --PATH_ASSETS=../assets/ --PATH_RESULTS=results/
+python3 experiments/run_ranking.py --dataset=cMNIST --fname=f --K=5 --iters=3 --category=Faithfulness --PATH_ASSETS=../assets/ --PATH_RESULTS=results/
 ```
 
 **Sanity-Check**: Run sanity-checking exercise: adversarial estimators.
 ```bash
-python3 scripts/run_sanity_checks.py --dataset=ImageNet --K=3 --iters=2 --PATH_ASSETS=../assets/ --PATH_RESULTS=results/
+python3 experiments/run_sanity_checks.py --dataset=ImageNet --K=3 --iters=2 --PATH_ASSETS=../assets/ --PATH_RESULTS=results/
 ```
 
 **Sanity-Check**: Run sanity-checking exercise: L dependency.
 ```bash
-python3 scripts/run_l_dependency.py --dataset=MNIST --K=5 --iters=3 --PATH_ASSETS=../assets/ --PATH_RESULTS=results/
-python3 scripts/run_l_dependency.py --dataset=fMNIST --K=5 --iters=3 --PATH_ASSETS=../assets/ --PATH_RESULTS=results/
-python3 scripts/run_l_dependency.py --dataset=cMNIST --K=5 --iters=3 --PATH_ASSETS=../assets/ --PATH_RESULTS=results/
+python3 experiments/run_l_dependency.py --dataset=MNIST --K=5 --iters=3 --PATH_ASSETS=../assets/ --PATH_RESULTS=results/
+python3 experiments/run_l_dependency.py --dataset=fMNIST --K=5 --iters=3 --PATH_ASSETS=../assets/ --PATH_RESULTS=results/
+python3 experiments/run_l_dependency.py --dataset=cMNIST --K=5 --iters=3 --PATH_ASSETS=../assets/ --PATH_RESULTS=results/
 ```
 
 **Benchmarking Transformers**: Run transformer benchmarking experiment.
 ```bash
-python3 scripts/run_benchmarking_transformers.py --dataset=ImageNet --K=5 --iters=3 --start_idx=0 --end_idx=40 --category=localisation --PATH_ASSETS=../assets/ --PATH_RESULTS=results/
-python3 scripts/run_benchmarking_transformers.py --dataset=ImageNet --K=5 --iters=3 --start_idx=40 --end_idx=80 --category=localisation --PATH_ASSETS=../assets/ --PATH_RESULTS=results/
-python3 scripts/run_benchmarking_transformers.py --dataset=ImageNet --K=5 --iters=3 --start_idx=80 --end_idx=120 --category=localisation --PATH_ASSETS=../assets/ --PATH_RESULTS=results/
-python3 scripts/run_benchmarking_transformers.py --dataset=ImageNet --K=5 --iters=3 --start_idx=120 --end_idx=160 --category=localisation --PATH_ASSETS=../assets/ --PATH_RESULTS=results/
+python3 experiments/run_benchmarking_transformers.py --dataset=ImageNet --K=5 --iters=3 --start_idx=0 --end_idx=40 --category=localisation --PATH_ASSETS=../assets/ --PATH_RESULTS=results/
+python3 experiments/run_benchmarking_transformers.py --dataset=ImageNet --K=5 --iters=3 --start_idx=40 --end_idx=80 --category=localisation --PATH_ASSETS=../assets/ --PATH_RESULTS=results/
+python3 experiments/run_benchmarking_transformers.py --dataset=ImageNet --K=5 --iters=3 --start_idx=80 --end_idx=120 --category=localisation --PATH_ASSETS=../assets/ --PATH_RESULTS=results/
+python3 experiments/run_benchmarking_transformers.py --dataset=ImageNet --K=5 --iters=3 --start_idx=120 --end_idx=160 --category=localisation --PATH_ASSETS=../assets/ --PATH_RESULTS=results/
 ```
 
 ```bash
-python3 scripts/run_benchmarking_transformers.py --dataset=ImageNet --K=5 --iters=3 --start_idx=40 --end_idx=80 --category=complexity --PATH_ASSETS=../assets/ --PATH_RESULTS=results/
-python3 scripts/run_benchmarking_transformers.py --dataset=ImageNet --K=5 --iters=3 --start_idx=0 --end_idx=40 --category=complexity --PATH_ASSETS=../assets/ --PATH_RESULTS=results/
-python3 scripts/run_benchmarking_transformers.py --dataset=ImageNet --K=5 --iters=3 --start_idx=80 --end_idx=120 --category=complexity --PATH_ASSETS=../assets/ --PATH_RESULTS=results/
-python3 scripts/run_benchmarking_transformers.py --dataset=ImageNet --K=5 --iters=3 --start_idx=120 --end_idx=160 --category=complexity --PATH_ASSETS=../assets/ --PATH_RESULTS=results/
+python3 experiments/run_benchmarking_transformers.py --dataset=ImageNet --K=5 --iters=3 --start_idx=40 --end_idx=80 --category=complexity --PATH_ASSETS=../assets/ --PATH_RESULTS=results/
+python3 experiments/run_benchmarking_transformers.py --dataset=ImageNet --K=5 --iters=3 --start_idx=0 --end_idx=40 --category=complexity --PATH_ASSETS=../assets/ --PATH_RESULTS=results/
+python3 experiments/run_benchmarking_transformers.py --dataset=ImageNet --K=5 --iters=3 --start_idx=80 --end_idx=120 --category=complexity --PATH_ASSETS=../assets/ --PATH_RESULTS=results/
+python3 experiments/run_benchmarking_transformers.py --dataset=ImageNet --K=5 --iters=3 --start_idx=120 --end_idx=160 --category=complexity --PATH_ASSETS=../assets/ --PATH_RESULTS=results/
 ```
 </details>
 

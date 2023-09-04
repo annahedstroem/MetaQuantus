@@ -10,7 +10,7 @@ import torch
 import gc
 import uuid
 from datetime import datetime
-from quantus.metrics.base import Metric, PerturbationMetric
+from quantus.metrics.base import Metric
 
 from .meta_evaluation import MetaEvaluation
 from .helpers.utils import *
@@ -21,7 +21,7 @@ class MetaEvaluationBenchmarking:
         self,
         master: MetaEvaluation,
         estimators: Dict[
-            str, Dict[str, Tuple[Union[Metric, PerturbationMetric], bool]]
+            str, Dict[str, Tuple[Metric, bool]]
         ],
         experimental_settings: Dict[str, Dict[str, Any]],
         path: str = "/content/drive/MyDrive/Projects/MetaQuantus/results/",
@@ -121,7 +121,7 @@ class MetaEvaluationBenchmarking:
 
                         # Run full analysis.
                         self.master(
-                            estimator=estimator[0],
+                            estimator=estimator["init"],
                             model=model,
                             x_batch=settings_data["x_batch"],
                             y_batch=settings_data["y_batch"],
@@ -130,7 +130,7 @@ class MetaEvaluationBenchmarking:
                             channel_first=self.channel_first,
                             softmax=self.softmax,
                             device=self.device,
-                            score_direction_lower_is_better=estimator[1],
+                            score_direction=estimator["score_direction"],
                         )
 
                         # Keep results.

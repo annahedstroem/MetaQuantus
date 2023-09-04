@@ -61,16 +61,15 @@ if __name__ == "__main__":
 
     # Setting device on GPU if available, else CPU.
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print("Using device:", device)
-    print()
-    print(torch.version.cuda)
+    print("\nUsing device:", device)
+    print("\t{torch.version.cuda}")
 
     # Additional info when using cuda.
     if device.type == "cuda":
-        print(torch.cuda.get_device_name(0))
-        print("Memory Usage:")
-        print("Allocated:", round(torch.cuda.memory_allocated(0) / 1024 ** 3, 1), "GB")
-        print("Cached:   ", round(torch.cuda.memory_cached(0) / 1024 ** 3, 1), "GB")
+        print(f"\t{torch.cuda.get_device_name(0)}")
+        print("\tMemory Usage:")
+        print("\tAllocated:", round(torch.cuda.memory_allocated(0) / 1024 ** 3, 1), "GB")
+        print("\tCached:   ", round(torch.cuda.memory_cached(0) / 1024 ** 3, 1), "GB")
 
     ##############################
     # Dataset-specific settings. #
@@ -81,19 +80,19 @@ if __name__ == "__main__":
         dataset_name=dataset_name, path_assets=PATH_ASSETS, device=device
     )
     dataset_settings = {dataset_name: SETTINGS[dataset_name]}
-    dataset_kwargs = dataset_settings[dataset_name]["estimator_kwargs"]
+    estimator_kwargs = dataset_settings[dataset_name]["estimator_kwargs"]
 
     # Get analyser suite.
     analyser_suite = setup_test_suite(dataset_name=dataset_name)
 
     # Get estimators.
     estimators = setup_estimators(
-        features=dataset_kwargs["features"],
-        num_classes=dataset_kwargs["num_classes"],
-        img_size=dataset_kwargs["img_size"],
-        percentage=dataset_kwargs["percentage"],
-        patch_size=dataset_kwargs["patch_size"],
-        perturb_baseline=dataset_kwargs["perturb_baseline"],
+        features=estimator_kwargs["features"],
+        num_classes=estimator_kwargs["num_classes"],
+        img_size=estimator_kwargs["img_size"],
+        percentage=estimator_kwargs["percentage"],
+        patch_size=estimator_kwargs["patch_size"],
+        perturb_baseline=estimator_kwargs["perturb_baseline"],
     )
     estimators = {
         "Localisation": estimators["Localisation"],
@@ -142,8 +141,8 @@ if __name__ == "__main__":
         xai_methods = setup_xai_settings(
             xai_settings=xai_setting,
             gc_layer=dataset_settings[dataset_name]["gc_layers"][model_name],
-            img_size=dataset_kwargs["img_size"],
-            nr_channels=dataset_kwargs["nr_channels"],
+            img_size=estimator_kwargs["img_size"],
+            nr_channels=estimator_kwargs["nr_channels"],
         )
 
         # Define master!

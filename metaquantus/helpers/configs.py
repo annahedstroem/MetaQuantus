@@ -119,7 +119,7 @@ def setup_estimators(
                     aggregate_func=np.mean,
                     disable_warnings=True,
                 ),
-                True,
+                "lower",
             ),
             "Local Lipschitz Estimate": (
                 quantus.LocalLipschitzEstimate(
@@ -135,7 +135,7 @@ def setup_estimators(
                     aggregate_func=np.mean,
                     disable_warnings=True,
                 ),
-                True,
+                "lower",
             ),
         },
         "Randomisation": {
@@ -150,7 +150,7 @@ def setup_estimators(
                     aggregate_func=np.mean,
                     disable_warnings=True,
                 ),
-                True,
+                "lower",
             ),
             "Model Parameter Randomisation Test": (
                 quantus.ModelParameterRandomisation(
@@ -163,7 +163,7 @@ def setup_estimators(
                     aggregate_func=np.mean,
                     disable_warnings=True,
                 ),
-                True,
+                "lower",
             ),
         },
         "Faithfulness": {
@@ -180,7 +180,7 @@ def setup_estimators(
                     aggregate_func=np.mean,
                     disable_warnings=True,
                 ),
-                False,
+                "higher",
             ),
             "Pixel-Flipping": (
                 quantus.PixelFlipping(
@@ -195,7 +195,7 @@ def setup_estimators(
                     return_auc_per_sample=True,
                     disable_warnings=True,
                 ),
-                False,
+                "higher",
             ),
         },
         "Complexity": {
@@ -208,7 +208,7 @@ def setup_estimators(
                     aggregate_func=np.mean,
                     disable_warnings=True,
                 ),
-                False,
+                "higher",
             ),
             "Complexity": (
                 quantus.Complexity(
@@ -219,7 +219,7 @@ def setup_estimators(
                     aggregate_func=np.mean,
                     disable_warnings=True,
                 ),
-                True,
+                "lower",
             ),
         },
         "Localisation": {
@@ -232,7 +232,7 @@ def setup_estimators(
                     aggregate_func=np.mean,
                     disable_warnings=True,
                 ),
-                False,
+                "higher",
             ),
             "Relevance Mass Accuracy": (
                 quantus.RelevanceMassAccuracy(
@@ -243,7 +243,7 @@ def setup_estimators(
                     aggregate_func=np.mean,
                     disable_warnings=True,
                 ),
-                False,
+                "higher",
             ),
         },
     }
@@ -255,7 +255,7 @@ def setup_estimators(
             for estimator_name, v in d[category].items():
                 estimator_dict[category][estimator_name] = {
                     "init": v[0],
-                    "score_direction_lower_is_better": v[1],
+                    "score_direction": v[1],
                 }
 
     return estimator_dict
@@ -693,7 +693,7 @@ def setup_faithfulness_estimators_full(
                     return_aggregate=False,
                     disable_warnings=True,
                 ),
-                False,
+                "higher",
             ),
             "Pixel-Flipping": (
                 quantus.PixelFlipping(
@@ -707,7 +707,7 @@ def setup_faithfulness_estimators_full(
                     return_auc_per_sample=True,
                     disable_warnings=True,
                 ),
-                True,
+                "higher",
             ),
             "MonotonicityCorrelation": (
                 quantus.MonotonicityCorrelation(
@@ -722,7 +722,7 @@ def setup_faithfulness_estimators_full(
                     return_aggregate=False,
                     disable_warnings=True,
                 ),
-                False,
+                "higher",
             ),
             "Infidelity": (
                 quantus.Infidelity(
@@ -737,7 +737,7 @@ def setup_faithfulness_estimators_full(
                     return_auc_per_sample=True,
                     disable_warnings=True,
                 ),
-                False,
+                "higher",
             ),
         },
     }
@@ -749,7 +749,7 @@ def setup_faithfulness_estimators_full(
             for estimator_name, v in d[category].items():
                 estimator_dict[category][estimator_name] = {
                     "init": v[0],
-                    "score_direction_lower_is_better": v[1],
+                    "score_direction": v[1],
                 }
 
     return estimator_dict
@@ -774,7 +774,7 @@ def setup_complexity_estimators(
                     aggregate_func=np.mean,
                     disable_warnings=True,
                 ),
-                False,
+                "higher",
             ),
             "Complexity": (
                 quantus.Complexity(
@@ -785,7 +785,7 @@ def setup_complexity_estimators(
                     aggregate_func=np.mean,
                     disable_warnings=True,
                 ),
-                True,
+                "lower",
             ),
         }
     }
@@ -796,7 +796,7 @@ def setup_complexity_estimators(
             for estimator_name, v in d[category].items():
                 estimator_dict[category][estimator_name] = {
                     "init": v[0],
-                    "score_direction_lower_is_better": v[1],
+                    "score_direction": v[1],
                 }
 
     return estimator_dict
@@ -824,7 +824,7 @@ def setup_faithfulness_estimators(
                     return_aggregate=False,
                     disable_warnings=True,
                 ),
-                False,
+                "higher",
             ),
             "Monotonicity Correlation": (
                 quantus.MonotonicityCorrelation(
@@ -839,7 +839,7 @@ def setup_faithfulness_estimators(
                     return_aggregate=False,
                     disable_warnings=True,
                 ),
-                False,
+                "higher",
             ),
         }
     }
@@ -850,7 +850,7 @@ def setup_faithfulness_estimators(
             for estimator_name, v in d[category].items():
                 estimator_dict[category][estimator_name] = {
                     "init": v[0],
-                    "score_direction_lower_is_better": v[1],
+                    "score_direction": v[1],
                 }
 
     return estimator_dict
@@ -877,7 +877,7 @@ def setup_randomisation_estimators(
                     aggregate_func=np.mean,
                     disable_warnings=True,
                 ),
-                True,
+                "lower",
             ),
             "Model Parameter Randomisation Test": (
                 quantus.ModelParameterRandomisation(
@@ -890,7 +890,7 @@ def setup_randomisation_estimators(
                     aggregate_func=np.mean,
                     disable_warnings=True,
                 ),
-                True,
+                "lower",
             ),
         },
     }
@@ -901,7 +901,7 @@ def setup_randomisation_estimators(
             for estimator_name, v in d[category].items():
                 estimator_dict[category][estimator_name] = {
                     "init": v[0],
-                    "score_direction_lower_is_better": v[1],
+                    "score_direction": v[1],
                 }
 
     return estimator_dict
@@ -926,7 +926,7 @@ def setup_localisation_estimators(
                     aggregate_func=np.mean,
                     disable_warnings=True,
                 ),
-                False,
+                "higher",
             ),
             "Top-K Intersection": (
                 quantus.TopKIntersection(
@@ -938,7 +938,7 @@ def setup_localisation_estimators(
                     aggregate_func=np.mean,
                     disable_warnings=True,
                 ),
-                False,
+                "higher",
             ),
             "Relevance Mass Accuracy": (
                 quantus.RelevanceMassAccuracy(
@@ -949,7 +949,7 @@ def setup_localisation_estimators(
                     aggregate_func=np.mean,
                     disable_warnings=True,
                 ),
-                False,
+                "higher",
             ),
             "Relevance Rank Accuracy": (
                 quantus.RelevanceRankAccuracy(
@@ -960,7 +960,7 @@ def setup_localisation_estimators(
                     aggregate_func=np.mean,
                     disable_warnings=True,
                 ),
-                False,
+                "higher",
             ),
         },
     }
@@ -971,7 +971,7 @@ def setup_localisation_estimators(
             for estimator_name, v in d[category].items():
                 estimator_dict[category][estimator_name] = {
                     "init": v[0],
-                    "score_direction_lower_is_better": v[1],
+                    "score_direction": v[1],
                 }
 
     return estimator_dict
