@@ -12,8 +12,8 @@ This repository contains the code and experimental results for the paper **[The 
 ![Python version](https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9%20%7C%203.10%20%7C%203.11-blue.svg)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![PyPI version](https://badge.fury.io/py/metaquantus.svg)](https://badge.fury.io/py/metaquantus)
-[![Python package](https://github.com/annahedstroem/MetaQuantus/actions/workflows/python-publish.yml/badge.svg)](https://github.com/annahedstroem/MetaQuantus/actions/workflows/python-publish.yml/badge.svg)
-<!--[![Launch Tutorials](https://mybinder.org/badge_logo.svg)](anonymous)-->
+<!--[![Python package](https://github.com/annahedstroem/MetaQuantus/actions/workflows/python-publish.yml/badge.svg)](https://github.com/annahedstroem/MetaQuantus/actions/workflows/python-publish.yml/badge.svg)
+[![Launch Tutorials](https://mybinder.org/badge_logo.svg)](anonymous)-->
 
 _MetaQuantus is currently under active development. Carefully note the release version to ensure reproducibility of your work._
 
