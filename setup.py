@@ -6,7 +6,10 @@
 from setuptools import setup, find_packages
 
 with open('requirements.txt') as f:
-    required = f.read().splitlines()
+    required = [line.strip() for line in f.readlines() if "git+" not in line]
+
+# Fix to make @git work
+required.append("Quantus @ git+https://github.com/understandable-machine-intelligence-lab/Quantus.git")
 
 # Define setup.
 setup(
