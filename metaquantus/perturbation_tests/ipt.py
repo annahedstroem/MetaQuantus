@@ -52,6 +52,7 @@ class InputPerturbationTest(PerturbationTestBase):
         explain_func: Optional[Callable],
         model_predict_kwargs: Optional[Dict],
         softmax: Optional[bool],
+        batch_size: Optional[int],
         device: Optional[str],
     ) -> Tuple[dict, np.ndarray, dict]:
         """
@@ -83,6 +84,8 @@ class InputPerturbationTest(PerturbationTestBase):
             Extra kwargs when running model.predict.
         softmax: bool
             Indicates if the softmax (or logits) are used.
+        batch_size: int 
+            The batch size to run Quantus evaluation with.
         device: torch.device
             The device used, to enable GPUs.
 
@@ -175,6 +178,7 @@ class InputPerturbationTest(PerturbationTestBase):
                     },
                     model_predict_kwargs=model_predict_kwargs,
                     channel_first=channel_first,
+                    batch_size=batch_size,
                     softmax=softmax,
                     device=device,
                 )

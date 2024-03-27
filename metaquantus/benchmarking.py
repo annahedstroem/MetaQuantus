@@ -29,6 +29,7 @@ class MetaEvaluationBenchmarking:
         keep_results: bool = False,
         channel_first: Optional[bool] = True,
         softmax: Optional[bool] = False,
+        batch_size: Optional[int] = 64,
         device: Optional[str] = None,
     ):
         """
@@ -56,6 +57,8 @@ class MetaEvaluationBenchmarking:
             Indicates if channels is first.
         softmax: bool
             Indicates if the softmax (or logits) are used.
+        batch_size: int 
+            The batch size to run Quantus evaluation with.
         device: torch.device
             The device used, to enable GPUs.
 
@@ -73,6 +76,7 @@ class MetaEvaluationBenchmarking:
         self.write_to_file = write_to_file
         self.channel_first = channel_first
         self.softmax = softmax
+        self.batch_size = batch_size
         self.device = device
         self.name = self.master.fname
 
@@ -127,6 +131,7 @@ class MetaEvaluationBenchmarking:
                             s_batch=settings_data["s_batch"],
                             channel_first=self.channel_first,
                             softmax=self.softmax,
+                            batch_size=self.batch_size,
                             device=self.device,
                             score_direction=estimator["score_direction"],
                         )

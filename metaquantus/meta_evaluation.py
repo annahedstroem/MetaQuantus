@@ -130,6 +130,7 @@ class MetaEvaluation:
         channel_first: Optional[bool] = True,
         softmax: Optional[bool] = False,
         device: Optional[str] = None,
+        batch_size: Optional[int] = 64,
         model_predict_kwargs: Optional[Dict[str, Any]] = {},
         score_direction: Optional[str] = None,
     ):
@@ -154,6 +155,8 @@ class MetaEvaluation:
             Indicates if channels is first.
         softmax: bool
             Indicates if the softmax (or logits) are used.
+        batch_size: int 
+            The batch size to run Quantus evaluation with.
         device: torch.device
             The device used, to enable GPUs.
         model_predict_kwargs: dict
@@ -179,6 +182,7 @@ class MetaEvaluation:
             channel_first=channel_first,
             softmax=softmax,
             device=device,
+            batch_size=batch_size,
         )
 
         # Run inference.
@@ -255,6 +259,7 @@ class MetaEvaluation:
         s_batch: Union[np.array, None] = None,
         channel_first: Optional[bool] = True,
         softmax: Optional[bool] = False,
+        batch_size: Optional[int] = 64,
         device: Optional[str] = None,
         model_predict_kwargs: Optional[Dict[str, Any]] = {},
     ):
@@ -352,6 +357,7 @@ class MetaEvaluation:
                         },
                         model_predict_kwargs=model_predict_kwargs,
                         softmax=softmax,
+                        batch_size=batch_size,
                         device=device,
                     )
 
@@ -397,6 +403,7 @@ class MetaEvaluation:
                         model_predict_kwargs=model_predict_kwargs,
                         softmax=softmax,
                         device=device,
+                        batch_size=batch_size,
                     )
 
                 self.results_eval_scores_perturbed[test_name][i] = scores_perturbed
