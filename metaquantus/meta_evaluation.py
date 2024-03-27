@@ -259,6 +259,7 @@ class MetaEvaluation:
         s_batch: Union[np.array, None] = None,
         channel_first: Optional[bool] = True,
         softmax: Optional[bool] = False,
+        batch_size: Optional[int] = 64,
         device: Optional[str] = None,
         model_predict_kwargs: Optional[Dict[str, Any]] = {},
     ):
