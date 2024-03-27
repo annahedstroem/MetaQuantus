@@ -131,7 +131,7 @@ class MetaEvaluationBenchmarking:
                             s_batch=settings_data["s_batch"],
                             channel_first=self.channel_first,
                             softmax=self.softmax,
-                            batch_size=batch_size,
+                            batch_size=self.batch_size,
                             device=self.device,
                             score_direction=estimator["score_direction"],
                         )
