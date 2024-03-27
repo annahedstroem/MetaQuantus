@@ -155,6 +155,8 @@ class MetaEvaluation:
             Indicates if channels is first.
         softmax: bool
             Indicates if the softmax (or logits) are used.
+        batch_size: int 
+            The batch size to run Quantus evaluation with.
         device: torch.device
             The device used, to enable GPUs.
         model_predict_kwargs: dict

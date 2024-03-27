@@ -100,6 +100,7 @@ def test_meta_evaluation_mnist(
         s_batch=s_batch,
         channel_first=True,
         softmax=False,
+        batch_size=50,
         device=device,
         score_direction=score_direction,
     )

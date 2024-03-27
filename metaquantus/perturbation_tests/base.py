@@ -34,6 +34,7 @@ class PerturbationTestBase(ABC):
         explain_func_kwargs: Optional[Dict[str, Any]],
         model_predict_kwargs: Optional[Dict],
         softmax: Optional[bool],
+        batch_size: Optional[int],
         device: Optional[str],
     ) -> Union[int, float, list, dict, None]:
         raise NotImplementedError

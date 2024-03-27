@@ -86,6 +86,7 @@ def test_benchmarking_mnist(
         keep_results=True,
         channel_first=True,
         softmax=False,
+        batch_size=64,
         device=device,
         path=os.getcwd()+"tests/assets/results/",
         save=False,
