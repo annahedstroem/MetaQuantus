@@ -2,6 +2,6 @@
 coverage>=7.2.3
 black==22.10.0
 numpy>=1.20.3
-pytest>=6.2.5
+pytest<=7.4.4 # pytest-lazyfixture issue https://github.com/annahedstroem/MetaQuantus/actions/runs/8449892962/job/23144947207
 pytest-cov>=3.0.0
 pytest-lazy-fixture>=0.6.3
