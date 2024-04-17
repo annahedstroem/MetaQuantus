@@ -587,30 +587,30 @@ class MetaEvaluation:
 
             # Get the mean scores, over the right axes.
             consistency_scores = {
-                "IAC_{NR}": self.results_consistency_scores[perturbation_type][
+                "IAC_{NR}": np.nanmean(self.results_consistency_scores[perturbation_type][
                     "intra_scores_res"
-                ].mean(axis=(0, 2)),
-                "IAC_{AR}": self.results_consistency_scores[perturbation_type][
+                ], axis=(0, 2)),
+                "IAC_{AR}": np.nanmean(self.results_consistency_scores[perturbation_type][
                     "intra_scores_adv"
-                ].mean(axis=(0, 2)),
-                "IEC_{NR}": self.results_consistency_scores[perturbation_type][
+                ], axis=(0, 2)),
+                "IEC_{NR}": np.nanmean(self.results_consistency_scores[perturbation_type][
                     "inter_scores_res"
-                ].mean(axis=1),
-                "IEC_{AR}": self.results_consistency_scores[perturbation_type][
+                ], axis=1),
+                "IEC_{AR}": np.nanmean(self.results_consistency_scores[perturbation_type][
                     "inter_scores_adv"
-                ].mean(axis=1),
+                ], axis=1),
             }
 
             # Compute the results.
             consistency_results = {
-                "IAC_{NR} mean": consistency_scores["IAC_{NR}"].mean(),
-                "IAC_{NR} std": consistency_scores["IAC_{NR}"].std(),
-                "IAC_{AR} mean": consistency_scores["IAC_{AR}"].mean(),
-                "IAC_{AR} std": consistency_scores["IAC_{NR}"].std(),
-                "IEC_{NR} mean": consistency_scores["IEC_{NR}"].mean(),
-                "IEC_{NR} std": consistency_scores["IEC_{NR}"].std(),
-                "IEC_{AR} mean": consistency_scores["IEC_{AR}"].mean(),
-                "IEC_{AR} std": consistency_scores["IEC_{AR}"].std(),
+                "IAC_{NR} mean": np.nanmean(consistency_scores["IAC_{NR}"]),
+                "IAC_{NR} std": np.nanstd(consistency_scores["IAC_{NR}"]),
+                "IAC_{AR} mean": np.nanmean(consistency_scores["IAC_{AR}"]),
+                "IAC_{AR} std": np.nanstd(consistency_scores["IAC_{AR}"]),
+                "IEC_{NR} mean": np.nanmean(consistency_scores["IEC_{NR}"]),
+                "IEC_{NR} std": np.nanstd(consistency_scores["IEC_{NR}"]),
+                "IEC_{AR} mean": np.nanmean(consistency_scores["IEC_{AR}"]),
+                "IEC_{AR} std": np.nanstd(consistency_scores["IEC_{AR}"]),
             }
 
             # Produce the results.
@@ -618,17 +618,14 @@ class MetaEvaluation:
             self.results_meta_consistency_scores[perturbation_type] = {
                 "consistency_scores": consistency_scores,
                 "consistency_results": consistency_results,
-                "MC_means": np.array(list(consistency_scores.values()))
-                .reshape(shape)
-                .mean(axis=0),
-                "MC_mean": np.array(list(consistency_scores.values()))
-                .reshape(shape)
-                .mean(),
-                "MC_std": np.array(list(consistency_scores.values()))
-                .reshape(shape)
-                .mean(axis=0)
-                .std(),
+                "MC_means": np.nanmean(np.array(list(consistency_scores.values()))
+                                       .reshape(shape), axis=0),
+                "MC_mean": np.nanmean(np.array(list(consistency_scores.values()))
+                                      .reshape(shape)),
+                "MC_std": np.nanstd(np.nanmean(np.array(list(consistency_scores.values()))
+                                               .reshape(shape), axis=0)),
             }
+            
             if self.print_results:
                 print(
                     f"\n{perturbation_type} Perturbation Test ---> MC score="
