@@ -99,7 +99,7 @@ def plot_multiple_estimator_area(
 
                 # Set the spaces to average the MC value over.
                 if perturbation_type in average_over:
-                    mc_score = np.mean(
+                    mc_score = np.nanmean(
                         [
                             scores["IAC_NR"].mean(),
                             scores["IEC_NR"].mean(),
@@ -268,7 +268,7 @@ def plot_multiple_models_estimator_area(
 
                 # Set the spaces to average the MC value over.
                 if perturbation_type in average_over:
-                    mc_score = np.mean(
+                    mc_score = np.nanmean(
                         [
                             scores["IAC_NR"].mean(),
                             scores["IEC_NR"].mean(),
@@ -453,7 +453,7 @@ def plot_single_estimator_area(
 
     # Labels, titles and grids.
     plt.title(
-        f"{estimator_name} ({np.mean(mc_scores):.3f}) — {perturbation_type}",
+        f"{estimator_name} ({np.nanmean(mc_scores):.3f}) — {perturbation_type}",
         fontsize=12,
     )
     plt.grid()
@@ -906,14 +906,14 @@ def plot_average_meta_evaluation_categories(
     """
 
     for i, est in zip(range(0, len(means), datasets), metrics):
-        print(f"{est}: {np.mean(means[i:i + 4])}")
+        print(f"{est}: {np.nanmean(means[i:i + 4])}")
 
     # Plot the average MC scores for each category!
     fig, ax = plt.subplots(1, 1, figsize=(3, 3.5))
 
     # Prep the data.
-    means_vals = [np.mean(means[i : i + 8]) for i in range(0, len(means), 8)]
-    stds_vals = [np.mean(stds[i : i + 8]) for i in range(0, len(stds), 8)]
+    means_vals = [np.nanmean(means[i : i + 8]) for i in range(0, len(means), 8)]
+    stds_vals = [np.nanmean(stds[i : i + 8]) for i in range(0, len(stds), 8)]
     x = np.arange(0, len(means_vals))
 
     # Plot!
@@ -1025,9 +1025,9 @@ def make_benchmarking_df_as_str(benchmark: Dict, estimators: Dict):
                     df.loc[row, "MC_bar"] = ""
                 elif px == 1:
                     df.loc[row, "MC_bar"] = (
-                        f"{np.mean(np.array(means_bar).flatten()):.3f}"
+                        f"{np.nanmean(np.array(means_bar).flatten()):.3f}"
                         + " $\pm$ "
-                        + f"{np.mean(np.array(stds_bar).flatten()) * 2:.3f}"
+                        + f"{np.nanmean(np.array(stds_bar).flatten()) * 2:.3f}"
                     )
 
     return df
@@ -1262,8 +1262,8 @@ def aggregate_benchmarking_datasets(
                             means_.append(data["MC_mean"])
                             stds_.append(data["MC_std"])
 
-                means[dataset_name].append(np.mean(means_))
-                stds[dataset_name].append(np.mean(stds_))
+                means[dataset_name].append(np.nanmean(means_))
+                stds[dataset_name].append(np.nanmean(stds_))
 
     means_resorted = [
         list(means.values())[j][i]
