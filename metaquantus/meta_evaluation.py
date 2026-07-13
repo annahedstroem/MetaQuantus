@@ -780,11 +780,16 @@ class MetaEvaluation:
         -------
         float
         """
+        if score_direction not in ("lower", "higher"):
+            raise ValueError(
+                f"score_direction must be 'lower' or 'higher', got {score_direction!r}."
+            )
+
         U = []
         for row_star, row_hat in zip(Q_star, Q_hat):
             for q_star, q_hat in zip(row_star[indices], row_hat[indices]):
 
-                if score_direction:
+                if score_direction == "lower":
                     if q_star < q_hat:
                         U.append(1)
                     else:

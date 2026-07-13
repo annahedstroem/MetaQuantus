@@ -8,7 +8,7 @@ from typing import Callable, Optional
 class Estimator:
     name: str
     category: str
-    score_direction: bool
+    score_direction: str
     init: quantus.Metric
 
 

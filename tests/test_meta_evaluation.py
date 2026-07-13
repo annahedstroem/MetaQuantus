@@ -79,7 +79,7 @@ def test_meta_evaluation_mnist(
     iters = 3
     K = 5
     metric = estimators[estimator_category][estimator_name]["init"]
-    score_direction = estimators[estimator_category][estimator_name]["init"]
+    score_direction = estimators[estimator_category][estimator_name]["score_direction"]
 
     # Define the meta-evaluation exercise.
     meta_evaluator = MetaEvaluation(
@@ -178,7 +178,7 @@ def test_meta_evaluation_fmnist(
     iters = 3
     K = 5
     metric = estimators[estimator_category][estimator_name]["init"]
-    score_direction = estimators[estimator_category][estimator_name]["init"]
+    score_direction = estimators[estimator_category][estimator_name]["score_direction"]
 
     # Define the meta-evaluation exercise.
     meta_evaluator = MetaEvaluation(
@@ -279,7 +279,7 @@ def test_meta_evaluation_cmnist(
     iters = 5
     K = 10
     metric = estimators[estimator_category][estimator_name]["init"]
-    score_direction = estimators[estimator_category][estimator_name]["init"]
+    score_direction = estimators[estimator_category][estimator_name]["score_direction"]
 
     # Define the meta-evaluation exercise.
     meta_evaluator = MetaEvaluation(
