@@ -153,7 +153,7 @@ class InputPerturbationTest(PerturbationTestBase):
                 # Generate explanations based on predictions.
                 a_batch_preds = generate_explanations(
                     model=model,
-                    x_batch=x_batch,
+                    x_batch=x_batch_perturbed,
                     y_batch=y_batch,
                     explain_func=explain_func,
                     explain_func_kwargs=explain_func_kwargs,
